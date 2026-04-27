@@ -102,49 +102,47 @@
 
 ## Traceability
 
-*Populated during roadmap creation.*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| AUTH-04 | — | Pending |
-| REVW-01 | — | Pending |
-| REVW-02 | — | Pending |
-| REVW-03 | — | Pending |
-| REVW-04 | — | Pending |
-| REVW-05 | — | Pending |
-| REVW-06 | — | Pending |
-| REVW-07 | — | Pending |
-| MEAL-01 | — | Pending |
-| MEAL-02 | — | Pending |
-| MEAL-03 | — | Pending |
-| PROF-01 | — | Pending |
-| PROF-02 | — | Pending |
-| PROF-03 | — | Pending |
-| PROF-04 | — | Pending |
-| PROF-05 | — | Pending |
-| PROF-06 | — | Pending |
-| SOCL-01 | — | Pending |
-| SOCL-02 | — | Pending |
-| SOCL-03 | — | Pending |
-| SOCL-04 | — | Pending |
-| SOCL-05 | — | Pending |
-| FEED-01 | — | Pending |
-| FEED-02 | — | Pending |
-| NOTF-01 | — | Pending |
-| NOTF-02 | — | Pending |
-| NOTF-03 | — | Pending |
-| LOCN-01 | — | Pending |
-| LOCN-02 | — | Pending |
-| LOCN-03 | — | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| REVW-01 | Phase 2 | Pending |
+| REVW-02 | Phase 2 | Pending |
+| REVW-03 | Phase 2 | Pending |
+| REVW-04 | Phase 2 | Pending |
+| REVW-05 | Phase 2 | Pending |
+| REVW-06 | Phase 2 | Pending |
+| REVW-07 | Phase 2 | Pending |
+| MEAL-01 | Phase 2 | Pending |
+| MEAL-02 | Phase 2 | Pending |
+| MEAL-03 | Phase 2 | Pending |
+| PROF-01 | Phase 5 | Pending |
+| PROF-02 | Phase 5 | Pending |
+| PROF-03 | Phase 5 | Pending |
+| PROF-04 | Phase 5 | Pending |
+| PROF-05 | Phase 5 | Pending |
+| PROF-06 | Phase 5 | Pending |
+| SOCL-01 | Phase 3 | Pending |
+| SOCL-02 | Phase 3 | Pending |
+| SOCL-03 | Phase 3 | Pending |
+| SOCL-04 | Phase 3 | Pending |
+| SOCL-05 | Phase 3 | Pending |
+| FEED-01 | Phase 4 | Pending |
+| FEED-02 | Phase 4 | Pending |
+| NOTF-01 | Phase 6 | Pending |
+| NOTF-02 | Phase 6 | Pending |
+| NOTF-03 | Phase 6 | Pending |
+| LOCN-01 | Phase 6 | Pending |
+| LOCN-02 | Phase 6 | Pending |
+| LOCN-03 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 33 total
-- Mapped to phases: 0
-- Unmapped: 33 ⚠️ (will be resolved during roadmap creation)
+- Mapped to phases: 33
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-27*
-*Last updated: 2026-04-27 after initial definition*
+*Last updated: 2026-04-27 after roadmap creation — all 33 v1 requirements mapped*
