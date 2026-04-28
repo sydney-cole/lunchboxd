@@ -12,11 +12,9 @@ A user should be able to post a meal review and immediately see it appear in the
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] User can create an account and log in — Validated in Phase 1: Auth Foundation
 
 ### Active
-
-- [ ] User can create an account and log in
 - [ ] User can post a meal review with star rating, written note, photo, and tags/mood
 - [ ] Reviews can be tagged as restaurant meals (searched via database or entered manually) or homemade
 - [ ] User has a profile page showing their reviews, stats, favorites, and followers/following
@@ -69,4 +67,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-27 after initialization*
+*Last updated: 2026-04-28 — Phase 1 complete: auth foundation shipped*
