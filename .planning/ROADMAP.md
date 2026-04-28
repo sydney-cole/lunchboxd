@@ -8,7 +8,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Auth & Foundation** — Users can create accounts and sign in securely; project infrastructure is ready for all subsequent phases
+- [x] **Phase 1: Auth & Foundation** — Users can create accounts and sign in securely; project infrastructure is ready for all subsequent phases (completed 2026-04-28)
 - [ ] **Phase 2: Reviews & Meals** — Users can post a complete meal review with rating, note, photo, tags, and restaurant association
 - [ ] **Phase 3: Social Graph** — Users can follow others, detect mutual friends, like reviews, and search for users
 - [ ] **Phase 4: Feed** — Users see a real-time, paginated feed of reviews from people they follow
@@ -32,12 +32,12 @@
 3. A user can sign in using their Google account via OAuth
 4. A user who forgot their password receives a reset link by email and can set a new password
 
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 01-01-PLAN.md — Scaffold Turborepo monorepo, shared package, Drizzle schema, design tokens
-- [ ] 01-02-PLAN.md — Wire Clerk auth on web: middleware, webhook, auth screens, onboarding
-- [ ] 01-03-PLAN.md — Wire Clerk auth on mobile: ClerkProvider, auth screens, EAS build config
+- [x] 01-02-PLAN.md — Wire Clerk auth on web: middleware, webhook, auth screens, onboarding
+- [x] 01-03-PLAN.md — Wire Clerk auth on mobile: ClerkProvider, auth screens, EAS build config
 
 ---
 
@@ -129,7 +129,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Auth & Foundation | 1/3 | In Progress|  |
+| 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 0/? | Not started | - |
 | 3. Social Graph | 0/? | Not started | - |
 | 4. Feed | 0/? | Not started | - |
