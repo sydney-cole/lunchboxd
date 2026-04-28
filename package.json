@@ -1,0 +1,16 @@
+{
+  "name": "lunchboxd",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "test": "turbo test"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.6",
+    "typescript": "^5.8.0"
+  },
+  "packageManager": "pnpm@10.8.1"
+}

@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #FFF8F0;
+  --color-surface: #FFF0E0;
+  --color-accent: #F97316;
+  --color-accent-hover: #EA6C10;
+  --color-accent-active: #D96209;
+  --color-text-primary: #1C1917;
+  --color-text-secondary: #78716C;
+  --color-border: #E7D5C5;
+  --color-destructive: #EF4444;
+  --color-white: #FFFFFF;
+
+  --font-inter: 'Inter Variable', sans-serif;
+  --font-fraunces: 'Fraunces', serif;
+
+  --radius-auth-card: 12px;
+  --shadow-auth-card: 0 1px 4px 0 rgba(28, 25, 23, 0.08);
+}
