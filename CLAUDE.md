@@ -20,7 +20,7 @@ Lunchboxd is a Letterboxd-inspired food review app where users log, rate, and sh
 | Technology | Version | Purpose | Why |
 |------------|---------|---------|-----|
 | Next.js Route Handlers | 16.2.4 | REST API for web + mobile | Eliminates separate backend; full HTTP method support; serverless-ready; well-documented |
-| Zod | ^3.x | Request/response validation | Next.js docs explicitly recommend Zod for schema validation in Route Handlers; type-safe; works in Edge and Node runtimes |
+| Zod | ^4.x | Request/response validation | Next.js docs explicitly recommend Zod for schema validation in Route Handlers; type-safe; works in Edge and Node runtimes |
 | TypeScript | ^5.x | Language | End-to-end type safety; shared types between API and frontend |
 ## Web Frontend
 | Technology | Version | Purpose | Why |
