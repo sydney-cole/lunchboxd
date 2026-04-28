@@ -32,10 +32,10 @@
 3. A user can sign in using their Google account via OAuth
 4. A user who forgot their password receives a reset link by email and can set a new password
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 01-01-PLAN.md — Scaffold Turborepo monorepo, shared package, Drizzle schema, design tokens
+- [x] 01-01-PLAN.md — Scaffold Turborepo monorepo, shared package, Drizzle schema, design tokens
 - [ ] 01-02-PLAN.md — Wire Clerk auth on web: middleware, webhook, auth screens, onboarding
 - [ ] 01-03-PLAN.md — Wire Clerk auth on mobile: ClerkProvider, auth screens, EAS build config
 
@@ -129,7 +129,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Auth & Foundation | 0/3 | Not started | - |
+| 1. Auth & Foundation | 1/3 | In Progress|  |
 | 2. Reviews & Meals | 0/? | Not started | - |
 | 3. Social Graph | 0/? | Not started | - |
 | 4. Feed | 0/? | Not started | - |

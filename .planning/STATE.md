@@ -1,7 +1,21 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: executing
+last_updated: "2026-04-28T18:25:05Z"
+progress:
+  total_phases: 6
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 1
+  percent: 33
+---
+
 # State: Lunchboxd
 
-**Last updated:** 2026-04-27
-**Session:** Roadmap creation
+**Last updated:** 2026-04-28
+**Session:** Execute phase 01-01
 
 ---
 
@@ -9,19 +23,21 @@
 
 **Core value:** A user should be able to post a meal review and immediately see it appear in their friends' feeds.
 
-**Current focus:** Phase 1 — Auth & Foundation
+**Current focus:** Phase 01 — auth-foundation
 
 ---
 
 ## Current Position
 
+Phase: 01 (auth-foundation) — EXECUTING
+Plan: 2 of 3
 **Phase:** 1 — Auth & Foundation
-**Plan:** None started
-**Status:** Not started
+**Plan:** 01 complete, moving to 02
+**Status:** Executing Phase 01
 
 ```
-Progress: [          ] 0%
-Phase 1 of 6
+Progress: [==        ] 33%
+Phase 1 of 6 | Plan 1/3 complete
 ```
 
 ---
@@ -63,6 +79,8 @@ Phase 1 of 6
 - Restaurant model: `place_id` is nullable; manual entries are first-class (not a fallback hack)
 - Social model uses separate `follows` and `friendships` tables; mutual follows are detected, not stored redundantly
 - Platforms share a single API — Next.js API routes serve both web and Expo mobile
+- drizzle-kit 0.31.10: use pgTable callback API for indices — standalone index() exports are incompatible with bundled pg-core
+- feedItemsOwnerIdx is a single-column index on ownerUserId (compound with createdAt triggers drizzle-kit JSON parse bug)
 
 ### Todos
 
@@ -76,7 +94,8 @@ Phase 1 of 6
 
 ## Session Continuity
 
-To resume: read ROADMAP.md for phase structure, then run `/gsd:plan-phase 1` to begin Phase 1 planning.
+Stopped at: Completed 01-auth-foundation/01-01-PLAN.md
+To resume: Run `/gsd:execute-phase` for phase 01, plan 02 (Clerk auth pages).
 
 ---
 *State initialized: 2026-04-27*
