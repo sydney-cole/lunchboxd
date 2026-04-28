@@ -74,7 +74,7 @@ completed: 2026-04-28
 - **Duration:** ~15 min
 - **Started:** 2026-04-28T18:59:04Z
 - **Completed:** 2026-04-28
-- **Tasks:** 2 of 3 (Task 3 is a human-verify checkpoint — awaiting device verification)
+- **Tasks:** 3 of 3 (Task 3 human-verify checkpoint approved by user)
 - **Files modified:** 12
 
 ## Accomplishments
@@ -184,12 +184,9 @@ Before running an EAS development build:
    cd apps/mobile && npx expo start --dev-client
    ```
 
-## Task 3: Human Verification Required
+## Task 3: Human Verification
 
-Task 3 is a blocking `checkpoint:human-verify`. The user must:
-1. Create an EAS development build and install it
-2. Verify sign-in, sign-up, Google OAuth, forgot password, and onboarding screens work end-to-end
-3. Confirm session persists after app restart (SecureStore token cache working)
+Task 3 (`checkpoint:human-verify`) was approved by the user on 2026-04-28. Mobile auth flow verified end-to-end on device: sign-in, sign-up, Google OAuth, forgot password, onboarding screens, and SecureStore session persistence across app restarts all confirmed working.
 
 ## Self-Check: PASSED
 
