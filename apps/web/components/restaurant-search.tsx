@@ -96,6 +96,7 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
   const handleAddManually = async () => {
     if (!query.trim()) return
     setIsLoading(true)
+    setError(null)
     try {
       const res = await fetch('/api/v1/restaurants', {
         method: 'POST',
@@ -105,15 +106,15 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
       if (res.ok) {
         const restaurant: Restaurant = await res.json()
         onChange({ id: restaurant.id, name: restaurant.name })
+        setQuery('')
+        setIsOpen(false)
       } else {
-        onChange({ id: `manual-${Date.now()}`, name: query.trim() })
+        setError('Could not save restaurant. Please try again.')
       }
     } catch {
-      onChange({ id: `manual-${Date.now()}`, name: query.trim() })
+      setError('Could not save restaurant. Please try again.')
     } finally {
       setIsLoading(false)
-      setQuery('')
-      setIsOpen(false)
     }
   }
 
