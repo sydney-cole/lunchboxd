@@ -59,23 +59,27 @@ export async function PATCH(
   }
   if (input.mealDate !== undefined) updateSet.mealDate = input.mealDate ?? null
 
-  const [updated] = await db.update(reviews)
-    .set(updateSet)
-    .where(eq(reviews.id, id))
-    .returning()
+  const updated = await db.transaction(async (tx) => {
+    const [row] = await tx.update(reviews)
+      .set(updateSet)
+      .where(eq(reviews.id, id))
+      .returning()
 
-  // Replace tags atomically: delete all existing, re-insert new set
-  if (input.tags !== undefined) {
-    await db.delete(reviewTags).where(eq(reviewTags.reviewId, id))
-    if (input.tags.length > 0) {
-      await db.insert(reviewTags).values(
-        input.tags.map((label: string) => ({
-          reviewId: id,
-          label: label.toLowerCase().trim(),
-        }))
-      )
+    // Replace tags atomically within the same transaction
+    if (input.tags !== undefined) {
+      await tx.delete(reviewTags).where(eq(reviewTags.reviewId, id))
+      if (input.tags.length > 0) {
+        await tx.insert(reviewTags).values(
+          input.tags.map((label: string) => ({
+            reviewId: id,
+            label: label.toLowerCase().trim(),
+          }))
+        )
+      }
     }
-  }
+
+    return row
+  })
 
   return NextResponse.json(updated)
 }
