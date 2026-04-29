@@ -20,6 +20,19 @@ export async function POST(req: Request) {
   }
 
   const input = parsed.data
+
+  // Validate photoKey ownership: key must be reviews/<clerkId>/<uuid>
+  if (input.photoKey) {
+    const photoKeyPattern = /^reviews\/[a-zA-Z0-9_-]+\/[0-9a-f-]{36}$/
+    if (!photoKeyPattern.test(input.photoKey)) {
+      return NextResponse.json({ error: 'Invalid photoKey format' }, { status: 400 })
+    }
+    const keyClerkId = input.photoKey.split('/')[1]
+    if (keyClerkId !== clerkId) {
+      return NextResponse.json({ error: 'photoKey does not belong to authenticated user' }, { status: 400 })
+    }
+  }
+
   const photoUrl = input.photoKey
     ? `${process.env.R2_PUBLIC_URL}/${input.photoKey}`
     : null

@@ -34,6 +34,18 @@ export async function PATCH(
 
   const input = parsed.data
 
+  // Validate photoKey ownership: key must be reviews/<clerkId>/<uuid>
+  if (input.photoKey) {
+    const photoKeyPattern = /^reviews\/[a-zA-Z0-9_-]+\/[0-9a-f-]{36}$/
+    if (!photoKeyPattern.test(input.photoKey)) {
+      return NextResponse.json({ error: 'Invalid photoKey format' }, { status: 400 })
+    }
+    const keyClerkId = input.photoKey.split('/')[1]
+    if (keyClerkId !== clerkId) {
+      return NextResponse.json({ error: 'photoKey does not belong to authenticated user' }, { status: 400 })
+    }
+  }
+
   // Build update set — only include fields that were provided
   const updateSet: Record<string, unknown> = { updatedAt: new Date() }
   if (input.mealType !== undefined) updateSet.mealType = input.mealType
