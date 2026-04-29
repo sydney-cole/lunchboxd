@@ -19,8 +19,8 @@
 - [x] **REVW-03**: User can attach a photo to a review
 - [x] **REVW-04**: User can add mood/tags to a review (e.g. comfort food, date night, quick lunch)
 - [x] **REVW-05**: User can set the date the meal was eaten (not just the review date)
-- [ ] **REVW-06**: User can edit their own review after posting
-- [ ] **REVW-07**: User can delete their own review
+- [x] **REVW-06**: User can edit their own review after posting
+- [x] **REVW-07**: User can delete their own review
 
 ### Restaurants & Meals
 
@@ -113,8 +113,8 @@
 | REVW-03 | Phase 2 | Complete |
 | REVW-04 | Phase 2 | Complete |
 | REVW-05 | Phase 2 | Complete |
-| REVW-06 | Phase 2 | Pending |
-| REVW-07 | Phase 2 | Pending |
+| REVW-06 | Phase 2 | Complete |
+| REVW-07 | Phase 2 | Complete |
 | MEAL-01 | Phase 2 | Complete |
 | MEAL-02 | Phase 2 | Complete |
 | MEAL-03 | Phase 2 | Complete |

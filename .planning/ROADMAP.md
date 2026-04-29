@@ -9,7 +9,7 @@
 ## Phases
 
 - [x] **Phase 1: Auth & Foundation** — Users can create accounts and sign in securely; project infrastructure is ready for all subsequent phases (completed 2026-04-28)
-- [ ] **Phase 2: Reviews & Meals** — Users can post a complete meal review with rating, note, photo, tags, and restaurant association
+- [x] **Phase 2: Reviews & Meals** — Users can post a complete meal review with rating, note, photo, tags, and restaurant association (completed 2026-04-29)
 - [ ] **Phase 3: Social Graph** — Users can follow others, detect mutual friends, like reviews, and search for users
 - [ ] **Phase 4: Feed** — Users see a real-time, paginated feed of reviews from people they follow
 - [ ] **Phase 5: Profiles** — Users have complete public profiles with avatar, bio, review history, and follower/following display
@@ -55,7 +55,7 @@ Plans:
 4. A user can tag a review as a homemade meal without any restaurant field required
 5. A user can edit or delete any review they have posted and see the changes reflected immediately
 
-**Plans:** 5/6 plans executed
+**Plans:** 6/6 plans complete
 
 Plans:
 - [x] 02-01-PLAN.md — Schema migration (meal_date), Zod schemas (reviewSchema), Wave 0 test stubs
@@ -63,7 +63,7 @@ Plans:
 - [x] 02-03-PLAN.md — Review CRUD API routes (POST/GET/PATCH/DELETE) with fan-out-on-write
 - [x] 02-04-PLAN.md — Web UI input components (StarRating, TagInput, RestaurantSearch, PhotoPicker, MealTypeToggle) and review composer page
 - [x] 02-05-PLAN.md — Web review list page, ReviewCard, edit page, delete dialog, FAB
-- [ ] 02-06-PLAN.md — Mobile (Expo) review composer with native components
+- [x] 02-06-PLAN.md — Mobile (Expo) review composer with native components
 
 ---
 
@@ -138,7 +138,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
-| 2. Reviews & Meals | 5/6 | In Progress|  |
+| 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 0/? | Not started | - |
 | 4. Feed | 0/? | Not started | - |
 | 5. Profiles | 0/? | Not started | - |
