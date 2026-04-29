@@ -2,8 +2,8 @@
 phase: 1
 slug: auth-foundation
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-04-27
 ---
 
@@ -18,7 +18,7 @@ created: 2026-04-27
 | Property | Value |
 |----------|-------|
 | **Framework** | vitest (web) / jest (mobile) |
-| **Config file** | vitest.config.ts / jest.config.ts — Wave 0 installs |
+| **Config file** | apps/web/vitest.config.ts — created in Plan 01 Task 1 |
 | **Quick run command** | `pnpm --filter web test:unit` |
 | **Full suite command** | `pnpm test` |
 | **Estimated runtime** | ~30 seconds |
@@ -38,22 +38,21 @@ created: 2026-04-27
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 1-01-01 | 01 | 1 | AUTH-01 | unit | `pnpm --filter web test:unit` | ❌ W0 | ⬜ pending |
-| 1-01-02 | 01 | 1 | AUTH-02 | unit | `pnpm --filter web test:unit` | ❌ W0 | ⬜ pending |
-| 1-01-03 | 01 | 2 | AUTH-03 | integration | `pnpm --filter web test:integration` | ❌ W0 | ⬜ pending |
-| 1-01-04 | 01 | 2 | AUTH-04 | manual | — | — | ⬜ pending |
+| 1-01-01 | 01 | 1 | AUTH-01 | unit | `pnpm --filter web test:unit` | apps/web/__tests__/auth.test.ts | pending |
+| 1-01-02 | 01 | 1 | AUTH-02 | unit | `pnpm --filter web test:unit` | apps/web/__tests__/auth.test.ts | pending |
+| 1-01-03 | 01 | 2 | AUTH-03 | integration | `pnpm --filter web test:unit` | apps/web/__tests__/auth.test.ts | pending |
+| 1-01-04 | 01 | 2 | AUTH-04 | manual | — | — | pending |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
+*Status: pending / green / red / flaky*
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] `apps/web/__tests__/auth.test.ts` — stubs for AUTH-01, AUTH-02, AUTH-03
-- [ ] `apps/mobile/__tests__/auth.test.ts` — stubs for mobile auth flows
-- [ ] vitest + jest config — if not already present
+- [x] `apps/web/vitest.config.ts` — vitest configuration (created in Plan 01 Task 1)
+- [x] `apps/web/__tests__/auth.test.ts` — stubs for AUTH-01, AUTH-02, AUTH-03, AUTH-04 (created in Plan 01 Task 1)
 
-*If none: "Existing infrastructure covers all phase requirements."*
+*Wave 0 is satisfied by Plan 01 Task 1 which installs vitest and creates test stubs.*
 
 ---
 
@@ -63,16 +62,17 @@ created: 2026-04-27
 |----------|-------------|------------|-------------------|
 | Password reset email received | AUTH-04 | Requires real email delivery | Sign up, trigger reset, check inbox within 5 min |
 | Google OAuth sign-in (mobile) | AUTH-03 | Requires device + Google account | Open dev build, tap Google sign-in, verify session |
+| Migration push to Neon | Infrastructure | Requires DATABASE_URL credential | Run `cd apps/web && npx drizzle-kit migrate` after setting DATABASE_URL |
 
 ---
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved (Wave 0 incorporated into Plan 01 Task 1)

@@ -55,7 +55,15 @@ Plans:
 4. A user can tag a review as a homemade meal without any restaurant field required
 5. A user can edit or delete any review they have posted and see the changes reflected immediately
 
-**Plans**: TBD
+**Plans:** 6 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Schema migration (meal_date), Zod schemas (reviewSchema), Wave 0 test stubs
+- [ ] 02-02-PLAN.md — R2 presigned upload endpoint, Google Places restaurant search proxy
+- [ ] 02-03-PLAN.md — Review CRUD API routes (POST/GET/PATCH/DELETE) with fan-out-on-write
+- [ ] 02-04-PLAN.md — Web UI input components (StarRating, TagInput, RestaurantSearch, PhotoPicker, MealTypeToggle) and review composer page
+- [ ] 02-05-PLAN.md — Web review list page, ReviewCard, edit page, delete dialog, FAB
+- [ ] 02-06-PLAN.md — Mobile (Expo) review composer with native components
 
 ---
 
@@ -130,7 +138,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
-| 2. Reviews & Meals | 0/? | Not started | - |
+| 2. Reviews & Meals | 0/6 | Planned | - |
 | 3. Social Graph | 0/? | Not started | - |
 | 4. Feed | 0/? | Not started | - |
 | 5. Profiles | 0/? | Not started | - |
@@ -180,4 +188,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-04-27*
-*Last updated: 2026-04-27 after Phase 1 planning — 3 plans created*
+*Last updated: 2026-04-29 after Phase 2 planning — 6 plans created*
