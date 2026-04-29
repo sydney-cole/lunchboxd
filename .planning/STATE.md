@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready-to-execute
-stopped_at: Phase 03 Social Graph planned — 7 plans ready for execution
-last_updated: "2026-04-29T18:00:00.000Z"
+status: executing
+stopped_at: "Completed 03-01: Social Graph Schema Foundation"
+last_updated: "2026-04-29T19:47:57.863Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 9
-  percent: 56
+  completed_plans: 10
+  percent: 63
 ---
 
 # State: Lunchboxd
@@ -30,14 +30,14 @@ progress:
 
 ## Current Position
 
-Phase: 03 (social-graph) — READY TO EXECUTE
-Plan: 0 of 7
+Phase: 03 (social-graph) — EXECUTING
+Plan: 1 of 7 (complete)
 **Phase:** 3
-**Status:** Phase 3 planned — 7 plans in 3 waves ready for execution
+**Status:** Executing — 1/7 plans complete
 
 ```
-Progress: [████░░░░░░] ~40%
-Phase 3 of 6 | Plan 0/7 — PLANNED
+Progress: [██████░░░░] 63%
+Phase 3 of 6 | Plan 1/7 — IN PROGRESS
 ```
 
 ---
@@ -98,6 +98,9 @@ Phase 3 of 6 | Plan 0/7 — PLANNED
 - Mobile star rating uses Text character stars (★) not react-native-svg — avoids native module dependency (02-06)
 - Mobile API calls use Clerk getToken() Bearer header — no cookies on mobile; Next.js auth() reads both (02-06)
 - Mobile RestaurantSearch dropdown is a ScrollView below input (not floating) to avoid z-index issues (02-06)
+- friendshipsUniqueIdx uses pgTable callback API (same pattern as followsUniqueIdx) — enables .onConflictDoNothing() on duplicate friendship rows (03-01)
+- userSearchSchema adds max(100) bound beyond restaurantSearchSchema for input sanitization per threat model T-03-04 (03-01)
+- unfollowSchema defined as separate schema from followSchema for independent evolution and import clarity (03-01)
 
 ### Todos
 
@@ -111,7 +114,7 @@ Phase 3 of 6 | Plan 0/7 — PLANNED
 
 ## Session Continuity
 
-Stopped at: Phase 02-reviews-meals complete — all 6 plans executed and verified
+Stopped at: Completed 03-01: Social Graph Schema Foundation
 To resume: Run `/gsd:execute-phase` for Phase 03 — Social Graph.
 
 ---

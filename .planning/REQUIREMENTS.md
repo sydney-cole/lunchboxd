@@ -39,11 +39,11 @@
 
 ### Social
 
-- [ ] **SOCL-01**: User can follow another user (asymmetric)
-- [ ] **SOCL-02**: User can unfollow a user
-- [ ] **SOCL-03**: Mutual follows are detected and displayed as friends
-- [ ] **SOCL-04**: User can like a review
-- [ ] **SOCL-05**: User can search for other users by username or display name
+- [x] **SOCL-01**: User can follow another user (asymmetric)
+- [x] **SOCL-02**: User can unfollow a user
+- [x] **SOCL-03**: Mutual follows are detected and displayed as friends
+- [x] **SOCL-04**: User can like a review
+- [x] **SOCL-05**: User can search for other users by username or display name
 
 ### Feed
 
@@ -124,11 +124,11 @@
 | PROF-04 | Phase 5 | Pending |
 | PROF-05 | Phase 5 | Pending |
 | PROF-06 | Phase 5 | Pending |
-| SOCL-01 | Phase 3 | Pending |
-| SOCL-02 | Phase 3 | Pending |
-| SOCL-03 | Phase 3 | Pending |
-| SOCL-04 | Phase 3 | Pending |
-| SOCL-05 | Phase 3 | Pending |
+| SOCL-01 | Phase 3 | Complete |
+| SOCL-02 | Phase 3 | Complete |
+| SOCL-03 | Phase 3 | Complete |
+| SOCL-04 | Phase 3 | Complete |
+| SOCL-05 | Phase 3 | Complete |
 | FEED-01 | Phase 4 | Pending |
 | FEED-02 | Phase 4 | Pending |
 | NOTF-01 | Phase 6 | Pending |
