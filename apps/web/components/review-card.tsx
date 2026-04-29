@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { Pencil, Trash2, MoreHorizontal } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
 
@@ -27,8 +27,20 @@ function formatMealDate(dateStr: string | null): string {
 
 export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
   const [expanded, setExpanded] = useState(false)
+  const [isClamped, setIsClamped] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const bodyRef = useRef<HTMLParagraphElement>(null)
+
+  // Detect whether the body text is actually clamped (overflow hidden)
+  const checkClamped = useCallback(() => {
+    const el = bodyRef.current
+    if (el) setIsClamped(el.scrollHeight > el.clientHeight)
+  }, [])
+
+  useEffect(() => {
+    checkClamped()
+  }, [checkClamped])
 
   const ratingValue = review.rating ? parseFloat(review.rating) : 0
 
@@ -71,13 +83,8 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
             <span className="text-[16px] font-semibold text-text-primary truncate">
-              {review.mealType === 'homemade' ? '' : restaurantName}
+              {restaurantName}
             </span>
-            {review.mealType === 'homemade' && (
-              <span className="inline-flex items-center px-2 py-0.5 text-[14px] text-text-secondary bg-surface border border-border rounded-[4px] whitespace-nowrap">
-                Homemade
-              </span>
-            )}
           </div>
 
           {/* Kebab menu */}
@@ -115,13 +122,6 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
           </div>
         </div>
 
-        {/* Restaurant name for non-homemade (below header row) */}
-        {review.mealType !== 'homemade' && review.restaurant?.name && (
-          <p className="text-[16px] font-semibold text-text-primary mb-2">
-            {review.restaurant.name}
-          </p>
-        )}
-
         {/* Star rating */}
         <div className="mb-3">
           <StarRating
@@ -136,20 +136,23 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
         {review.body && (
           <div className="mb-3">
             <p
+              ref={bodyRef}
               className={`text-[14px] text-text-primary leading-[1.5] ${
                 !expanded ? 'line-clamp-3' : ''
               }`}
             >
               {review.body}
             </p>
-            {/* Show more / less toggle */}
-            <button
-              type="button"
-              onClick={() => setExpanded((prev) => !prev)}
-              className="mt-1 text-[14px] text-accent hover:underline focus:outline-none"
-            >
-              {expanded ? 'Show less' : 'Show more'}
-            </button>
+            {/* Show more / less toggle — only when text is actually clamped or expanded */}
+            {(isClamped || expanded) && (
+              <button
+                type="button"
+                onClick={() => setExpanded((prev) => !prev)}
+                className="mt-1 text-[14px] text-accent hover:underline focus:outline-none"
+              >
+                {expanded ? 'Show less' : 'Show more'}
+              </button>
+            )}
           </div>
         )}
 
