@@ -12,18 +12,19 @@ export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get('q') ?? ''
   if (q.length < 2) return NextResponse.json([])
 
-  // 1. Check local cache first
+  // 1. Check local cache
   const cached = await db.select().from(restaurants)
     .where(ilike(restaurants.name, `%${q}%`))
     .limit(5)
 
-  if (cached.length > 0) return NextResponse.json(cached)
+  // Short-circuit only when cache has 5+ results (sufficient coverage)
+  if (cached.length >= 5) return NextResponse.json(cached)
 
   // 2. Call Google Places (New) searchText endpoint
   const apiKey = process.env.GOOGLE_PLACES_API_KEY
   if (!apiKey) {
     // Graceful fallback — no Places API key configured
-    return NextResponse.json([])
+    return NextResponse.json(cached)
   }
 
   try {
@@ -37,12 +38,12 @@ export async function GET(req: NextRequest) {
       body: JSON.stringify({ textQuery: q, includedType: 'restaurant' }),
     })
 
-    if (!placesRes.ok) return NextResponse.json([])
+    if (!placesRes.ok) return NextResponse.json(cached)
 
     const { places = [] } = await placesRes.json()
 
     // 3. Upsert into local restaurants table (cache)
-    const results = await Promise.all(
+    const upserted = await Promise.all(
       places.slice(0, 5).map(async (p: any) => {
         const [row] = await db.insert(restaurants).values({
           placeId: p.id,
@@ -64,8 +65,15 @@ export async function GET(req: NextRequest) {
       })
     )
 
-    return NextResponse.json(results)
+    // 4. Merge: cached rows not already in upserted results + fresh Places results
+    const upsertedIds = new Set(upserted.map(r => r.id))
+    const merged = [
+      ...cached.filter(r => !upsertedIds.has(r.id)),
+      ...upserted,
+    ].slice(0, 5)
+
+    return NextResponse.json(merged)
   } catch {
-    return NextResponse.json([])
+    return NextResponse.json(cached)
   }
 }
