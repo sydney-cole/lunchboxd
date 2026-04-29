@@ -8,9 +8,10 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000'
 interface PhotoPickerProps {
   photoKey: string | null
   onPhotoChange: (key: string | null) => void
+  onGetToken: () => Promise<string | null>
 }
 
-export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
+export function PhotoPicker({ photoKey, onPhotoChange, onGetToken }: PhotoPickerProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [previewUri, setPreviewUri] = useState<string | null>(null)
@@ -34,9 +35,13 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
     try {
       // 1. Get presigned upload URL
       const contentType = asset.mimeType ?? 'image/jpeg'
+      const token = await onGetToken()
       const uploadRes = await fetch(`${API_BASE_URL}/api/v1/uploads`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ contentType }),
       })
 

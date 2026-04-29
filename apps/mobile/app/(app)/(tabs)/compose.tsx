@@ -165,7 +165,7 @@ export default function ComposeScreen() {
         {/* Photo picker */}
         <View style={styles.field}>
           <Text style={styles.label}>Photo</Text>
-          <PhotoPicker photoKey={photoKey} onPhotoChange={setPhotoKey} />
+          <PhotoPicker photoKey={photoKey} onPhotoChange={setPhotoKey} onGetToken={getToken} />
         </View>
 
         {/* Tag input */}
