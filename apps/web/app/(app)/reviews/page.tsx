@@ -8,7 +8,7 @@ import { ReviewCard } from '@/components/review-card'
 import { FloatingActionButton } from '@/components/floating-action-button'
 import { DeleteDialog } from '@/components/delete-dialog'
 
-interface Review {
+interface ReviewWithLike {
   id: string
   userId: string
   restaurantId: string | null
@@ -22,9 +22,11 @@ interface Review {
   updatedAt: string
   tags?: string[]
   restaurant?: { name: string; address: string | null } | null
+  likeCount: number
+  isLikedByMe: boolean
 }
 
-async function fetchMyReviews(): Promise<Review[]> {
+async function fetchMyReviews(): Promise<ReviewWithLike[]> {
   const res = await fetch('/api/v1/reviews')
   if (!res.ok) throw new Error('Failed to fetch reviews')
   return res.json()
@@ -43,6 +45,7 @@ export default function ReviewsPage() {
   const { data: reviews, isLoading, isError } = useQuery({
     queryKey: ['my-reviews'],
     queryFn: fetchMyReviews,
+    staleTime: 60_000,
   })
 
   const deleteMutation = useMutation({
@@ -50,6 +53,50 @@ export default function ReviewsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-reviews'] })
       setDeleteTargetId(null)
+    },
+  })
+
+  const likeMutation = useMutation({
+    mutationFn: async ({ reviewId }: { reviewId: string }) => {
+      const res = await fetch('/api/v1/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewId }),
+      })
+      if (!res.ok) throw new Error('Like failed')
+      return res.json() as Promise<{ liked: boolean; likeCount: number }>
+    },
+    onMutate: async ({ reviewId }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['my-reviews'] })
+
+      // Snapshot previous value
+      const previousReviews = queryClient.getQueryData<ReviewWithLike[]>(['my-reviews'])
+
+      // Optimistically update (per D-10: toggle instantly)
+      queryClient.setQueryData<ReviewWithLike[]>(['my-reviews'], (old) =>
+        old?.map(r =>
+          r.id === reviewId
+            ? {
+                ...r,
+                isLikedByMe: !r.isLikedByMe,
+                likeCount: r.isLikedByMe ? r.likeCount - 1 : r.likeCount + 1,
+              }
+            : r
+        )
+      )
+
+      return { previousReviews }
+    },
+    onError: (_err, _vars, context) => {
+      // Roll back on error (per D-10: on error, roll back to previous state)
+      if (context?.previousReviews) {
+        queryClient.setQueryData(['my-reviews'], context.previousReviews)
+      }
+    },
+    onSettled: () => {
+      // Always refetch to sync server state
+      queryClient.invalidateQueries({ queryKey: ['my-reviews'] })
     },
   })
 
@@ -129,6 +176,7 @@ export default function ReviewsPage() {
                 review={review}
                 onEdit={handleEdit}
                 onDelete={handleDeleteRequest}
+                onLike={(id) => likeMutation.mutate({ reviewId: id })}
               />
             ))}
           </div>
