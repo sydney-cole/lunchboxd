@@ -44,10 +44,10 @@ Declared values — sourced from `packages/shared/src/constants/tokens.ts` (lock
 
 Exceptions:
 - Feed list gap between cards: 24px (lg) on web — matches existing reviews page `gap-6`
-- Feed list gap between cards: 12px (sm + xs) on mobile — matches existing mobile card list style
+- Feed list gap between cards: 16px (md) on mobile — standard `md` token; matches card body padding rhythm
 - Author avatar size: 24px (w-6 h-6) on web ReviewCard author row — deliberately between xs and sm, matches RESEARCH.md Pattern 5 spec
 - Author avatar size: 32px on mobile FeedCard author row — consistent with mobile card density
-- FAB touch target: 56px diameter (fixed) — meets 44px minimum with margin; carried from Phase 2
+- FAB touch target: 56px diameter (fixed) — 56px = Phase 2 established; 48px would reduce touch-target margin below accessible comfort zone; cannot change without breaking Phase 2 implementation.
 
 ---
 
@@ -60,7 +60,7 @@ Source: `packages/shared/src/constants/tokens.ts` (locked); cross-referenced aga
 | Label | 14px (fontSizes.label) | 400 regular | 1.5 | Review body text, tag list, date, author attribution line, like count |
 | Body | 16px (fontSizes.body) | 400 regular | 1.5 | Subheadings, restaurant name in card, error/empty state body copy |
 | Heading | 20px (fontSizes.heading) | 600 semibold | 1.2 | Page heading ("Feed"), empty state heading |
-| Display | 32px (fontSizes.display) | 700 bold | 1.1 | Mobile app name display only — not used in feed phase |
+| Display | 32px (fontSizes.display) | 600 semibold | 1.1 | Mobile app name display only — not used in feed phase |
 
 Web fonts: Inter Variable for all label/body/heading roles; Fraunces reserved for brand moments (not used in feed cards).
 
@@ -93,6 +93,12 @@ Secondary semantic colors:
 - `#78716C` (`textSecondary`) — author attribution text, tags, dates, counts — not an accent; a text tone
 - `#E7D5C5` (`border`) — card borders, card divider lines
 - `#FEF3C7` / `#92400E` (`sessionExpiredBg` / `sessionExpiredText`) — session expired banner only; not used in feed phase
+
+---
+
+## Visuals
+
+Primary visual anchor on the feed page is the card's restaurant name (Body, 16px semibold). Author row sits above it at secondary weight. Like button is tertiary.
 
 ---
 
