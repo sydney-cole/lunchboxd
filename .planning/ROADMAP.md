@@ -80,7 +80,16 @@ Plans:
 4. A user can tap a like button on any review and see the like count increment in real time
 5. A user can search by username or display name and find other users on the platform
 
-**Plans**: TBD
+**Plans:** 7 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Schema fix (friendships unique index), Zod schemas, unit tests
+- [ ] 03-02-PLAN.md — Follow/unfollow API routes with friendship detection and userStats
+- [ ] 03-03-PLAN.md — Like toggle API and reviews GET extension with like data
+- [ ] 03-04-PLAN.md — User search API with ILIKE and follow state enrichment
+- [ ] 03-05-PLAN.md — Web search page, FollowButton, UserSearchCard components
+- [ ] 03-06-PLAN.md — Web ReviewCard like button with optimistic UI
+- [ ] 03-07-PLAN.md — Mobile search tab, follow button, and like button
 
 ---
 
@@ -139,7 +148,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
-| 3. Social Graph | 0/? | Not started | - |
+| 3. Social Graph | 0/7 | Planned | - |
 | 4. Feed | 0/? | Not started | - |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
@@ -188,4 +197,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-04-27*
-*Last updated: 2026-04-29 after Phase 2 planning — 6 plans created*
+*Last updated: 2026-04-29 after Phase 3 planning — 7 plans created*
