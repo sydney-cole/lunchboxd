@@ -10,7 +10,7 @@
 
 - [x] **Phase 1: Auth & Foundation** — Users can create accounts and sign in securely; project infrastructure is ready for all subsequent phases (completed 2026-04-28)
 - [x] **Phase 2: Reviews & Meals** — Users can post a complete meal review with rating, note, photo, tags, and restaurant association (completed 2026-04-29)
-- [ ] **Phase 3: Social Graph** — Users can follow others, detect mutual friends, like reviews, and search for users
+- [x] **Phase 3: Social Graph** — Users can follow others, detect mutual friends, like reviews, and search for users (completed 2026-04-29)
 - [ ] **Phase 4: Feed** — Users see a real-time, paginated feed of reviews from people they follow
 - [ ] **Phase 5: Profiles** — Users have complete public profiles with avatar, bio, review history, and follower/following display
 - [ ] **Phase 6: Notifications & Location** — Users receive in-app notifications on social activity and can browse reviewed restaurants on a map
@@ -80,7 +80,7 @@ Plans:
 4. A user can tap a like button on any review and see the like count increment in real time
 5. A user can search by username or display name and find other users on the platform
 
-**Plans:** 6/7 plans executed
+**Plans:** 7/7 plans complete
 
 Plans:
 
@@ -95,7 +95,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*:
 - [x] 03-05-PLAN.md — Web search page, FollowButton, UserSearchCard components
 - [x] 03-06-PLAN.md — Web ReviewCard like button with optimistic UI
-- [ ] 03-07-PLAN.md — Mobile search tab, follow button, and like button
+- [x] 03-07-PLAN.md — Mobile search tab, follow button, and like button
 
 **Cross-cutting constraints:**
 - All API routes must extract actor from `await auth()` — never from request body
@@ -159,7 +159,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
-| 3. Social Graph | 6/7 | In Progress|  |
+| 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 0/? | Not started | - |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
