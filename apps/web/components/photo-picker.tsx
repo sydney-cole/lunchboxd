@@ -1,0 +1,156 @@
+'use client'
+
+import React, { useState, useRef } from 'react'
+import { Camera, X, Loader2 } from 'lucide-react'
+
+interface PhotoPickerProps {
+  photoKey: string | null
+  onPhotoChange: (key: string | null) => void
+}
+
+const MAX_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
+
+export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const errorId = 'photo-picker-error'
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Reset error state
+    setError(null)
+
+    // Client-side file size validation — 10MB limit
+    if (file.size > MAX_SIZE_BYTES) {
+      setError('Photo must be under 10MB.')
+      e.target.value = ''
+      return
+    }
+
+    // Create preview immediately
+    const objectUrl = URL.createObjectURL(file)
+    setPreviewUrl(objectUrl)
+    setIsUploading(true)
+
+    try {
+      // Step 1: Get presigned URL
+      const uploadRes = await fetch('/api/v1/uploads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contentType: file.type }),
+      })
+
+      if (!uploadRes.ok) {
+        throw new Error('Failed to get upload URL')
+      }
+
+      const { uploadUrl, key } = await uploadRes.json()
+
+      // Step 2: PUT directly to R2 (no auth headers — presigned URL handles auth)
+      const putRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
+      })
+
+      if (!putRes.ok) {
+        throw new Error('Upload to storage failed')
+      }
+
+      // Success
+      onPhotoChange(key)
+    } catch {
+      setError('Photo upload failed. Try again.')
+      setPreviewUrl(null)
+      onPhotoChange(null)
+    } finally {
+      setIsUploading(false)
+      // Reset input so same file can be re-selected after error
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleRemove = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+    }
+    setPreviewUrl(null)
+    setError(null)
+    onPhotoChange(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const hasPhoto = photoKey && previewUrl
+
+  return (
+    <div className="w-full">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="sr-only"
+        aria-label="Add a photo"
+        aria-describedby={error ? errorId : undefined}
+        onChange={handleFileSelect}
+      />
+
+      {hasPhoto || previewUrl ? (
+        /* Thumbnail preview */
+        <div className="relative inline-block">
+          <div
+            className="relative w-[80px] h-[80px] rounded-[8px] overflow-hidden border border-border"
+            style={{ minWidth: 80 }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewUrl!}
+              alt="Photo preview"
+              className="w-full h-full object-cover"
+            />
+            {isUploading && (
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <Loader2 size={20} className="text-white animate-spin" />
+              </div>
+            )}
+          </div>
+          {!isUploading && (
+            <button
+              type="button"
+              aria-label="Remove photo"
+              className="absolute -top-2 -right-2 w-5 h-5 bg-white border border-border rounded-full flex items-center justify-center text-text-secondary hover:text-destructive transition-colors shadow-sm focus:outline-none"
+              onClick={handleRemove}
+            >
+              <X size={12} />
+            </button>
+          )}
+        </div>
+      ) : (
+        /* Default state: dashed add photo button */
+        <button
+          type="button"
+          aria-label="Add a photo"
+          aria-describedby={error ? errorId : undefined}
+          className={`w-full h-[80px] flex flex-col items-center justify-center gap-1 bg-surface border-2 border-dashed rounded-[8px] transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 hover:border-accent ${
+            error ? 'border-destructive' : 'border-border'
+          }`}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <Camera size={24} className="text-text-secondary" />
+          <span className="text-[16px] text-text-secondary">Add photo</span>
+        </button>
+      )}
+
+      {error && (
+        <p id={errorId} role="alert" className="mt-1 text-[14px] text-destructive">
+          {error}
+        </p>
+      )}
+    </div>
+  )
+}
