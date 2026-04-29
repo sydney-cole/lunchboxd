@@ -58,7 +58,12 @@ export async function POST(req: Request) {
   }
 
   // Fan-out to followers' feeds (includes author's own feed)
-  await fanOutToFollowers(review.id, userId, review.createdAt)
+  // Failure here must not mask the already-created review
+  try {
+    await fanOutToFollowers(review.id, userId, review.createdAt)
+  } catch (err) {
+    console.error('[fanOutToFollowers] failed for review', review.id, err)
+  }
 
   return NextResponse.json(review, { status: 201 })
 }
