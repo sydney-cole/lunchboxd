@@ -80,7 +80,7 @@ Plans:
 4. A user can tap a like button on any review and see the like count increment in real time
 5. A user can search by username or display name and find other users on the platform
 
-**Plans:** 3/7 plans executed
+**Plans:** 4/7 plans executed
 
 Plans:
 
@@ -90,7 +90,7 @@ Plans:
 **Wave 1** *(blocked on Wave 0 completion)*:
 - [x] 03-02-PLAN.md — Follow/unfollow API routes with friendship detection and userStats
 - [x] 03-03-PLAN.md — Like toggle API and reviews GET extension with like data
-- [ ] 03-04-PLAN.md — User search API with ILIKE and follow state enrichment
+- [x] 03-04-PLAN.md — User search API with ILIKE and follow state enrichment
 
 **Wave 2** *(blocked on Wave 1 completion)*:
 - [ ] 03-05-PLAN.md — Web search page, FollowButton, UserSearchCard components
@@ -159,7 +159,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
-| 3. Social Graph | 3/7 | In Progress|  |
+| 3. Social Graph | 4/7 | In Progress|  |
 | 4. Feed | 0/? | Not started | - |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
