@@ -51,7 +51,7 @@ metrics:
 |---|------|--------|--------|
 | 1 | Install expo-image-picker and build mobile input components | 8ca5255 | Done |
 | 2 | Build mobile composer screen wiring all components | abbdc0c | Done |
-| 3 | Verify end-to-end review creation flow on web | — | CHECKPOINT: Awaiting human verification |
+| 3 | Verify end-to-end review creation flow on web | — | Done (human approved) |
 
 ---
 
