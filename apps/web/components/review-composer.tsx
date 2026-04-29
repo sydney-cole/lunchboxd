@@ -13,7 +13,7 @@ import type { CreateReviewInput } from '@lunchboxd/shared'
 
 interface ReviewComposerProps {
   mode: 'create' | 'edit'
-  initialData?: Partial<CreateReviewInput> & { id?: string }
+  initialData?: Partial<CreateReviewInput> & { id?: string; restaurantName?: string }
   onSuccess?: () => void
 }
 
@@ -31,7 +31,7 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
   )
   const [restaurant, setRestaurant] = useState<{ id: string; name: string } | null>(
     initialData?.restaurantId
-      ? { id: initialData.restaurantId, name: '' }
+      ? { id: initialData.restaurantId, name: initialData.restaurantName ?? '' }
       : null
   )
   const [rating, setRating] = useState<number>(initialData?.rating ?? 0)

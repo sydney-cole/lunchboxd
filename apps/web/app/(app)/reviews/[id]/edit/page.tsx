@@ -77,6 +77,7 @@ export default function EditReviewPage() {
     id: review.id,
     mealType: review.mealType,
     restaurantId: review.restaurantId ?? undefined,
+    restaurantName: review.restaurant?.name ?? undefined,
     rating: review.rating ? parseFloat(review.rating) : 0,
     note: review.body ?? '',
     photoKey: review.photoUrl ?? null,
