@@ -56,7 +56,7 @@ Source: `packages/shared/src/constants/tokens.ts` (fontSizes, fontWeights). Web 
 
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
-| Label | 14px | 400 (regular) | 1.4 | Inter | Field labels, helper text, tag chips, metadata (date, "my reviews" count) |
+| Label | 14px | 400 (regular) | 1.4 | Inter | Field labels, helper text, tag chips, metadata (date, "my reviews" count), meal type badge |
 | Body | 16px | 400 (regular) | 1.5 | Inter | Text inputs, textarea (review note), autocomplete results, review card body, placeholder text |
 | Heading | 20px | 600 (semibold) | 1.3 | Inter | Page title ("New Review", "My Reviews"), section headers within composer |
 | Display | 32px | 600 (semibold) | 1.15 | Fraunces | Wordmark only — "lunchboxd" in page header. Not used in composer body. |
@@ -148,12 +148,13 @@ New components to build in this phase. Each maps to a file in `apps/web/componen
 - Layout (top to bottom): [photo thumbnail if present | restaurant name + meal type badge | rating stars (read-only, small) | review note (clamped to 3 lines, expandable) | tags row | meal date + edit/delete menu]
 - Photo thumbnail: 100% width, 160px height, object-cover, rounded top corners only
 - Restaurant name: 16px / semibold / text-primary
-- Meal type badge: "Homemade" label shown only for homemade type; 12px / regular / text-secondary / surface bg / border / border-radius sm
+- Meal type badge: "Homemade" label shown only for homemade type; 14px / regular / text-secondary / surface bg / border / border-radius sm
 - Rating display: 5 small stars (20px), filled/empty, accent fill — read-only
 - Review note: 14px / regular / text-primary, 1.5 line-height, clamped at 3 lines with "Show more" toggle
 - Tags: 14px / regular / text-secondary, comma-separated or chip display
 - Meal date: 14px / regular / text-secondary. Format: "Apr 29, 2026"
 - Edit/delete: kebab menu (···) top-right of card — Pencil icon → edit action, Trash2 icon → delete action
+- Kebab menu items: icon (16px) + text label ("Edit", "Delete") side-by-side — not icon-only.
 
 ### 7. `<FloatingActionButton>` (FAB)
 - Fixed position, bottom-right: 24px from right edge, 24px from bottom (web: above any nav chrome)
@@ -168,6 +169,8 @@ New components to build in this phase. Each maps to a file in `apps/web/componen
 ## Screen-by-Screen Contract
 
 ### Screen A: Review Composer (`/reviews/new` — web, `/compose` tab — mobile)
+
+Primary visual anchor: the StarRating component — the most expressive and emotionally loaded element of the form.
 
 Layout: Single full-page scrollable form (D-01). Max-width 600px centered. Background: bg (#FFF8F0). Vertical padding: xl (32px) top, xl bottom.
 
@@ -192,6 +195,8 @@ Validation behavior (mirrors Phase 1 pattern):
 - All other fields are optional
 
 ### Screen B: Review List (`/reviews` — web)
+
+Primary visual anchor: the ReviewCard photo header — the full-width photo thumbnail that leads each card.
 
 Layout: Single column, max-width 600px centered, bg (#FFF8F0). Padding: xl (32px) top.
 
