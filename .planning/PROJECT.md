@@ -67,4 +67,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-28 — Phase 1 complete: auth foundation shipped*
+*Last updated: 2026-04-29 — Phase 3 complete: social graph shipped (follow/unfollow, likes, user search, mutual friend detection on web + mobile)*
