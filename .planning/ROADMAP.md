@@ -115,7 +115,19 @@ Plans:
 2. The feed is displayed in reverse chronological order with no missed entries from followed accounts
 3. A user can scroll to the bottom of the visible feed and load additional older reviews without navigating away
 
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+
+**Wave 0:**
+- [ ] 04-01-PLAN.md — feedQuerySchema (shared), formatRelativeTime utility (web), feed unit test stubs
+
+**Wave 1** *(blocked on Wave 0 completion)*:
+- [ ] 04-02-PLAN.md — GET /api/v1/feed cursor-paginated endpoint
+
+**Wave 2** *(blocked on Wave 1 completion — 04-03 and 04-04 run in parallel)*:
+- [ ] 04-03-PLAN.md — Web FeedPage at app/(app)/page.tsx with useInfiniteQuery + IntersectionObserver; ReviewCard showAuthor extension
+- [ ] 04-04-PLAN.md — Mobile FlatList feed (index.tsx rewrite), 4-tab layout update, profile stub
 
 ---
 
@@ -160,7 +172,7 @@ Plans:
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
-| 4. Feed | 0/? | Not started | - |
+| 4. Feed | 0/4 | In progress | - |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
 
@@ -208,4 +220,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-04-27*
-*Last updated: 2026-04-29 after Phase 3 planning — 7 plans created*
+*Last updated: 2026-04-29 after Phase 4 planning — 4 plans created*
