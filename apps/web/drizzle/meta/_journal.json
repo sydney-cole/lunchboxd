@@ -8,6 +8,13 @@
       "when": 1777400601575,
       "tag": "0000_square_warbound",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777471004690,
+      "tag": "0001_deep_tigra",
+      "breakpoints": true
     }
   ]
 }

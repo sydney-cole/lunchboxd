@@ -5,9 +5,11 @@ import {
   timestamp,
   numeric,
   boolean,
+  date,
   index,
   uniqueIndex,
 } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -32,7 +34,11 @@ export const restaurants = pgTable('restaurants', {
   lat: numeric('lat', { precision: 10, scale: 7 }),
   lng: numeric('lng', { precision: 10, scale: 7 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+}, (table) => ({
+  restaurantsPlaceIdIdx: uniqueIndex('restaurants_place_id_idx')
+    .on(table.placeId)
+    .where(sql`place_id IS NOT NULL`),
+}))
 
 export const reviews = pgTable('reviews', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -42,6 +48,7 @@ export const reviews = pgTable('reviews', {
   body: text('body'),
   rating: numeric('rating', { precision: 2, scale: 1 }),
   photoUrl: text('photo_url'),
+  mealDate: date('meal_date'),
   deletedAt: timestamp('deleted_at'),    // soft-delete (D-06)
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

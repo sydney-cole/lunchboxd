@@ -31,6 +31,7 @@ export interface Review {
   body: string | null
   rating: number | null
   photoUrl: string | null
+  mealDate: string | null
   deletedAt: Date | null  // soft-delete per D-06
   createdAt: Date
   updatedAt: Date
