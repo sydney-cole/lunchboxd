@@ -79,7 +79,9 @@ export const friendships = pgTable('friendships', {
   userAId: uuid('user_a_id').references(() => users.id).notNull(),
   userBId: uuid('user_b_id').references(() => users.id).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+}, (table) => ({
+  friendshipsUniqueIdx: uniqueIndex('friendships_unique_idx').on(table.userAId, table.userBId),
+}))
 
 export const feedItems = pgTable('feed_items', {
   id: uuid('id').primaryKey().defaultRandom(),
