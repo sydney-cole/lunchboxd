@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Completed 03-01: Social Graph Schema Foundation"
-last_updated: "2026-04-29T19:50:52.493Z"
+stopped_at: "Completed 03-03: Like Toggle API"
+last_updated: "2026-04-29T19:54:07.559Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 11
-  percent: 69
+  completed_plans: 12
+  percent: 75
 ---
 
 # State: Lunchboxd
 
 **Last updated:** 2026-04-29
-**Session:** Plan phase 03 — Social Graph (7 plans created) | Completed 03-02
+**Session:** Plan phase 03 — Social Graph (7 plans created) | Completed 03-03
 
 ---
 
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 03 (social-graph) — EXECUTING
-Plan: 2 of 7 (complete)
+Plan: 3 of 7 (complete)
 **Phase:** 3
-**Status:** Executing — 2/7 plans complete
+**Status:** Executing — 3/7 plans complete
 
 ```
-Progress: [███████░░░] 69%
-Phase 3 of 6 | Plan 2/7 — IN PROGRESS
+Progress: [████████░░] 75%
+Phase 3 of 6 | Plan 3/7 — IN PROGRESS
 ```
 
 ---
@@ -105,6 +105,9 @@ Phase 3 of 6 | Plan 2/7 — IN PROGRESS
 - Friendship cleanup checks both (A,B) and (B,A) direction on unfollow — ordering convention not enforced (03-02)
 - Feed cleanup on unfollow uses two-step query — Drizzle does not support DELETE WHERE IN subquery (03-02)
 - GREATEST(count - 1, 0) floors userStats decrements at zero to prevent negative counts (03-02)
+- Like count computed via COUNT query (not denormalized) — simpler and avoids counter drift at MVP scale (03-03)
+- .onConflictDoNothing() on like insert leverages likesUniqueIdx for idempotent race condition handling (03-03)
+- Batch like fetch in GET /reviews uses inArray — single query, no N+1 (same pattern as tags/restaurants) (03-03)
 
 ### Todos
 
@@ -118,7 +121,7 @@ Phase 3 of 6 | Plan 2/7 — IN PROGRESS
 
 ## Session Continuity
 
-Stopped at: Completed 03-02: Follow/Unfollow API
+Stopped at: Completed 03-03: Like Toggle API
 To resume: Run `/gsd:execute-phase` for Phase 03 — Social Graph.
 
 ---
