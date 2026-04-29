@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { Pencil, Trash2, MoreHorizontal } from 'lucide-react'
+import { Pencil, Trash2, MoreHorizontal, Heart } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
 
 interface ReviewCardProps {
@@ -14,9 +14,12 @@ interface ReviewCardProps {
     mealDate: string | null
     restaurant?: { name: string; address: string | null } | null
     tags?: string[]
+    likeCount: number
+    isLikedByMe: boolean
   }
   onEdit: (id: string) => void
   onDelete: (id: string) => void
+  onLike: (id: string) => void
 }
 
 function formatMealDate(dateStr: string | null): string {
@@ -25,7 +28,7 @@ function formatMealDate(dateStr: string | null): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
+export function ReviewCard({ review, onEdit, onDelete, onLike }: ReviewCardProps) {
   const [expanded, setExpanded] = useState(false)
   const [isClamped, setIsClamped] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -169,6 +172,22 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
             {formatMealDate(review.mealDate)}
           </p>
         )}
+
+        {/* Like button — per D-09 */}
+        <div className="flex items-center gap-1 mt-3 pt-3 border-t border-border">
+          <button
+            type="button"
+            onClick={() => onLike(review.id)}
+            className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-destructive transition-colors"
+            aria-label={review.isLikedByMe ? 'Unlike review' : 'Like review'}
+          >
+            <Heart
+              size={16}
+              className={review.isLikedByMe ? 'fill-destructive text-destructive' : ''}
+            />
+            <span>{review.likeCount}</span>
+          </button>
+        </div>
       </div>
     </div>
   )
