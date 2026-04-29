@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Completed 03-04: User Search API"
-last_updated: "2026-04-29T19:56:35.259Z"
+stopped_at: "Completed 03-05: Search Page and Follow Button UI"
+last_updated: "2026-04-29T20:00:00.754Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 13
-  percent: 81
+  completed_plans: 14
+  percent: 88
 ---
 
 # State: Lunchboxd
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 03 (social-graph) — EXECUTING
-Plan: 4 of 7 (complete)
+Plan: 5 of 7 (complete)
 **Phase:** 3
 **Status:** Ready to execute
 
 ```
-Progress: [████████░░] 75%
-Phase 3 of 6 | Plan 3/7 — IN PROGRESS
+Progress: [█████████░] 88%
+Phase 3 of 6 | Plan 5/7 — IN PROGRESS
 ```
 
 ---
@@ -110,6 +110,9 @@ Phase 3 of 6 | Plan 3/7 — IN PROGRESS
 - Batch like fetch in GET /reviews uses inArray — single query, no N+1 (same pattern as tags/restaurants) (03-03)
 - User search SELECT explicitly lists safe fields only (id, username, displayName, avatarUrl) — no email, clerkId per T-03-03 (03-04)
 - Batch follow-state enrichment in user search uses two flat queries (follows + friendships), no N+1 (03-04)
+- FollowButton uses query invalidation not optimistic update — server-authoritative follow state avoids stale UI on error (03-05)
+- SearchPage 300ms debounce + 2 char minimum prevents rapid-fire API calls on every keystroke (03-05)
+- staleTime: 30_000 on user-search query prevents result flicker during navigation (03-05)
 
 ### Todos
 
@@ -123,7 +126,7 @@ Phase 3 of 6 | Plan 3/7 — IN PROGRESS
 
 ## Session Continuity
 
-Stopped at: Completed 03-04: User Search API
+Stopped at: Completed 03-05: Search Page and Follow Button UI
 To resume: Run `/gsd:execute-phase` for Phase 03 — Social Graph.
 
 ---

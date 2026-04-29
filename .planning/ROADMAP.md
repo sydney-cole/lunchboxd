@@ -93,7 +93,7 @@ Plans:
 - [x] 03-04-PLAN.md — User search API with ILIKE and follow state enrichment
 
 **Wave 2** *(blocked on Wave 1 completion)*:
-- [ ] 03-05-PLAN.md — Web search page, FollowButton, UserSearchCard components
+- [x] 03-05-PLAN.md — Web search page, FollowButton, UserSearchCard components
 - [ ] 03-06-PLAN.md — Web ReviewCard like button with optimistic UI
 - [ ] 03-07-PLAN.md — Mobile search tab, follow button, and like button
 
