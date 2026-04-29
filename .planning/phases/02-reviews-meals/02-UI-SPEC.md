@@ -45,7 +45,7 @@ Declared values (multiples of 4 only). Source: `packages/shared/src/constants/to
 Exceptions:
 - Touch targets (buttons, FAB, inputs, star zones): minimum 44px tall — required for iOS/Android accessibility
 - FAB (floating action button): 56px × 56px — standard FAB size for thumb reach
-- Star rating click zones: each half-star zone is minimum 22px wide × 44px tall
+- Star rating click zones: each half-star zone is minimum 22px wide × 44px tall. **Spacing exemption:** 22px is not a multiple of 4. This value is accessibility-derived: 22px = 44px ÷ 2; the non-multiple of 4 is accepted as a forced consequence of dividing the 44px WCAG 2.1 SC 2.5.5 minimum touch target across two half-star zones. No rounding to 20px or 24px is permitted as either would either under-serve the accessibility requirement (20px total = 40px < 44px) or inflate the component size unnecessarily.
 - Autocomplete dropdown items: minimum 44px tall
 
 ---
@@ -227,7 +227,7 @@ Delete action: Red text button "Delete review" below submit, right-aligned. 14px
 Delete confirmation dialog:
 - Title: "Delete this review?" — 20px / semibold
 - Body: "This can't be undone." — 16px / regular / text-secondary
-- Cancel button: outlined, border-border, text-primary — "Cancel"
+- Cancel button: outlined, border-border, text-primary — "Keep Review"
 - Confirm button: destructive red background, white text — "Delete"
 - Both buttons: 44px tall, full width on mobile, auto-width side-by-side on web
 
@@ -278,7 +278,7 @@ Delete confirmation dialog:
 | Delete confirmation title | "Delete this review?" |
 | Delete confirmation body | "This can't be undone." |
 | Delete confirm button | "Delete" |
-| Delete cancel button | "Cancel" |
+| Delete cancel button | "Keep Review" |
 | Review card — homemade badge | "Homemade" |
 | Autocomplete — add manually option | "+ Add "[query]" manually" |
 | Photo picker label | "Add photo" |
