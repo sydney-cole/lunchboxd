@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { reviews, reviewTags, restaurants } from '@/lib/schema'
+import { reviews, reviewTags, restaurants, likes } from '@/lib/schema'
 import { reviewSchema } from '@lunchboxd/shared'
 import { resolveUserId, fanOutToFollowers } from '@/lib/queries'
 import { eq, isNull, desc, and, inArray } from 'drizzle-orm'
@@ -109,10 +109,27 @@ export async function GET(_req: Request) {
     }
   }
 
+  // Fetch like data for all reviews (batch — not N+1)
+  let likeCountMap: Record<string, number> = {}
+  let likedByMeSet = new Set<string>()
+  if (reviewIds.length > 0) {
+    const likeRows = await db
+      .select({ reviewId: likes.reviewId, likeUserId: likes.userId })
+      .from(likes)
+      .where(inArray(likes.reviewId, reviewIds))
+
+    for (const row of likeRows) {
+      likeCountMap[row.reviewId] = (likeCountMap[row.reviewId] ?? 0) + 1
+      if (row.likeUserId === userId) likedByMeSet.add(row.reviewId)
+    }
+  }
+
   const result = userReviews.map(r => ({
     ...r,
     tags: tagsMap[r.id] ?? [],
     restaurant: r.restaurantId ? (restaurantMap[r.restaurantId] ?? null) : null,
+    likeCount: likeCountMap[r.id] ?? 0,
+    isLikedByMe: likedByMeSet.has(r.id),
   }))
 
   return NextResponse.json(result)
