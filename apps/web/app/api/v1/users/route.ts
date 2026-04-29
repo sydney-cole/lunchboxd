@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { users } from '@/lib/schema'
@@ -17,14 +17,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid username' }, { status: 400 })
   }
 
+  // Get email from Clerk so OAuth users get their email saved
+  const clerkUser = await currentUser()
+  const email = clerkUser?.emailAddresses[0]?.emailAddress ?? ''
+
   // Upsert — the webhook may have already created the row
   await db.insert(users).values({
     clerkId,
     username,
-    email: '', // will be populated by webhook
+    email,
   }).onConflictDoUpdate({
     target: users.clerkId,
-    set: { username, updatedAt: new Date() },
+    set: { username, email, updatedAt: new Date() },
   })
 
   return NextResponse.json({ success: true }, { status: 201 })

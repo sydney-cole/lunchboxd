@@ -102,19 +102,29 @@ export default function SignUpPage() {
       }
 
       // Finalize sets the session as active
-      const { error: finalizeError } = await signUp.finalize()
+      const finalizeResult = await signUp.finalize()
 
-      if (finalizeError) {
-        setErrors({ general: (finalizeError as { message?: string }).message ?? 'Something went wrong. Please try again.' })
+      if (finalizeResult.error) {
+        setErrors({ general: (finalizeResult.error as { message?: string }).message ?? 'Something went wrong. Please try again.' })
         return
       }
 
+      // Explicitly activate the session so the auth cookie is set before the API call
+      if ('session' in finalizeResult && finalizeResult.session) {
+        await setActive({ session: finalizeResult.session as Parameters<typeof setActive>[0]['session'] })
+      }
+
       // Store username immediately after session is active (Pitfall 4 from RESEARCH.md)
-      await fetch('/api/v1/users', {
+      const userRes = await fetch('/api/v1/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username }),
       })
+
+      if (!userRes.ok) {
+        setErrors({ general: 'Account created but profile setup failed. Please try signing in.' })
+        return
+      }
 
       router.push('/welcome')
     } catch {
@@ -132,9 +142,6 @@ export default function SignUpPage() {
       redirectUrlComplete: '/welcome',
     })
   }
-
-  // Suppress unused variable warning — setActive available via useClerk if needed for explicit session management
-  void setActive
 
   return (
     <AuthCard heading="Create your account">
