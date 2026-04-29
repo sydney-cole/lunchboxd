@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Camera, X, Loader2 } from 'lucide-react'
 
 interface PhotoPickerProps {
@@ -16,6 +16,13 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const errorId = 'photo-picker-error'
+
+  // Revoke object URL when previewUrl changes or component unmounts to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
+    }
+  }, [previewUrl])
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
