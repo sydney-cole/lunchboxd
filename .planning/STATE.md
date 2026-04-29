@@ -4,19 +4,19 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: "Completed 03-01: Social Graph Schema Foundation"
-last_updated: "2026-04-29T19:47:57.863Z"
+last_updated: "2026-04-29T19:50:52.493Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 10
-  percent: 63
+  completed_plans: 11
+  percent: 69
 ---
 
 # State: Lunchboxd
 
 **Last updated:** 2026-04-29
-**Session:** Plan phase 03 — Social Graph (7 plans created)
+**Session:** Plan phase 03 — Social Graph (7 plans created) | Completed 03-02
 
 ---
 
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 03 (social-graph) — EXECUTING
-Plan: 1 of 7 (complete)
+Plan: 2 of 7 (complete)
 **Phase:** 3
-**Status:** Executing — 1/7 plans complete
+**Status:** Executing — 2/7 plans complete
 
 ```
-Progress: [██████░░░░] 63%
-Phase 3 of 6 | Plan 1/7 — IN PROGRESS
+Progress: [███████░░░] 69%
+Phase 3 of 6 | Plan 2/7 — IN PROGRESS
 ```
 
 ---
@@ -101,6 +101,10 @@ Phase 3 of 6 | Plan 1/7 — IN PROGRESS
 - friendshipsUniqueIdx uses pgTable callback API (same pattern as followsUniqueIdx) — enables .onConflictDoNothing() on duplicate friendship rows (03-01)
 - userSearchSchema adds max(100) bound beyond restaurantSearchSchema for input sanitization per threat model T-03-04 (03-01)
 - unfollowSchema defined as separate schema from followSchema for independent evolution and import clarity (03-01)
+- No db.transaction() in follows API — Neon HTTP adapter sequential operations only (03-02)
+- Friendship cleanup checks both (A,B) and (B,A) direction on unfollow — ordering convention not enforced (03-02)
+- Feed cleanup on unfollow uses two-step query — Drizzle does not support DELETE WHERE IN subquery (03-02)
+- GREATEST(count - 1, 0) floors userStats decrements at zero to prevent negative counts (03-02)
 
 ### Todos
 
@@ -114,7 +118,7 @@ Phase 3 of 6 | Plan 1/7 — IN PROGRESS
 
 ## Session Continuity
 
-Stopped at: Completed 03-01: Social Graph Schema Foundation
+Stopped at: Completed 03-02: Follow/Unfollow API
 To resume: Run `/gsd:execute-phase` for Phase 03 — Social Graph.
 
 ---
