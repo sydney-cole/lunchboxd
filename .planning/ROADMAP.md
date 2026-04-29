@@ -83,13 +83,24 @@ Plans:
 **Plans:** 7 plans
 
 Plans:
+
+**Wave 0:**
 - [ ] 03-01-PLAN.md — Schema fix (friendships unique index), Zod schemas, unit tests
+
+**Wave 1** *(blocked on Wave 0 completion)*:
 - [ ] 03-02-PLAN.md — Follow/unfollow API routes with friendship detection and userStats
 - [ ] 03-03-PLAN.md — Like toggle API and reviews GET extension with like data
 - [ ] 03-04-PLAN.md — User search API with ILIKE and follow state enrichment
+
+**Wave 2** *(blocked on Wave 1 completion)*:
 - [ ] 03-05-PLAN.md — Web search page, FollowButton, UserSearchCard components
 - [ ] 03-06-PLAN.md — Web ReviewCard like button with optimistic UI
 - [ ] 03-07-PLAN.md — Mobile search tab, follow button, and like button
+
+**Cross-cutting constraints:**
+- All API routes must extract actor from `await auth()` — never from request body
+- No `db.transaction()` — Neon HTTP adapter; use sequential awaits for multi-table writes
+- userStats updates use `.onConflictDoUpdate()` upsert — not plain `.update()`
 
 ---
 
