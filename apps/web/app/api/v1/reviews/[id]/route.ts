@@ -2,10 +2,44 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
-import { reviews, reviewTags, feedItems } from '@/lib/schema'
-import { reviewSchema } from '@lunchboxd/shared'
+import { reviews, reviewTags, feedItems, restaurants } from '@/lib/schema'
+import { reviewSchema, updateReviewSchema } from '@lunchboxd/shared'
 import { resolveUserId } from '@/lib/queries'
 import { eq, and, isNull } from 'drizzle-orm'
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  const { userId: clerkId } = await auth()
+  if (!clerkId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const userId = await resolveUserId(clerkId)
+  if (!userId) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+  const [review] = await db.select().from(reviews)
+    .where(and(eq(reviews.id, id), eq(reviews.userId, userId), isNull(reviews.deletedAt)))
+
+  if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+
+  const tags = await db.select({ label: reviewTags.label }).from(reviewTags)
+    .where(eq(reviewTags.reviewId, id))
+
+  let restaurant = null
+  if (review.restaurantId) {
+    const [r] = await db.select({ name: restaurants.name, address: restaurants.address })
+      .from(restaurants)
+      .where(eq(restaurants.id, review.restaurantId))
+    restaurant = r ?? null
+  }
+
+  return NextResponse.json({
+    ...review,
+    tags: tags.map(t => t.label),
+    restaurant,
+  })
+}
 
 export async function PATCH(
   req: NextRequest,
@@ -27,7 +61,7 @@ export async function PATCH(
   if (existing.userId !== userId) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const parsed = reviewSchema.partial().safeParse(body)
+  const parsed = updateReviewSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: 'Validation failed', issues: parsed.error.issues }, { status: 400 })
   }

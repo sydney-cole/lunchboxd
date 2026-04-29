@@ -25,14 +25,18 @@ export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>
 export const reviewSchema = z.object({
   mealType: z.enum(['restaurant', 'homemade']),
   restaurantId: z.string().uuid().optional().nullable(),
-  rating: z.number().min(0.5).max(5).multipleOf(0.5).optional(),
+  rating: z.number().min(0.5).max(5).multipleOf(0.5),
   note: z.string().max(2000).optional(),
   photoKey: z.string().optional().nullable(),
   tags: z.array(z.string().max(50)).max(50).default([]),
   mealDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
 })
 
+// For PATCH: all fields optional (rating not required for partial updates)
+export const updateReviewSchema = reviewSchema.partial()
+
 export type CreateReviewInput = z.infer<typeof reviewSchema>
+export type UpdateReviewInput = z.infer<typeof updateReviewSchema>
 
 export const restaurantSearchSchema = z.object({
   q: z.string().min(2),

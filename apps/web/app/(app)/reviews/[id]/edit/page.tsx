@@ -23,9 +23,9 @@ interface Review {
   restaurant?: { name: string; address: string | null } | null
 }
 
-async function fetchAllReviews(): Promise<Review[]> {
-  const res = await fetch('/api/v1/reviews')
-  if (!res.ok) throw new Error('Failed to fetch reviews')
+async function fetchReviewById(id: string): Promise<Review> {
+  const res = await fetch(`/api/v1/reviews/${id}`)
+  if (!res.ok) throw new Error('Failed to fetch review')
   return res.json()
 }
 
@@ -43,10 +43,7 @@ export default function EditReviewPage() {
 
   const { data: review, isLoading, isError } = useQuery({
     queryKey: ['review', id],
-    queryFn: async () => {
-      const reviews = await fetchAllReviews()
-      return reviews.find((r) => r.id === id) ?? null
-    },
+    queryFn: () => fetchReviewById(id),
     enabled: !!id,
   })
 
