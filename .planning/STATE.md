@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Completed 03-05: Search Page and Follow Button UI"
-last_updated: "2026-04-29T20:00:00.754Z"
+stopped_at: "Completed 03-06: Like Button UI and Optimistic Mutations"
+last_updated: "2026-04-29T20:02:33.847Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 14
-  percent: 88
+  completed_plans: 15
+  percent: 94
 ---
 
 # State: Lunchboxd
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 03 (social-graph) — EXECUTING
-Plan: 5 of 7 (complete)
+Plan: 6 of 7 (complete)
 **Phase:** 3
 **Status:** Ready to execute
 
 ```
-Progress: [█████████░] 88%
-Phase 3 of 6 | Plan 5/7 — IN PROGRESS
+Progress: [█████████░] 94%
+Phase 3 of 6 | Plan 6/7 — IN PROGRESS
 ```
 
 ---
@@ -113,6 +113,7 @@ Phase 3 of 6 | Plan 5/7 — IN PROGRESS
 - FollowButton uses query invalidation not optimistic update — server-authoritative follow state avoids stale UI on error (03-05)
 - SearchPage 300ms debounce + 2 char minimum prevents rapid-fire API calls on every keystroke (03-05)
 - staleTime: 30_000 on user-search query prevents result flicker during navigation (03-05)
+- Like optimistic update targets query key 'my-reviews' (not 'reviews') — matches existing fetch key in reviews page; staleTime: 60_000 prevents like state flicker on navigation (03-06)
 
 ### Todos
 
@@ -126,7 +127,7 @@ Phase 3 of 6 | Plan 5/7 — IN PROGRESS
 
 ## Session Continuity
 
-Stopped at: Completed 03-05: Search Page and Follow Button UI
+Stopped at: Completed 03-06: Like Button UI and Optimistic Mutations
 To resume: Run `/gsd:execute-phase` for Phase 03 — Social Graph.
 
 ---

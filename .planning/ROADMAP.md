@@ -80,7 +80,7 @@ Plans:
 4. A user can tap a like button on any review and see the like count increment in real time
 5. A user can search by username or display name and find other users on the platform
 
-**Plans:** 4/7 plans executed
+**Plans:** 6/7 plans executed
 
 Plans:
 
@@ -94,7 +94,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*:
 - [x] 03-05-PLAN.md — Web search page, FollowButton, UserSearchCard components
-- [ ] 03-06-PLAN.md — Web ReviewCard like button with optimistic UI
+- [x] 03-06-PLAN.md — Web ReviewCard like button with optimistic UI
 - [ ] 03-07-PLAN.md — Mobile search tab, follow button, and like button
 
 **Cross-cutting constraints:**
@@ -159,7 +159,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
-| 3. Social Graph | 4/7 | In Progress|  |
+| 3. Social Graph | 6/7 | In Progress|  |
 | 4. Feed | 0/? | Not started | - |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
