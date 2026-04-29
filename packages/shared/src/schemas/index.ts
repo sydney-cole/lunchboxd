@@ -43,3 +43,25 @@ export const restaurantSearchSchema = z.object({
 })
 
 export type RestaurantSearchInput = z.infer<typeof restaurantSearchSchema>
+
+// --- Phase 3: Social Graph schemas ---
+
+export const followSchema = z.object({
+  targetUserId: z.string().uuid(),
+})
+export type FollowInput = z.infer<typeof followSchema>
+
+export const unfollowSchema = z.object({
+  targetUserId: z.string().uuid(),
+})
+export type UnfollowInput = z.infer<typeof unfollowSchema>
+
+export const likeSchema = z.object({
+  reviewId: z.string().uuid(),
+})
+export type LikeInput = z.infer<typeof likeSchema>
+
+export const userSearchSchema = z.object({
+  q: z.string().min(2).max(100),
+})
+export type UserSearchInput = z.infer<typeof userSearchSchema>
