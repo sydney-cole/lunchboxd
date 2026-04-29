@@ -16,7 +16,7 @@
 
 - [x] **REVW-01**: User can post a meal review with a half-star rating (0.5–5 stars)
 - [x] **REVW-02**: User can add a written note to a review
-- [ ] **REVW-03**: User can attach a photo to a review
+- [x] **REVW-03**: User can attach a photo to a review
 - [x] **REVW-04**: User can add mood/tags to a review (e.g. comfort food, date night, quick lunch)
 - [x] **REVW-05**: User can set the date the meal was eaten (not just the review date)
 - [ ] **REVW-06**: User can edit their own review after posting
@@ -110,7 +110,7 @@
 | AUTH-04 | Phase 1 | Complete |
 | REVW-01 | Phase 2 | Complete |
 | REVW-02 | Phase 2 | Complete |
-| REVW-03 | Phase 2 | Pending |
+| REVW-03 | Phase 2 | Complete |
 | REVW-04 | Phase 2 | Complete |
 | REVW-05 | Phase 2 | Complete |
 | REVW-06 | Phase 2 | Pending |
