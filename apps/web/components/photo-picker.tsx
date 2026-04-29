@@ -45,6 +45,9 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
       })
 
       if (!uploadRes.ok) {
+        if (uploadRes.status === 503) {
+          throw new Error('Photo upload is not configured.')
+        }
         throw new Error('Failed to get upload URL')
       }
 
@@ -65,8 +68,9 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
 
       // Success
       onPhotoChange(key)
-    } catch {
-      setError('Photo upload failed. Try again.')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : ''
+      setError(msg === 'Photo upload is not configured.' ? msg : 'Photo upload failed. Try again.')
       setPreviewUrl(null)
       onPhotoChange(null)
     } finally {

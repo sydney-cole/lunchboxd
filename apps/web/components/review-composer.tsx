@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
 import { TagInput } from '@/components/tag-input'
@@ -23,6 +24,7 @@ function getTodayDateString(): string {
 
 export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerProps) {
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const [mealType, setMealType] = useState<'restaurant' | 'homemade'>(
     initialData?.mealType ?? 'restaurant'
@@ -99,6 +101,8 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
       if (!res.ok) {
         throw new Error('Request failed')
       }
+
+      await queryClient.invalidateQueries({ queryKey: ['my-reviews'] })
 
       if (onSuccess) {
         onSuccess()
