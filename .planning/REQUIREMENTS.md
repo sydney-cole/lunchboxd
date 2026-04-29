@@ -14,19 +14,19 @@
 
 ### Reviews
 
-- [ ] **REVW-01**: User can post a meal review with a half-star rating (0.5–5 stars)
-- [ ] **REVW-02**: User can add a written note to a review
+- [x] **REVW-01**: User can post a meal review with a half-star rating (0.5–5 stars)
+- [x] **REVW-02**: User can add a written note to a review
 - [ ] **REVW-03**: User can attach a photo to a review
-- [ ] **REVW-04**: User can add mood/tags to a review (e.g. comfort food, date night, quick lunch)
-- [ ] **REVW-05**: User can set the date the meal was eaten (not just the review date)
+- [x] **REVW-04**: User can add mood/tags to a review (e.g. comfort food, date night, quick lunch)
+- [x] **REVW-05**: User can set the date the meal was eaten (not just the review date)
 - [ ] **REVW-06**: User can edit their own review after posting
 - [ ] **REVW-07**: User can delete their own review
 
 ### Restaurants & Meals
 
-- [ ] **MEAL-01**: User can search for a restaurant by name using Google Places autocomplete
-- [ ] **MEAL-02**: User can manually enter a restaurant name if it is not found in search
-- [ ] **MEAL-03**: User can tag a review as a homemade meal (no restaurant required)
+- [x] **MEAL-01**: User can search for a restaurant by name using Google Places autocomplete
+- [x] **MEAL-02**: User can manually enter a restaurant name if it is not found in search
+- [x] **MEAL-03**: User can tag a review as a homemade meal (no restaurant required)
 
 ### Profile
 
@@ -108,16 +108,16 @@
 | AUTH-02 | Phase 1 | Complete |
 | AUTH-03 | Phase 1 | Complete |
 | AUTH-04 | Phase 1 | Complete |
-| REVW-01 | Phase 2 | Pending |
-| REVW-02 | Phase 2 | Pending |
+| REVW-01 | Phase 2 | Complete |
+| REVW-02 | Phase 2 | Complete |
 | REVW-03 | Phase 2 | Pending |
-| REVW-04 | Phase 2 | Pending |
-| REVW-05 | Phase 2 | Pending |
+| REVW-04 | Phase 2 | Complete |
+| REVW-05 | Phase 2 | Complete |
 | REVW-06 | Phase 2 | Pending |
 | REVW-07 | Phase 2 | Pending |
-| MEAL-01 | Phase 2 | Pending |
-| MEAL-02 | Phase 2 | Pending |
-| MEAL-03 | Phase 2 | Pending |
+| MEAL-01 | Phase 2 | Complete |
+| MEAL-02 | Phase 2 | Complete |
+| MEAL-03 | Phase 2 | Complete |
 | PROF-01 | Phase 5 | Pending |
 | PROF-02 | Phase 5 | Pending |
 | PROF-03 | Phase 5 | Pending |
