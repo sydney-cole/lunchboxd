@@ -144,15 +144,27 @@ Plans:
 3. Any user can view another user's public profile page without needing to follow them
 4. A user can see their follower count and following count on their profile and tap each to browse the full list
 
-**Plans:** 6 plans
+**Plans:** 0/6 plans complete
 
 Plans:
-- [ ] 05-01-PLAN.md — Wave 0: patchUserSchema + profileQuerySchema schemas, upload type param, test stubs
-- [ ] 05-02-PLAN.md — Wave 1: GET /api/v1/users/[username], PATCH /api/v1/users/me, GET /api/v1/users/[username]/reviews
-- [ ] 05-03-PLAN.md — Wave 1: GET followers/following endpoints, proxy.ts rewrite, /profile redirect
-- [ ] 05-04-PLAN.md — Wave 2: Web profile page, followers list page, following list page
-- [ ] 05-05-PLAN.md — Wave 2: Web edit profile page (bio, displayName, avatar upload)
-- [ ] 05-06-PLAN.md — Wave 2: Mobile ProfileScreen, EditProfileScreen, FollowersScreen, FollowingScreen
+
+**Wave 0:**
+- [ ] 05-01-PLAN.md — patchUserSchema + profileQuerySchema schemas, upload type param, Wave 0 test stubs
+
+**Wave 1** *(blocked on Wave 0 completion — 05-02 and 05-03 run in parallel)*:
+- [ ] 05-02-PLAN.md — GET /api/v1/users/[username], PATCH /api/v1/users/me, GET /api/v1/users/[username]/reviews
+- [ ] 05-03-PLAN.md — Followers/following endpoints, proxy.ts (/@username rewrite), /profile redirect
+
+**Wave 2** *(blocked on Wave 1 completion — 05-04, 05-05, 05-06 run in parallel)*:
+- [ ] 05-04-PLAN.md — Web profile page (/@username), followers list page, following list page
+- [ ] 05-05-PLAN.md — Web edit profile page (bio, displayName, avatar upload)
+- [ ] 05-06-PLAN.md — Mobile ProfileScreen, EditProfileScreen, FollowersScreen, FollowingScreen
+
+**Cross-cutting constraints:**
+- Use `proxy.ts` not `middleware.ts` — Next.js 16 renamed Middleware to Proxy; export `function proxy()`
+- All dynamic route pages must `await params` — params is a Promise in Next.js 16
+- SELECT only safe user fields (id, username, displayName, avatarUrl) — never email or clerkId
+- getToken() must be called inside queryFn/mutationFn — never at hook level (mobile)
 
 ---
 
@@ -181,7 +193,7 @@ Plans:
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 4/4 | Complete    | 2026-04-30 |
-| 5. Profiles | 0/? | Not started | - |
+| 5. Profiles | 0/6 | Ready to execute | - |
 | 6. Notifications & Location | 0/? | Not started | - |
 
 ---
