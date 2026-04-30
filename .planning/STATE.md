@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 5 UI-SPEC approved
-last_updated: "2026-04-30T19:57:39.681Z"
+stopped_at: Completed 05-02-PLAN.md (Wave 1 API routes — GET /users/[username], PATCH /users/me, GET /users/[username]/reviews)
+last_updated: "2026-04-30T20:01:28.736Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 26
-  completed_plans: 21
-  percent: 81
+  completed_plans: 22
+  percent: 85
 ---
 
 # State: Lunchboxd
@@ -31,7 +31,7 @@ progress:
 ## Current Position
 
 Phase: 05 (profiles) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 Plans: 6/6 planned (Wave 0: 05-01 | Wave 1: 05-02, 05-03 | Wave 2: 05-04, 05-05, 05-06)
 **Status:** Ready to execute
 
@@ -135,6 +135,9 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 - avatarKey regex allows both avatars/ and reviews/ prefixes so users can set a review photo as their avatar (05-01)
 - profileQuerySchema mirrors feedQuerySchema — same cursor pagination contract for consistency across profile endpoints (05-01)
 - Upload type param defaults to 'review' — backward compatible with all existing upload calls (05-01)
+- Viewer userId resolved lazily inside enrichment block — skipped entirely for unauthenticated public profile requests (05-02)
+- avatarKey ownership enforced at PATCH handler by matching clerkId segment [1] against auth() session clerkId (05-02)
+- Stats default to { followerCount: '0', followingCount: '0', reviewCount: '0' } when no userStats row exists for new users (05-02)
 
 ### Todos
 
@@ -148,8 +151,8 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 
 ## Session Continuity
 
-Stopped at: Completed 05-01-PLAN.md (Wave 0 foundation — schemas + upload endpoint)
-To resume: Execute Phase 05 Plan 02 (05-02)
+Stopped at: Completed 05-02-PLAN.md (Wave 1 API routes — GET /users/[username], PATCH /users/me, GET /users/[username]/reviews)
+To resume: Execute Phase 05 Plan 03 (05-03)
 
 ---
 *State initialized: 2026-04-27*
