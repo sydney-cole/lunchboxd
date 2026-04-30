@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 5 planned — 6 plans ready to execute
-last_updated: "2026-04-30T17:00:00.000Z"
+status: executing
+stopped_at: Phase 5 UI-SPEC approved
+last_updated: "2026-04-30T19:57:39.681Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 26
-  completed_plans: 20
-  percent: 77
+  completed_plans: 21
+  percent: 81
 ---
 
 # State: Lunchboxd
@@ -24,13 +24,14 @@ progress:
 
 **Core value:** A user should be able to post a meal review and immediately see it appear in their friends' feeds.
 
-**Current focus:** Phase 05 — profiles (planned, ready to execute)
+**Current focus:** Phase 05 — profiles
 
 ---
 
 ## Current Position
 
-Phase: 05 (profiles) — Ready to execute
+Phase: 05 (profiles) — EXECUTING
+Plan: 2 of 6
 Plans: 6/6 planned (Wave 0: 05-01 | Wave 1: 05-02, 05-03 | Wave 2: 05-04, 05-05, 05-06)
 **Status:** Ready to execute
 
@@ -131,6 +132,9 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 - Mobile like mutation targets ['feed'] InfiniteData pages structure (not ['my-reviews'] flat array) (04-04)
 - formatRelativeTime hand-rolled inline in index.tsx — mirrors web util without requiring shared package import (04-04)
 - Apostrophes in React Native JSX use {'...'} expression syntax, not HTML &apos; entities (04-04)
+- avatarKey regex allows both avatars/ and reviews/ prefixes so users can set a review photo as their avatar (05-01)
+- profileQuerySchema mirrors feedQuerySchema — same cursor pagination contract for consistency across profile endpoints (05-01)
+- Upload type param defaults to 'review' — backward compatible with all existing upload calls (05-01)
 
 ### Todos
 
@@ -144,8 +148,8 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 
 ## Session Continuity
 
-Stopped at: Phase 5 UI-SPEC approved
-To resume: Execute Phase 05 (Profiles)
+Stopped at: Completed 05-01-PLAN.md (Wave 0 foundation — schemas + upload endpoint)
+To resume: Execute Phase 05 Plan 02 (05-02)
 
 ---
 *State initialized: 2026-04-27*

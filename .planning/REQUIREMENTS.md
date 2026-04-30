@@ -30,10 +30,10 @@
 
 ### Profile
 
-- [ ] **PROF-01**: User can set a profile avatar (photo)
-- [ ] **PROF-02**: User can write a profile bio
-- [ ] **PROF-03**: User's profile displays their reviews in reverse chronological order
-- [ ] **PROF-04**: User can view another user's public profile
+- [x] **PROF-01**: User can set a profile avatar (photo)
+- [x] **PROF-02**: User can write a profile bio
+- [x] **PROF-03**: User's profile displays their reviews in reverse chronological order
+- [x] **PROF-04**: User can view another user's public profile
 - [ ] **PROF-05**: User can see their follower count and following count on their profile
 - [ ] **PROF-06**: User can browse their followers list and following list
 
@@ -118,10 +118,10 @@
 | MEAL-01 | Phase 2 | Complete |
 | MEAL-02 | Phase 2 | Complete |
 | MEAL-03 | Phase 2 | Complete |
-| PROF-01 | Phase 5 | Pending |
-| PROF-02 | Phase 5 | Pending |
-| PROF-03 | Phase 5 | Pending |
-| PROF-04 | Phase 5 | Pending |
+| PROF-01 | Phase 5 | Complete |
+| PROF-02 | Phase 5 | Complete |
+| PROF-03 | Phase 5 | Complete |
+| PROF-04 | Phase 5 | Complete |
 | PROF-05 | Phase 5 | Pending |
 | PROF-06 | Phase 5 | Pending |
 | SOCL-01 | Phase 3 | Complete |
