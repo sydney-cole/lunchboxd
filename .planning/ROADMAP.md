@@ -144,7 +144,15 @@ Plans:
 3. Any user can view another user's public profile page without needing to follow them
 4. A user can see their follower count and following count on their profile and tap each to browse the full list
 
-**Plans**: TBD
+**Plans:** 6 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Wave 0: patchUserSchema + profileQuerySchema schemas, upload type param, test stubs
+- [ ] 05-02-PLAN.md — Wave 1: GET /api/v1/users/[username], PATCH /api/v1/users/me, GET /api/v1/users/[username]/reviews
+- [ ] 05-03-PLAN.md — Wave 1: GET followers/following endpoints, proxy.ts rewrite, /profile redirect
+- [ ] 05-04-PLAN.md — Wave 2: Web profile page, followers list page, following list page
+- [ ] 05-05-PLAN.md — Wave 2: Web edit profile page (bio, displayName, avatar upload)
+- [ ] 05-06-PLAN.md — Wave 2: Mobile ProfileScreen, EditProfileScreen, FollowersScreen, FollowingScreen
 
 ---
 
