@@ -11,7 +11,7 @@
 - [x] **Phase 1: Auth & Foundation** — Users can create accounts and sign in securely; project infrastructure is ready for all subsequent phases (completed 2026-04-28)
 - [x] **Phase 2: Reviews & Meals** — Users can post a complete meal review with rating, note, photo, tags, and restaurant association (completed 2026-04-29)
 - [x] **Phase 3: Social Graph** — Users can follow others, detect mutual friends, like reviews, and search for users (completed 2026-04-29)
-- [ ] **Phase 4: Feed** — Users see a real-time, paginated feed of reviews from people they follow
+- [x] **Phase 4: Feed** — Users see a real-time, paginated feed of reviews from people they follow (completed 2026-04-30)
 - [ ] **Phase 5: Profiles** — Users have complete public profiles with avatar, bio, review history, and follower/following display
 - [ ] **Phase 6: Notifications & Location** — Users receive in-app notifications on social activity and can browse reviewed restaurants on a map
 
@@ -115,7 +115,7 @@ Plans:
 2. The feed is displayed in reverse chronological order with no missed entries from followed accounts
 3. A user can scroll to the bottom of the visible feed and load additional older reviews without navigating away
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 
@@ -127,7 +127,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion — 04-03 and 04-04 run in parallel)*:
 - [x] 04-03-PLAN.md — Web FeedPage at app/(app)/page.tsx with useInfiniteQuery + IntersectionObserver; ReviewCard showAuthor extension
-- [ ] 04-04-PLAN.md — Mobile FlatList feed (index.tsx rewrite), 4-tab layout update, profile stub
+- [x] 04-04-PLAN.md — Mobile FlatList feed (index.tsx rewrite), 4-tab layout update, profile stub
 
 ---
 
@@ -172,7 +172,7 @@ Plans:
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
-| 4. Feed | 3/4 | In Progress|  |
+| 4. Feed | 4/4 | Complete   | 2026-04-30 |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
 
