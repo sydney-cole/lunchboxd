@@ -144,7 +144,7 @@ Plans:
 3. Any user can view another user's public profile page without needing to follow them
 4. A user can see their follower count and following count on their profile and tap each to browse the full list
 
-**Plans:** 4/6 plans executed
+**Plans:** 5/6 plans executed
 
 Plans:
 
@@ -157,7 +157,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion — 05-04, 05-05, 05-06 run in parallel)*:
 - [x] 05-04-PLAN.md — Web profile page (/@username), followers list page, following list page
-- [ ] 05-05-PLAN.md — Web edit profile page (bio, displayName, avatar upload)
+- [x] 05-05-PLAN.md — Web edit profile page (bio, displayName, avatar upload)
 - [ ] 05-06-PLAN.md — Mobile ProfileScreen, EditProfileScreen, FollowersScreen, FollowingScreen
 
 **Cross-cutting constraints:**
@@ -193,7 +193,7 @@ Plans:
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 4/4 | Complete    | 2026-04-30 |
-| 5. Profiles | 4/6 | In Progress|  |
+| 5. Profiles | 5/6 | In Progress|  |
 | 6. Notifications & Location | 0/? | Not started | - |
 
 ---
