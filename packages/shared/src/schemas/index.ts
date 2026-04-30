@@ -73,3 +73,20 @@ export const feedQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 export type FeedQueryInput = z.infer<typeof feedQuerySchema>
+
+// --- Phase 5: Profiles schemas ---
+
+export const patchUserSchema = z.object({
+  bio: z.string().max(500).optional(),
+  displayName: z.string().max(50).optional(),
+  // R2 key returned by POST /api/v1/uploads; server constructs the public URL
+  // Pattern: avatars/<clerkId>/<uuid> OR reviews/<clerkId>/<uuid>
+  avatarKey: z.string().regex(/^(avatars|reviews)\/[a-zA-Z0-9_-]+\/[0-9a-f-]{36}$/).optional(),
+})
+export type PatchUserInput = z.infer<typeof patchUserSchema>
+
+export const profileQuerySchema = z.object({
+  cursor: z.string().datetime().optional().nullable(),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+})
+export type ProfileQueryInput = z.infer<typeof profileQuerySchema>
