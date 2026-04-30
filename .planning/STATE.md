@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-02-PLAN.md (Wave 1 API routes — GET /users/[username], PATCH /users/me, GET /users/[username]/reviews)
-last_updated: "2026-04-30T20:01:28.736Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-04-30T20:06:22.891Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 26
-  completed_plans: 22
-  percent: 85
+  completed_plans: 23
+  percent: 88
 ---
 
 # State: Lunchboxd
@@ -31,12 +31,12 @@ progress:
 ## Current Position
 
 Phase: 05 (profiles) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 Plans: 6/6 planned (Wave 0: 05-01 | Wave 1: 05-02, 05-03 | Wave 2: 05-04, 05-05, 05-06)
 **Status:** Ready to execute
 
 ```
-Progress: [████████░░] 77%
+Progress: [█████████░] 88%
 Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages, mobile screens
 ```
 
@@ -138,6 +138,9 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 - Viewer userId resolved lazily inside enrichment block — skipped entirely for unauthenticated public profile requests (05-02)
 - avatarKey ownership enforced at PATCH handler by matching clerkId segment [1] against auth() session clerkId (05-02)
 - Stats default to { followerCount: '0', followingCount: '0', reviewCount: '0' } when no userStats row exists for new users (05-02)
+- Follower/following lists are public (no auth required) per PROF-06; followState enrichment only runs when viewer is authenticated (05-03)
+- proxy.ts merged /@username rewrite with existing Clerk auth middleware — single file handles both URL rewrite and auth protection (05-03)
+- profile/page.tsx uses static segment priority over [username] dynamic segment in Next.js App Router (05-03)
 
 ### Todos
 
@@ -151,8 +154,8 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 
 ## Session Continuity
 
-Stopped at: Completed 05-02-PLAN.md (Wave 1 API routes — GET /users/[username], PATCH /users/me, GET /users/[username]/reviews)
-To resume: Execute Phase 05 Plan 03 (05-03)
+Stopped at: Completed 05-03-PLAN.md
+To resume: Execute Phase 05 Plan 04 (05-04)
 
 ---
 *State initialized: 2026-04-27*

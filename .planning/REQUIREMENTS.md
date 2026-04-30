@@ -35,7 +35,7 @@
 - [x] **PROF-03**: User's profile displays their reviews in reverse chronological order
 - [x] **PROF-04**: User can view another user's public profile
 - [x] **PROF-05**: User can see their follower count and following count on their profile
-- [ ] **PROF-06**: User can browse their followers list and following list
+- [x] **PROF-06**: User can browse their followers list and following list
 
 ### Social
 
@@ -123,7 +123,7 @@
 | PROF-03 | Phase 5 | Complete |
 | PROF-04 | Phase 5 | Complete |
 | PROF-05 | Phase 5 | Complete |
-| PROF-06 | Phase 5 | Pending |
+| PROF-06 | Phase 5 | Complete |
 | SOCL-01 | Phase 3 | Complete |
 | SOCL-02 | Phase 3 | Complete |
 | SOCL-03 | Phase 3 | Complete |

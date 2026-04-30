@@ -144,7 +144,7 @@ Plans:
 3. Any user can view another user's public profile page without needing to follow them
 4. A user can see their follower count and following count on their profile and tap each to browse the full list
 
-**Plans:** 2/6 plans executed
+**Plans:** 3/6 plans executed
 
 Plans:
 
@@ -153,7 +153,7 @@ Plans:
 
 **Wave 1** *(blocked on Wave 0 completion — 05-02 and 05-03 run in parallel)*:
 - [x] 05-02-PLAN.md — GET /api/v1/users/[username], PATCH /api/v1/users/me, GET /api/v1/users/[username]/reviews
-- [ ] 05-03-PLAN.md — Followers/following endpoints, proxy.ts (/@username rewrite), /profile redirect
+- [x] 05-03-PLAN.md — Followers/following endpoints, proxy.ts (/@username rewrite), /profile redirect
 
 **Wave 2** *(blocked on Wave 1 completion — 05-04, 05-05, 05-06 run in parallel)*:
 - [ ] 05-04-PLAN.md — Web profile page (/@username), followers list page, following list page
@@ -193,7 +193,7 @@ Plans:
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 4/4 | Complete    | 2026-04-30 |
-| 5. Profiles | 2/6 | In Progress|  |
+| 5. Profiles | 3/6 | In Progress|  |
 | 6. Notifications & Location | 0/? | Not started | - |
 
 ---
