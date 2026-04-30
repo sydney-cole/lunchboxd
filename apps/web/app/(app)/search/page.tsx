@@ -55,12 +55,18 @@ export default function SearchPage() {
 
       {/* Results */}
       <div className="mt-4 space-y-2">
+        {query.length === 1 && (
+          <p className="text-sm text-text-secondary text-center py-4">Keep typing to search…</p>
+        )}
+
         {isLoading && debouncedQuery.length >= 2 && (
           <p className="text-sm text-text-secondary text-center py-4">Searching...</p>
         )}
 
-        {results && results.length === 0 && debouncedQuery.length >= 2 && (
-          <p className="text-sm text-text-secondary text-center py-4">No users found</p>
+        {!isLoading && results && results.length === 0 && debouncedQuery.length >= 2 && (
+          <p className="text-sm text-text-secondary text-center py-4">
+            No users found for &ldquo;{debouncedQuery}&rdquo;
+          </p>
         )}
 
         {results &&

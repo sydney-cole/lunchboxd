@@ -73,6 +73,14 @@ export default function SearchScreen() {
       />
 
       <ScrollView style={{ marginTop: 16 }} keyboardShouldPersistTaps="handled">
+        {query.length === 1 && (
+          <Text
+            style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', paddingVertical: 16 }}
+          >
+            Keep typing to search…
+          </Text>
+        )}
+
         {isLoading && debouncedQuery.length >= 2 && (
           <Text
             style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', paddingVertical: 16 }}
@@ -81,11 +89,11 @@ export default function SearchScreen() {
           </Text>
         )}
 
-        {results && results.length === 0 && debouncedQuery.length >= 2 && (
+        {!isLoading && results && results.length === 0 && debouncedQuery.length >= 2 && (
           <Text
             style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', paddingVertical: 16 }}
           >
-            No users found
+            No users found for "{debouncedQuery}"
           </Text>
         )}
 
