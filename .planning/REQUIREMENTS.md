@@ -47,8 +47,8 @@
 
 ### Feed
 
-- [ ] **FEED-01**: User sees a chronological feed of reviews from people they follow
-- [ ] **FEED-02**: Feed is paginated and loads more on scroll
+- [x] **FEED-01**: User sees a chronological feed of reviews from people they follow
+- [x] **FEED-02**: Feed is paginated and loads more on scroll
 
 ### Notifications
 
@@ -129,8 +129,8 @@
 | SOCL-03 | Phase 3 | Complete |
 | SOCL-04 | Phase 3 | Complete |
 | SOCL-05 | Phase 3 | Complete |
-| FEED-01 | Phase 4 | Pending |
-| FEED-02 | Phase 4 | Pending |
+| FEED-01 | Phase 4 | Complete |
+| FEED-02 | Phase 4 | Complete |
 | NOTF-01 | Phase 6 | Pending |
 | NOTF-02 | Phase 6 | Pending |
 | NOTF-03 | Phase 6 | Pending |

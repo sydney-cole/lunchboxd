@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready-to-plan
-stopped_at: "Phase 03 Social Graph complete — 7/7 plans verified"
-last_updated: "2026-04-29T20:15:00.000Z"
+status: verifying
+stopped_at: Completed 04-feed-01-PLAN.md
+last_updated: "2026-04-30T13:34:21.200Z"
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 16
-  completed_plans: 16
-  percent: 50
+  total_plans: 20
+  completed_plans: 17
+  percent: 85
 ---
 
 # State: Lunchboxd
 
-**Last updated:** 2026-04-29
-**Session:** Phase 03 Social Graph complete — all 7 plans verified (SOCL-01 through SOCL-05)
+**Last updated:** 2026-04-30
+**Session:** Phase 04 Feed plan 01 complete — feedQuerySchema + formatRelativeTime + 5 unit tests GREEN
 
 ---
 
@@ -24,20 +24,20 @@ progress:
 
 **Core value:** A user should be able to post a meal review and immediately see it appear in their friends' feeds.
 
-**Current focus:** Phase 04 — feed (next)
+**Current focus:** Phase 04 — feed (planned, ready to execute)
 
 ---
 
 ## Current Position
 
-Phase: 03 (social-graph) — COMPLETE → advancing to Phase 04
-Plan: 7 of 7 (complete)
-**Phase:** 3 → 4
-**Status:** Phase 3 verified complete — Phase 4 Feed ready to plan
+Phase: 04 (feed) — IN PROGRESS
+Plan: 1 of 4 (complete)
+**Phase:** 4
+**Status:** Plan 01 complete — Wave 0 foundation done
 
 ```
-Progress: [█████░░░░░] 50%
-Phase 3 of 6 | COMPLETE — next: Phase 4 Feed
+Progress: [█████████░] 85%
+Phase 4 of 6 | Plan 1/4 complete — feed schema and utils foundation ready
 ```
 
 ---
@@ -49,7 +49,7 @@ Phase 3 of 6 | COMPLETE — next: Phase 4 Feed
 | 1 | Auth & Foundation | Complete |
 | 2 | Reviews & Meals | Complete |
 | 3 | Social Graph | Complete |
-| 4 | Feed | Not started |
+| 4 | Feed | In progress (1/4 plans done) |
 | 5 | Profiles | Not started |
 | 6 | Notifications & Location | Not started |
 
@@ -117,6 +117,8 @@ Phase 3 of 6 | COMPLETE — next: Phase 4 Feed
 - Mobile auth import is '@clerk/expo' (not '@clerk/clerk-expo') — matches compose.tsx pattern in this Expo project (03-07)
 - Mobile components use StyleSheet.create() not NativeWind className — NativeWind may not be configured; StyleSheet consistent with compose.tsx (03-07)
 - Mobile like optimistic mutation targets ['my-reviews'] query key — same key as reviews fetch to hit correct cache entry (03-07)
+- feedQuerySchema uses z.string().datetime() for ISO 8601 cursor validation and z.coerce.number() for limit coercion (Zod v4 API) (04-01)
+- formatRelativeTime is a pure function with no dependencies in apps/web/lib/utils.ts (04-01)
 
 ### Todos
 
@@ -130,8 +132,8 @@ Phase 3 of 6 | COMPLETE — next: Phase 4 Feed
 
 ## Session Continuity
 
-Stopped at: Phase 03 Social Graph verified complete — 7/7 plans, 21/21 must-haves, SOCL-01 through SOCL-05
-To resume: Run `/gsd-discuss-phase 04` or `/gsd-plan-phase 04` for Phase 04 — Feed.
+Stopped at: Completed 04-01-PLAN.md — Phase 04 Feed plan 1 of 4 done
+To resume: Execute 04-02-PLAN.md (Wave 1: feed API endpoint and database schema)
 
 ---
 *State initialized: 2026-04-27*
