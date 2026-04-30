@@ -115,7 +115,7 @@ Plans:
 2. The feed is displayed in reverse chronological order with no missed entries from followed accounts
 3. A user can scroll to the bottom of the visible feed and load additional older reviews without navigating away
 
-**Plans:** 1/4 plans executed
+**Plans:** 2/4 plans executed
 
 Plans:
 
@@ -123,7 +123,7 @@ Plans:
 - [x] 04-01-PLAN.md — feedQuerySchema (shared), formatRelativeTime utility (web), feed unit test stubs
 
 **Wave 1** *(blocked on Wave 0 completion)*:
-- [ ] 04-02-PLAN.md — GET /api/v1/feed cursor-paginated endpoint
+- [x] 04-02-PLAN.md — GET /api/v1/feed cursor-paginated endpoint
 
 **Wave 2** *(blocked on Wave 1 completion — 04-03 and 04-04 run in parallel)*:
 - [ ] 04-03-PLAN.md — Web FeedPage at app/(app)/page.tsx with useInfiniteQuery + IntersectionObserver; ReviewCard showAuthor extension
@@ -172,7 +172,7 @@ Plans:
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
-| 4. Feed | 1/4 | In Progress|  |
+| 4. Feed | 2/4 | In Progress|  |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
 

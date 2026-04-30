@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 04-feed-01-PLAN.md
-last_updated: "2026-04-30T13:34:21.200Z"
+status: completed
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-04-30T13:38:24.426Z"
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 20
-  completed_plans: 17
-  percent: 85
+  completed_plans: 18
+  percent: 90
 ---
 
 # State: Lunchboxd
 
 **Last updated:** 2026-04-30
-**Session:** Phase 04 Feed plan 01 complete — feedQuerySchema + formatRelativeTime + 5 unit tests GREEN
+**Session:** Phase 04 Feed plan 02 complete — GET /api/v1/feed cursor-paginated endpoint built
 
 ---
 
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 04 (feed) — IN PROGRESS
-Plan: 1 of 4 (complete)
+Plan: 2 of 4 (complete)
 **Phase:** 4
-**Status:** Plan 01 complete — Wave 0 foundation done
+**Status:** Plan 02 complete — GET /api/v1/feed endpoint done
 
 ```
-Progress: [█████████░] 85%
-Phase 4 of 6 | Plan 1/4 complete — feed schema and utils foundation ready
+Progress: [█████████░] 90%
+Phase 4 of 6 | Plan 2/4 complete — feed API endpoint ready
 ```
 
 ---
@@ -49,7 +49,7 @@ Phase 4 of 6 | Plan 1/4 complete — feed schema and utils foundation ready
 | 1 | Auth & Foundation | Complete |
 | 2 | Reviews & Meals | Complete |
 | 3 | Social Graph | Complete |
-| 4 | Feed | In progress (1/4 plans done) |
+| 4 | Feed | In progress (2/4 plans done) |
 | 5 | Profiles | Not started |
 | 6 | Notifications & Location | Not started |
 
@@ -119,6 +119,11 @@ Phase 4 of 6 | Plan 1/4 complete — feed schema and utils foundation ready
 - Mobile like optimistic mutation targets ['my-reviews'] query key — same key as reviews fetch to hit correct cache entry (03-07)
 - feedQuerySchema uses z.string().datetime() for ISO 8601 cursor validation and z.coerce.number() for limit coercion (Zod v4 API) (04-01)
 - formatRelativeTime is a pure function with no dependencies in apps/web/lib/utils.ts (04-01)
+- Feed API orders by feedItems.createdAt DESC not reviews.createdAt — preserves fan-out ordering correctness (04-02)
+- Cursor wraps new Date(cursor) in lt() — raw string comparison fails for timestamp columns in Drizzle (04-02)
+- limit+1 fetch trick detects hasMore without COUNT query — one fewer DB round-trip per request (04-02)
+- isOwnReview field included in feed items for conditional kebab menu rendering in feed UI (04-02)
+- Author fields limited to username + avatarUrl only — no email or clerkId exposed (security, 04-02)
 
 ### Todos
 
@@ -132,8 +137,8 @@ Phase 4 of 6 | Plan 1/4 complete — feed schema and utils foundation ready
 
 ## Session Continuity
 
-Stopped at: Completed 04-01-PLAN.md — Phase 04 Feed plan 1 of 4 done
-To resume: Execute 04-02-PLAN.md (Wave 1: feed API endpoint and database schema)
+Stopped at: Completed 04-02-PLAN.md
+To resume: Execute 04-03-PLAN.md (Wave 2: web feed infinite scroll UI)
 
 ---
 *State initialized: 2026-04-27*
