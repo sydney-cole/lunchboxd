@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { Pencil, Trash2, MoreHorizontal, Heart } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
+import { formatRelativeTime } from '@/lib/utils'
 
 interface ReviewCardProps {
   review: {
@@ -12,14 +13,21 @@ interface ReviewCardProps {
     photoUrl: string | null
     mealType: string
     mealDate: string | null
+    createdAt?: string | Date
     restaurant?: { name: string; address: string | null } | null
     tags?: string[]
     likeCount: number
     isLikedByMe: boolean
+    author?: {
+      username: string
+      avatarUrl: string | null
+    } | null
   }
   onEdit: (id: string) => void
   onDelete: (id: string) => void
   onLike: (id: string) => void
+  showAuthor?: boolean
+  isOwnReview?: boolean
 }
 
 function formatMealDate(dateStr: string | null): string {
@@ -28,7 +36,7 @@ function formatMealDate(dateStr: string | null): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-export function ReviewCard({ review, onEdit, onDelete, onLike }: ReviewCardProps) {
+export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwnReview }: ReviewCardProps) {
   const [expanded, setExpanded] = useState(false)
   const [isClamped, setIsClamped] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -82,6 +90,30 @@ export function ReviewCard({ review, onEdit, onDelete, onLike }: ReviewCardProps
 
       {/* Card body */}
       <div className="p-4">
+        {/* Author row — only when showAuthor is true and author data is present */}
+        {showAuthor && review.author && (
+          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border">
+            {review.author.avatarUrl ? (
+              <img
+                src={review.author.avatarUrl}
+                className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                alt=""
+              />
+            ) : (
+              <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] text-accent font-medium">
+                  {review.author.username.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <span className="text-[13px] text-text-secondary">
+              @{review.author.username} · {review.createdAt ? formatRelativeTime(
+                typeof review.createdAt === 'string' ? review.createdAt : (review.createdAt as Date).toISOString()
+              ) : ''}
+            </span>
+          </div>
+        )}
+
         {/* Header row: restaurant name + kebab menu */}
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -90,39 +122,41 @@ export function ReviewCard({ review, onEdit, onDelete, onLike }: ReviewCardProps
             </span>
           </div>
 
-          {/* Kebab menu */}
-          <div className="relative flex-shrink-0" ref={menuRef}>
-            <button
-              type="button"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className="p-1 rounded-md text-text-secondary hover:text-text-primary hover:bg-bg transition-colors focus:outline-none focus:ring-2 focus:ring-accent"
-              aria-label="Review actions"
-              aria-expanded={menuOpen}
-            >
-              <MoreHorizontal size={20} />
-            </button>
+          {/* Kebab menu — hidden when isOwnReview is explicitly false */}
+          {isOwnReview !== false && (
+            <div className="relative flex-shrink-0" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((prev) => !prev)}
+                className="p-1 rounded-md text-text-secondary hover:text-text-primary hover:bg-bg transition-colors focus:outline-none focus:ring-2 focus:ring-accent"
+                aria-label="Review actions"
+                aria-expanded={menuOpen}
+              >
+                <MoreHorizontal size={20} />
+              </button>
 
-            {menuOpen && (
-              <div className="absolute right-0 top-8 z-10 min-w-[140px] bg-surface border border-border rounded-[8px] shadow-[0_4px_12px_rgba(28,25,23,0.12)] py-1">
-                <button
-                  type="button"
-                  onClick={() => { setMenuOpen(false); onEdit(review.id) }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-[14px] text-text-primary hover:bg-bg transition-colors"
-                >
-                  <Pencil size={16} />
-                  <span>Edit</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setMenuOpen(false); onDelete(review.id) }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-[14px] text-destructive hover:bg-bg transition-colors"
-                >
-                  <Trash2 size={16} />
-                  <span>Delete</span>
-                </button>
-              </div>
-            )}
-          </div>
+              {menuOpen && (
+                <div className="absolute right-0 top-8 z-10 min-w-[140px] bg-surface border border-border rounded-[8px] shadow-[0_4px_12px_rgba(28,25,23,0.12)] py-1">
+                  <button
+                    type="button"
+                    onClick={() => { setMenuOpen(false); onEdit(review.id) }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-[14px] text-text-primary hover:bg-bg transition-colors"
+                  >
+                    <Pencil size={16} />
+                    <span>Edit</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setMenuOpen(false); onDelete(review.id) }}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-[14px] text-destructive hover:bg-bg transition-colors"
+                  >
+                    <Trash2 size={16} />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Star rating */}
