@@ -172,7 +172,7 @@ Plans:
 | 1. Auth & Foundation | 3/3 | Complete   | 2026-04-28 |
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
-| 4. Feed | 4/4 | Complete   | 2026-04-30 |
+| 4. Feed | 4/4 | Complete    | 2026-04-30 |
 | 5. Profiles | 0/? | Not started | - |
 | 6. Notifications & Location | 0/? | Not started | - |
 
