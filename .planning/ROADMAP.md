@@ -12,7 +12,7 @@
 - [x] **Phase 2: Reviews & Meals** — Users can post a complete meal review with rating, note, photo, tags, and restaurant association (completed 2026-04-29)
 - [x] **Phase 3: Social Graph** — Users can follow others, detect mutual friends, like reviews, and search for users (completed 2026-04-29)
 - [x] **Phase 4: Feed** — Users see a real-time, paginated feed of reviews from people they follow (completed 2026-04-30)
-- [ ] **Phase 5: Profiles** — Users have complete public profiles with avatar, bio, review history, and follower/following display
+- [x] **Phase 5: Profiles** — Users have complete public profiles with avatar, bio, review history, and follower/following display (completed 2026-04-30)
 - [ ] **Phase 6: Notifications & Location** — Users receive in-app notifications on social activity and can browse reviewed restaurants on a map
 
 ---
@@ -144,7 +144,7 @@ Plans:
 3. Any user can view another user's public profile page without needing to follow them
 4. A user can see their follower count and following count on their profile and tap each to browse the full list
 
-**Plans:** 5/6 plans executed
+**Plans:** 6/6 plans complete
 
 Plans:
 
@@ -158,7 +158,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion — 05-04, 05-05, 05-06 run in parallel)*:
 - [x] 05-04-PLAN.md — Web profile page (/@username), followers list page, following list page
 - [x] 05-05-PLAN.md — Web edit profile page (bio, displayName, avatar upload)
-- [ ] 05-06-PLAN.md — Mobile ProfileScreen, EditProfileScreen, FollowersScreen, FollowingScreen
+- [x] 05-06-PLAN.md — Mobile ProfileScreen, EditProfileScreen, FollowersScreen, FollowingScreen
 
 **Cross-cutting constraints:**
 - Use `proxy.ts` not `middleware.ts` — Next.js 16 renamed Middleware to Proxy; export `function proxy()`
@@ -193,7 +193,7 @@ Plans:
 | 2. Reviews & Meals | 6/6 | Complete   | 2026-04-29 |
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 4/4 | Complete    | 2026-04-30 |
-| 5. Profiles | 5/6 | In Progress|  |
+| 5. Profiles | 6/6 | Complete   | 2026-04-30 |
 | 6. Notifications & Location | 0/? | Not started | - |
 
 ---
