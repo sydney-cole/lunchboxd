@@ -45,7 +45,7 @@ Declared values from `packages/shared/src/constants/tokens.ts` — multiples of 
 
 Exceptions:
 - Avatar touch targets on mobile: minimum 44px height (accessibility floor — not a spacing token, applied as explicit `minHeight: 44` on tappable avatar containers)
-- Follow button: `px-4 py-1.5` (6px vertical / 16px horizontal) — matches existing FollowButton pattern exactly
+- FollowButton vertical padding (`py-1.5` = 6px) is a component-internal legacy value — not governed by this phase's spacing scale.
 
 ---
 
@@ -55,14 +55,12 @@ Source: `packages/shared/src/constants/tokens.ts` `fontSizes` and `fontWeights`;
 
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
-| Display | 32px | 600 (semibold) | 1.15 | Fraunces (web) / system bold (mobile) | Wordmark only; not used in profile screens |
-| Heading | 20px | 600 (semibold) | 1.2 | Inter / system | Section headings (e.g. "Reviews", "Followers") |
-| Body | 16px | 400 (regular) | 1.5 | Inter / system | Bio text, restaurant names in cards, form inputs |
+| Heading | 20px | 600 (semibold) | 1.2 | Inter / system | Section headings (e.g. "Reviews", "Followers"), username on profile header |
+| Body | 16px | 400 (regular) | 1.5 | Inter / system | Bio text, restaurant names in cards, form inputs, display name on profile header |
 | Label | 14px | 400 (regular) | 1.4 | Inter / system | Secondary metadata (date, tags, @username under display name, stats counts) |
 | Micro | 13px | 400 (regular) | 1.4 | Inter / system | Author row in feed cards (existing pattern from review-card.tsx line 110) |
-| Micro-initial | 10px | 500 (medium) | — | Inter / system | Letter-avatar initial character |
 
-Maximum weights in use: regular (400) and semibold (600). Medium (500) is used only for the letter-avatar initial — not a new weight, already established in review-card.tsx.
+Declared weights: regular (400) and semibold (600).
 
 Username on profile header: 20px / semibold — same as Heading role.
 Display name on profile header: 16px / regular — same as Body role.
@@ -215,9 +213,11 @@ ScrollView layout:
 | Fallback bg | `accent/20` (#F97316 at 20% opacity) |
 | Fallback text color | `accent` (#F97316) |
 | Fallback text size | 10px for 24px avatar; 14px for 40px avatar; 28px for 80px avatar |
-| Fallback font weight | 500 (medium) |
+| Fallback font weight | 500 (medium) — component-internal value, not a declared type scale token |
 | Upload overlay (edit page) | Semi-transparent dark overlay on hover (web) / tap (mobile) with camera icon centered |
 | Upload icon | `lucide-react Camera` (web) / `Ionicons camera` (mobile) |
+
+Note: The letter-avatar initial uses font-weight 500 (medium) and a 10px size for the 24px avatar. These are component-internal values established in `review-card.tsx` — they are not part of the declared type scale and must not be used outside avatar fallback rendering.
 
 ---
 
