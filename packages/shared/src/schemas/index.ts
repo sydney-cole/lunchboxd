@@ -65,3 +65,11 @@ export const userSearchSchema = z.object({
   q: z.string().min(2).max(100),
 })
 export type UserSearchInput = z.infer<typeof userSearchSchema>
+
+// --- Phase 4: Feed schemas ---
+
+export const feedQuerySchema = z.object({
+  cursor: z.string().datetime().optional().nullable(),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+})
+export type FeedQueryInput = z.infer<typeof feedQuerySchema>
