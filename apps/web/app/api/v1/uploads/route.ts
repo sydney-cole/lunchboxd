@@ -29,7 +29,8 @@ export async function POST(req: Request) {
     )
   }
 
-  const { contentType } = await req.json()
+  const body = await req.json()
+  const { contentType, type = 'review' } = body as { contentType: string; type?: 'review' | 'avatar' }
   const allowed = ['image/jpeg', 'image/png', 'image/webp']
   if (!contentType || !allowed.includes(contentType)) {
     return NextResponse.json(
@@ -38,7 +39,8 @@ export async function POST(req: Request) {
     )
   }
 
-  const key = `reviews/${clerkId}/${randomUUID()}`
+  const prefix = type === 'avatar' ? 'avatars' : 'reviews'
+  const key = `${prefix}/${clerkId}/${randomUUID()}`
   const url = await getSignedUrl(
     r2,
     new PutObjectCommand({
