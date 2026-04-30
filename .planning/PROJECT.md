@@ -67,4 +67,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-29 — Phase 3 complete: social graph shipped (follow/unfollow, likes, user search, mutual friend detection on web + mobile)*
+*Last updated: 2026-04-30 — Phase 4 complete: feed shipped (feedQuerySchema, GET /api/v1/feed cursor-paginated endpoint, web infinite scroll UI, mobile FlatList feed with pull-to-refresh)*
