@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-04-30T20:06:22.891Z"
+last_updated: "2026-04-30T20:10:04.340Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 26
-  completed_plans: 23
-  percent: 88
+  completed_plans: 24
+  percent: 92
 ---
 
 # State: Lunchboxd
@@ -31,12 +31,12 @@ progress:
 ## Current Position
 
 Phase: 05 (profiles) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Plans: 6/6 planned (Wave 0: 05-01 | Wave 1: 05-02, 05-03 | Wave 2: 05-04, 05-05, 05-06)
 **Status:** Ready to execute
 
 ```
-Progress: [█████████░] 88%
+Progress: [█████████░] 92%
 Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages, mobile screens
 ```
 
@@ -141,6 +141,10 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 - Follower/following lists are public (no auth required) per PROF-06; followState enrichment only runs when viewer is authenticated (05-03)
 - proxy.ts merged /@username rewrite with existing Clerk auth middleware — single file handles both URL rewrite and auth protection (05-03)
 - profile/page.tsx uses static segment priority over [username] dynamic segment in Next.js App Router (05-03)
+- Profile page is a single Client Component — avoids RSC streaming complexity; isOwner check via Clerk JWT-verified username comparison (D-08) (05-04)
+- Like mutation on profile page targets ['profile-reviews', username] — separate cache from ['feed'] and ['my-reviews'] to prevent cross-page cache corruption (05-04)
+- React.use(params) used in followers/following Client Components for async params unwrap (Next.js 16 pattern) (05-04)
+- notFound() not callable in Client Components — rendered as custom 404 UI matching UI-SPEC copywriting (05-04)
 
 ### Todos
 
@@ -154,8 +158,8 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 
 ## Session Continuity
 
-Stopped at: Completed 05-03-PLAN.md
-To resume: Execute Phase 05 Plan 04 (05-04)
+Stopped at: Completed 05-04-PLAN.md
+To resume: Execute Phase 05 Plan 05 (05-05)
 
 ---
 *State initialized: 2026-04-27*
