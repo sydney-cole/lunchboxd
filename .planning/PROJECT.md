@@ -67,4 +67,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-30 — Phase 4 complete: feed shipped (feedQuerySchema, GET /api/v1/feed cursor-paginated endpoint, web infinite scroll UI, mobile FlatList feed with pull-to-refresh)*
+*Last updated: 2026-04-30 — Phase 5 complete: full profile system shipped (patchUserSchema + profileQuerySchema, GET/PATCH user APIs, followers/following endpoints with batch follow-state enrichment, proxy.ts /@username rewrite, web profile + edit + follower/following pages, mobile profile tab + pushed screen + edit + follower/following screens)*
