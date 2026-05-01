@@ -20,17 +20,28 @@ export default function EditProfilePage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Track original values to detect dirty fields
+  const originalBio = useRef('')
+  const originalDisplayName = useRef('')
 
   // Pre-fill form with current profile data once Clerk user is loaded
   // Fetch current profile to get bio (bio is in our DB, not Clerk)
   useEffect(() => {
     if (!isLoaded || !clerkUser) return
-    setDisplayName(clerkUser.fullName ?? '')
+    const initial = clerkUser.fullName ?? ''
+    setDisplayName(initial)
+    originalDisplayName.current = initial
     fetch(`/api/v1/users/${encodeURIComponent(clerkUser.username ?? '')}`)
       .then(r => r.json())
       .then((data: { user?: { bio?: string; displayName?: string; avatarUrl?: string } }) => {
-        if (data.user?.bio) setBio(data.user.bio)
-        if (data.user?.displayName) setDisplayName(data.user.displayName)
+        if (data.user?.bio) {
+          setBio(data.user.bio)
+          originalBio.current = data.user.bio
+        }
+        if (data.user?.displayName) {
+          setDisplayName(data.user.displayName)
+          originalDisplayName.current = data.user.displayName
+        }
         if (data.user?.avatarUrl) setAvatarPreview(data.user.avatarUrl)
       })
       .catch(() => {})
@@ -98,9 +109,15 @@ export default function EditProfilePage() {
 
     try {
       const body: Record<string, string | undefined> = {}
-      if (bio !== undefined) body.bio = bio
-      if (displayName !== undefined) body.displayName = displayName
+      // Only send fields that were actually modified
+      if (bio !== originalBio.current) body.bio = bio
+      if (displayName !== originalDisplayName.current) body.displayName = displayName
       if (avatarKey) body.avatarKey = avatarKey
+
+      if (Object.keys(body).length === 0) {
+        router.push(`/@${clerkUser!.username}`)
+        return
+      }
 
       const res = await fetch('/api/v1/users/me', {
         method: 'PATCH',

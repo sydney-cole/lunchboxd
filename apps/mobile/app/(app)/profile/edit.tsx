@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   Text,
@@ -29,6 +29,10 @@ export default function EditProfileScreen() {
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  // Track original values to detect dirty fields
+  const originalBio = useRef('')
+  const originalDisplayName = useRef('')
+
   // Pre-fill from API once Clerk user is available
   useEffect(() => {
     if (!clerkUser?.username) return
@@ -38,8 +42,14 @@ export default function EditProfileScreen() {
       })
         .then((r) => r.json())
         .then((data) => {
-          if (data.user?.bio) setBio(data.user.bio)
-          if (data.user?.displayName) setDisplayName(data.user.displayName)
+          if (data.user?.bio) {
+            setBio(data.user.bio)
+            originalBio.current = data.user.bio
+          }
+          if (data.user?.displayName) {
+            setDisplayName(data.user.displayName)
+            originalDisplayName.current = data.user.displayName
+          }
         })
         .catch(() => {})
     })
@@ -97,9 +107,14 @@ export default function EditProfileScreen() {
     try {
       const token = await getToken()
       const body: Record<string, string | undefined> = {}
-      if (bio !== undefined) body.bio = bio
-      if (displayName !== undefined) body.displayName = displayName
+      // Only send fields that were actually modified
+      if (bio !== originalBio.current) body.bio = bio
+      if (displayName !== originalDisplayName.current) body.displayName = displayName
       if (avatarKey) body.avatarKey = avatarKey
+      if (Object.keys(body).length === 0) {
+        router.back()
+        return
+      }
 
       const res = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
         method: 'PATCH',
