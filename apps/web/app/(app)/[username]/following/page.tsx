@@ -3,6 +3,7 @@
 import { use } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
+import { useAuth } from '@clerk/nextjs'
 import { UserSearchCard } from '@/components/user-search-card'
 
 type FollowState = 'none' | 'following' | 'friends'
@@ -21,11 +22,15 @@ export default function FollowingPage({
   params: Promise<{ username: string }>
 }) {
   const { username } = use(params)  // Client Component: use React.use() not await
+  const { getToken } = useAuth()
 
   const { data: users, isLoading, isError } = useQuery<UserCard[]>({
     queryKey: ['following', username],
     queryFn: async () => {
-      const res = await fetch(`/api/v1/users/${username}/following`)
+      const token = await getToken()
+      const headers: HeadersInit = {}
+      if (token) headers['Authorization'] = `Bearer ${token}`
+      const res = await fetch(`/api/v1/users/${username}/following`, { headers })
       if (!res.ok) throw new Error('Failed to load following')
       return res.json()
     },
