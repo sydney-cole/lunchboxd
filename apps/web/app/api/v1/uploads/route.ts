@@ -3,6 +3,12 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
+import { z } from 'zod/v4'
+
+const uploadRequestSchema = z.object({
+  contentType: z.string(),
+  type: z.enum(['review', 'avatar']).default('review'),
+})
 
 function getR2Client() {
   const accountId = process.env.R2_ACCOUNT_ID
@@ -30,9 +36,16 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { contentType, type = 'review' } = body as { contentType: string; type?: 'review' | 'avatar' }
+  const parsed = uploadRequestSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Validation failed', issues: parsed.error.issues },
+      { status: 400 }
+    )
+  }
+  const { contentType, type } = parsed.data
   const allowed = ['image/jpeg', 'image/png', 'image/webp']
-  if (!contentType || !allowed.includes(contentType)) {
+  if (!allowed.includes(contentType)) {
     return NextResponse.json(
       { error: 'Invalid content type. Allowed: image/jpeg, image/png, image/webp' },
       { status: 400 }
