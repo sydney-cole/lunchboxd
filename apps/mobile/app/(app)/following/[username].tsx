@@ -26,7 +26,7 @@ export default function FollowingScreen() {
     queryKey: ['following', username],
     queryFn: async () => {
       const token = await getToken()
-      const res = await fetch(`${API_BASE_URL}/api/v1/users/${username}/following`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/${encodeURIComponent(username)}/following`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) throw new Error('Failed to load following')

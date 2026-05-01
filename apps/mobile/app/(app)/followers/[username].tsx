@@ -26,7 +26,7 @@ export default function FollowersScreen() {
     queryKey: ['followers', username],
     queryFn: async () => {
       const token = await getToken()
-      const res = await fetch(`${API_BASE_URL}/api/v1/users/${username}/followers`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/${encodeURIComponent(username)}/followers`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) throw new Error('Failed to load followers')

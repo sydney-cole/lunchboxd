@@ -62,7 +62,7 @@ export function ProfileContent({ username }: { username: string }) {
     queryKey: ['profile', username],
     queryFn: async () => {
       const token = await getToken()
-      const res = await fetch(`${API_BASE_URL}/api/v1/users/${username}`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/users/${encodeURIComponent(username)}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) throw new Error('Profile not found')
@@ -82,8 +82,8 @@ export function ProfileContent({ username }: { username: string }) {
     queryFn: async ({ pageParam }) => {
       const token = await getToken()
       const url = pageParam
-        ? `${API_BASE_URL}/api/v1/users/${username}/reviews?cursor=${encodeURIComponent(pageParam as string)}&limit=20`
-        : `${API_BASE_URL}/api/v1/users/${username}/reviews`
+        ? `${API_BASE_URL}/api/v1/users/${encodeURIComponent(username)}/reviews?cursor=${encodeURIComponent(pageParam as string)}&limit=20`
+        : `${API_BASE_URL}/api/v1/users/${encodeURIComponent(username)}/reviews`
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
       if (!res.ok) throw new Error('Failed to load reviews')
       return res.json()
