@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { useQueryClient } from '@tanstack/react-query'
@@ -19,16 +19,14 @@ export default function EditProfilePage() {
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
-  const [profileLoaded, setProfileLoaded] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Pre-fill form with current profile data once Clerk user is loaded
-  // Fetch current profile to get bio (Clerk user object may not have bio)
-  if (isLoaded && clerkUser && !profileLoaded) {
-    setProfileLoaded(true)
+  // Fetch current profile to get bio (bio is in our DB, not Clerk)
+  useEffect(() => {
+    if (!isLoaded || !clerkUser) return
     setDisplayName(clerkUser.fullName ?? '')
-    // Fetch bio from our API (bio is in our DB, not Clerk)
-    fetch(`/api/v1/users/${clerkUser.username}`)
+    fetch(`/api/v1/users/${encodeURIComponent(clerkUser.username ?? '')}`)
       .then(r => r.json())
       .then((data: { user?: { bio?: string; displayName?: string; avatarUrl?: string } }) => {
         if (data.user?.bio) setBio(data.user.bio)
@@ -36,7 +34,8 @@ export default function EditProfilePage() {
         if (data.user?.avatarUrl) setAvatarPreview(data.user.avatarUrl)
       })
       .catch(() => {})
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, clerkUser?.id])
 
   if (!isLoaded) {
     return (

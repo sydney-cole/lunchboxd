@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -29,13 +29,11 @@ export default function EditProfileScreen() {
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
-  const [initialized, setInitialized] = useState(false)
-
-  // Pre-fill from API on first render
-  if (!initialized && clerkUser?.username) {
-    setInitialized(true)
+  // Pre-fill from API once Clerk user is available
+  useEffect(() => {
+    if (!clerkUser?.username) return
     getToken().then((token) => {
-      fetch(`${API_BASE_URL}/api/v1/users/${clerkUser.username}`, {
+      fetch(`${API_BASE_URL}/api/v1/users/${encodeURIComponent(clerkUser.username!)}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((r) => r.json())
@@ -45,7 +43,8 @@ export default function EditProfileScreen() {
         })
         .catch(() => {})
     })
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clerkUser?.username])
 
   async function handlePickAvatar() {
     try {
