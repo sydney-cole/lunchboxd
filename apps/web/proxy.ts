@@ -28,15 +28,23 @@ export function proxy(request: NextRequest) {
 }
 
 // Clerk auth protection wraps proxy so both rewrites and auth run together.
-// /@username paths are rewritten first by proxy(); Clerk sees the rewritten path.
+// /@username paths are rewritten to /username, then auth protection is applied.
 export default clerkMiddleware(async (auth, request: NextRequest) => {
   const { pathname } = request.nextUrl
 
-  // Apply /@username rewrite before auth check
   if (pathname.startsWith('/@')) {
+    // Run auth check on the rewritten path before issuing the rewrite
     const withoutLeadingSlash = pathname.slice(1)
     const withoutAt = withoutLeadingSlash.slice(1)
-    return NextResponse.rewrite(new URL(`/${withoutAt}`, request.url))
+    const rewrittenUrl = new URL(`/${withoutAt}`, request.url)
+
+    // Build a synthetic request with the rewritten pathname for route matching
+    const rewrittenRequest = new NextRequest(rewrittenUrl, request)
+    if (!isPublicRoute(rewrittenRequest)) {
+      await auth.protect()
+    }
+
+    return NextResponse.rewrite(rewrittenUrl)
   }
 
   if (!isPublicRoute(request)) {
