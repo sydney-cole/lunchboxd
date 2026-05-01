@@ -2,14 +2,26 @@ import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
 import { users, follows, friendships } from '@/lib/schema'
-import { eq, and, or, inArray } from 'drizzle-orm'
+import { followListQuerySchema } from '@lunchboxd/shared'
+import { eq, and, or, inArray, gt } from 'drizzle-orm'
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ username: string }> }
 ) {
   const { username } = await params
   const { userId: clerkId } = await auth()
+
+  // Parse cursor and limit from query string
+  const { searchParams } = new URL(req.url)
+  const parsed = followListQuerySchema.safeParse({
+    cursor: searchParams.get('cursor'),
+    limit: searchParams.get('limit') ?? 20,
+  })
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid query params' }, { status: 400 })
+  }
+  const { cursor, limit } = parsed.data
 
   // Resolve profile user
   const [profileUser] = await db
@@ -22,6 +34,14 @@ export async function GET(
   }
 
   // Following: users that the profile owner follows (followerId = profileUser.id → join on followeeId)
+  // Cursor uses user.id (UUID) for stable ordering
+  const conditions = [
+    eq(follows.followerId, profileUser.id),
+    ...(cursor ? [gt(users.id, cursor)] : []),
+  ]
+
+  // limit+1 trick: fetch one extra to determine if there's a next page
+  const fetchLimit = limit + 1
   const followingRows = await db
     .select({
       id: users.id,
@@ -31,13 +51,18 @@ export async function GET(
     })
     .from(follows)
     .innerJoin(users, eq(follows.followeeId, users.id))
-    .where(eq(follows.followerId, profileUser.id))
+    .where(and(...conditions))
+    .limit(fetchLimit)
 
-  if (followingRows.length === 0) {
-    return NextResponse.json([])
+  const hasMore = followingRows.length === fetchLimit
+  const items = hasMore ? followingRows.slice(0, limit) : followingRows
+  const nextCursor = hasMore ? items[items.length - 1].id : null
+
+  if (items.length === 0) {
+    return NextResponse.json({ items: [], nextCursor: null })
   }
 
-  const resultIds = followingRows.map(r => r.id)
+  const resultIds = items.map(r => r.id)
 
   // Batch follow-state enrichment (only if viewer is authenticated)
   let followedSet = new Set<string>()
@@ -69,7 +94,7 @@ export async function GET(
     }
   }
 
-  const enriched = followingRows.map(r => ({
+  const enriched = items.map(r => ({
     ...r,
     followState: friendSet.has(r.id)
       ? 'friends' as const
@@ -78,5 +103,5 @@ export async function GET(
         : 'none' as const,
   }))
 
-  return NextResponse.json(enriched)
+  return NextResponse.json({ items: enriched, nextCursor })
 }

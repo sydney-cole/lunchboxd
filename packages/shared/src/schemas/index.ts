@@ -90,3 +90,9 @@ export const profileQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 export type ProfileQueryInput = z.infer<typeof profileQuerySchema>
+
+export const followListQuerySchema = z.object({
+  cursor: z.string().uuid().optional().nullable(),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+})
+export type FollowListQueryInput = z.infer<typeof followListQuerySchema>
