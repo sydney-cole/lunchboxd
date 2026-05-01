@@ -51,6 +51,7 @@ export function ProfileContent({ username }: { username: string }) {
   const { user: clerkUser } = useUser()
   const queryClient = useQueryClient()
   const isOwner = clerkUser?.username === username
+  const [isFollowing, setIsFollowing] = React.useState(false)
 
   // Fetch profile
   const {
@@ -90,6 +91,23 @@ export function ProfileContent({ username }: { username: string }) {
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     staleTime: 60_000,
+  })
+
+  // Follow mutation
+  const followMutation = useMutation({
+    mutationFn: async ({ targetUserId, isFollowing }: { targetUserId: string; isFollowing: boolean }) => {
+      const token = await getToken()
+      const res = await fetch(`${API_BASE_URL}/api/v1/follows`, {
+        method: isFollowing ? 'DELETE' : 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ targetUserId }),
+      })
+      if (!res.ok) throw new Error('Follow action failed')
+      return res.json()
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', username] })
+    },
   })
 
   // Like mutation
@@ -185,9 +203,15 @@ export function ProfileContent({ username }: { username: string }) {
         ) : (
           <Pressable
             style={styles.followButton}
-            accessibilityLabel={`Follow ${user.username}`}
+            accessibilityLabel={isFollowing ? `Unfollow ${user.username}` : `Follow ${user.username}`}
+            onPress={() => {
+              followMutation.mutate(
+                { targetUserId: user.id, isFollowing },
+                { onSuccess: () => setIsFollowing((prev) => !prev) }
+              )
+            }}
           >
-            <Text style={styles.followButtonText}>Follow</Text>
+            <Text style={styles.followButtonText}>{isFollowing ? 'Unfollow' : 'Follow'}</Text>
           </Pressable>
         )}
       </View>
