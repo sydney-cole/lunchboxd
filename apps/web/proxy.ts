@@ -9,27 +9,12 @@ const isPublicRoute = createRouteMatcher([
   '/api/v1/webhooks(.*)',
 ])
 
-// Next.js 16: proxy.ts replaces middleware.ts. Function name is `proxy`, not `middleware`.
-// This rewrite enables the /@username URL convention (D-01 from CONTEXT.md):
+// Next.js 16: proxy.ts replaces middleware.ts. The named `proxy` export is what Next.js uses.
+// clerkMiddleware handles both /@username rewrites and Clerk auth protection.
 // /@sarah          → /sarah         (profile page)
 // /@sarah/followers → /sarah/followers (followers list)
 // /@sarah/following → /sarah/following (following list)
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  if (pathname.startsWith('/@')) {
-    // Remove the leading / and the @: /@sarah/followers → sarah/followers
-    const withoutLeadingSlash = pathname.slice(1)   // @sarah/followers
-    const withoutAt = withoutLeadingSlash.slice(1)   // sarah/followers
-    return NextResponse.rewrite(new URL(`/${withoutAt}`, request.url))
-  }
-
-  return NextResponse.next()
-}
-
-// Clerk auth protection wraps proxy so both rewrites and auth run together.
-// /@username paths are rewritten to /username, then auth protection is applied.
-export default clerkMiddleware(async (auth, request: NextRequest) => {
+export const proxy = clerkMiddleware(async (auth, request: NextRequest) => {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith('/@')) {
@@ -51,6 +36,8 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
     await auth.protect()
   }
 })
+
+export default proxy
 
 export const config = {
   matcher: [
