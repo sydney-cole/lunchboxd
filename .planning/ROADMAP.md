@@ -194,7 +194,14 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 — 06-04 and 06-05 run in parallel)*:
 - [ ] 06-04-PLAN.md — Web notification bell + dropdown panel + map page at /map
-- [ ] 06-05-PLAN.md — Mobile NotificationsScreen + profile header bell + mobile MapScreen
+- [ ] 06-05-PLAN.md — Mobile NotificationsScreen + profile header bell + mobile MapScreen + Search tab Map button
+
+**Cross-cutting constraints:**
+- All new API routes: `await auth()` → `resolveUserId()` before any logic — never accept userId from request body
+- `actorId` always derived server-side from Clerk session — never from request body
+- `restaurants.lat` / `restaurants.lng` are Drizzle `numeric` → TypeScript `string` — always `parseFloat()` before passing to map coordinates
+- `zod/v4` import path in all new Zod schemas
+- Mobile: `getToken()` inside `queryFn` only — never at hook level
 
 ---
 
