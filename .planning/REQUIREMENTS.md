@@ -58,9 +58,9 @@
 
 ### Location
 
-- [ ] **LOCN-01**: User can browse an interactive map showing restaurants that have been reviewed on the platform
-- [ ] **LOCN-02**: User can search for reviewed restaurants by neighborhood or city and see a list view
-- [ ] **LOCN-03**: Location browse prioritizes reviews from people the user follows, falling back to all public reviews when sparse
+- [x] **LOCN-01**: User can browse an interactive map showing restaurants that have been reviewed on the platform
+- [x] **LOCN-02**: User can search for reviewed restaurants by neighborhood or city and see a list view
+- [x] **LOCN-03**: Location browse prioritizes reviews from people the user follows, falling back to all public reviews when sparse
 
 ## v2 Requirements
 
@@ -134,9 +134,9 @@
 | NOTF-01 | Phase 6 | Pending |
 | NOTF-02 | Phase 6 | Pending |
 | NOTF-03 | Phase 6 | Pending |
-| LOCN-01 | Phase 6 | Pending |
-| LOCN-02 | Phase 6 | Pending |
-| LOCN-03 | Phase 6 | Pending |
+| LOCN-01 | Phase 6 | Complete |
+| LOCN-02 | Phase 6 | Complete |
+| LOCN-03 | Phase 6 | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total

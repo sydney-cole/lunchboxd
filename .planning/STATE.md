@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 06 Plan 02 complete — notification API routes + side effects done
-last_updated: "2026-05-04T16:00:00Z"
+stopped_at: Phase 06 Plan 03 complete
+last_updated: "2026-05-04T15:39:35.995Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 31
-  completed_plans: 28
-  percent: 90
+  completed_plans: 29
+  percent: 94
 ---
 
 # State: Lunchboxd
 
 **Last updated:** 2026-05-04
-**Session:** Phase 06 Plan 02 complete — 3 notification API routes created; notification INSERT side effects added to follows and likes routes
+**Session:** Phase 06 Plan 03 complete — restaurant map endpoint (GET /api/v1/restaurants/map) and reviewed list endpoint (GET /api/v1/restaurants/reviewed) created
 
 ---
 
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 06 (notifications-location) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Plans: 5/5 planned (Wave 1: 06-01 | Wave 2: 06-02, 06-03 | Wave 3: 06-04, 06-05)
-**Status:** Plan 02 complete — notification API routes and side effects done; 06-03 still needed to complete Wave 2
+**Status:** Plan 03 complete — Wave 2 complete; 06-04 and 06-05 (Wave 3 UI) still needed
 
 ```
-Progress: [█████████░] 90%
-Phase 6 of 6 | 2/5 plans complete — notification API endpoints implemented
+Progress: [█████████░] 94%
+Phase 6 of 6 | 3/5 plans complete — restaurant map + reviewed endpoints implemented
 ```
 
 ---
@@ -156,6 +156,10 @@ Phase 6 of 6 | 2/5 plans complete — notification API endpoints implemented
 - Notification INSERT in follows route placed after follow INSERT and before reverse-follow check — ordering ensures notification only fires if follow succeeded (06-02)
 - Like notification requires SELECT reviews.userId before INSERT — single-row SELECT in else branch only (06-02)
 - actorId always sourced from resolveUserId(clerkId), never request body — enforced in notification INSERTs in both follows and likes routes (06-02, T-06-02-04)
+- lat/lng returned as TypeScript string (Drizzle numeric type contract) — UI components call parseFloat() before passing to map coordinates (06-03)
+- null lat/lng restaurants included in /reviewed but excluded from /map — per D-11; they appear in list only, not on map (06-03)
+- restaurantReviewedQuerySchema validates q param (max 100) before ILIKE — prevents unbounded query size (06-03, T-06-03-02)
+- reviewedByFollowed computed server-side from authenticated user's follows — never from client-supplied data (06-03, T-06-03-01)
 
 ### Todos
 
@@ -169,8 +173,8 @@ Phase 6 of 6 | 2/5 plans complete — notification API endpoints implemented
 
 ## Session Continuity
 
-Stopped at: Phase 06 Plan 02 complete
-Phase 06 Wave 2 in progress. Next: 06-03 (restaurant map/reviewed endpoints) to complete Wave 2, then Wave 3 (06-04, 06-05) for UI
+Stopped at: Phase 06 Plan 03 complete
+Phase 06 Wave 2 complete. Next: Wave 3 — 06-04 (web map page) and 06-05 (mobile map screen)
 
 ---
 *State initialized: 2026-04-27*
