@@ -96,3 +96,18 @@ export const followListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 export type FollowListQueryInput = z.infer<typeof followListQuerySchema>
+
+// --- Phase 6: Notifications & Location schemas ---
+
+// Identical contract to feedQuerySchema — cursor-paginated notifications list
+export const notificationQuerySchema = z.object({
+  cursor: z.string().datetime().optional().nullable(),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+})
+export type NotificationQueryInput = z.infer<typeof notificationQuerySchema>
+
+// Restaurant list search — optional q param validated before ILIKE
+export const restaurantReviewedQuerySchema = z.object({
+  q: z.string().max(100).optional(),
+})
+export type RestaurantReviewedQueryInput = z.infer<typeof restaurantReviewedQuerySchema>
