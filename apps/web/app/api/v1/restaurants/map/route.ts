@@ -39,6 +39,7 @@ export async function GET() {
           isNull(reviews.deletedAt)
         )
       )
+      .limit(500) // Hard cap — prevents unbounded memory/response size; add viewport query in a follow-up
 
     // Step 3: Deduplicate by restaurant ID; upgrade reviewedByFollowed if any reviewer is followed
     type MapPin = { id: string; name: string; lat: string; lng: string; reviewedByFollowed: boolean }
