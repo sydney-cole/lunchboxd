@@ -28,14 +28,15 @@ export async function POST(req: Request) {
   }
 
   // 1. Insert follow (idempotent — followsUniqueIdx prevents duplicates)
-  await db.insert(follows)
+  const inserted = await db.insert(follows)
     .values({ followerId: actorUserId, followeeId: targetUserId })
     .onConflictDoNothing()
+    .returning({ id: follows.id })
 
-  // D-01: notification INSERT inline — after successful follow INSERT
+  // D-01: notification INSERT inline — only when a new follow row was actually created
   // D-02: skip self-notification (actorId === userId — already blocked by self-follow guard above, but guard here too)
   // T-06-02-04: actorId always set to actorUserId from resolveUserId(clerkId) — never from request body
-  if (targetUserId !== actorUserId) {
+  if (inserted.length > 0 && targetUserId !== actorUserId) {
     await db.insert(notifications).values({
       userId: targetUserId,   // who receives the notification (the person being followed)
       type: 'follow',
