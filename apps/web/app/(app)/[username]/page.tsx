@@ -150,7 +150,7 @@ export default function ProfilePage() {
   }
 
   // notFound() cannot be called in Client Components — render a custom not-found UI instead
-  if (profileError || profile === null) {
+  if (profileError || profile == null) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
