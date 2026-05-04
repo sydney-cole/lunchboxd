@@ -9,7 +9,21 @@ import {
   SafeAreaView,
   Platform,
 } from 'react-native'
-import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
+// react-native-maps requires a native dev build (EAS). Lazy-require so the
+// module error only surfaces when this screen is navigated to, not on app launch.
+let MapView: typeof import('react-native-maps').default
+let Marker: typeof import('react-native-maps').Marker
+let Callout: typeof import('react-native-maps').Callout
+let PROVIDER_GOOGLE: typeof import('react-native-maps').PROVIDER_GOOGLE
+try {
+  const rnm = require('react-native-maps')
+  MapView = rnm.default
+  Marker = rnm.Marker
+  Callout = rnm.Callout
+  PROVIDER_GOOGLE = rnm.PROVIDER_GOOGLE
+} catch {
+  // Native module not available — MapView will be undefined, handled in render
+}
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@clerk/expo'
 import { colors } from '@lunchboxd/shared'
@@ -68,6 +82,18 @@ export default function MapScreen() {
     },
     staleTime: 30_000,
   })
+
+  if (!MapView) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.mapContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+          <Text style={{ color: '#9CA3AF', textAlign: 'center', padding: 24 }}>
+            Map requires a dev build.{'\n'}Run: eas build --profile development
+          </Text>
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView style={styles.container}>
