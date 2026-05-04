@@ -54,7 +54,7 @@
 
 - [ ] **NOTF-01**: User receives an in-app notification when someone follows them
 - [ ] **NOTF-02**: User receives an in-app notification when someone likes their review
-- [ ] **NOTF-03**: User can view all notifications in a notification center
+- [x] **NOTF-03**: User can view all notifications in a notification center
 
 ### Location
 
@@ -133,7 +133,7 @@
 | FEED-02 | Phase 4 | Complete |
 | NOTF-01 | Phase 6 | Pending |
 | NOTF-02 | Phase 6 | Pending |
-| NOTF-03 | Phase 6 | Pending |
+| NOTF-03 | Phase 6 | Complete |
 | LOCN-01 | Phase 6 | Complete |
 | LOCN-02 | Phase 6 | Complete |
 | LOCN-03 | Phase 6 | Complete |

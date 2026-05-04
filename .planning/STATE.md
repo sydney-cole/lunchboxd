@@ -9,14 +9,14 @@ progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 31
-  completed_plans: 29
-  percent: 94
+  completed_plans: 30
+  percent: 97
 ---
 
 # State: Lunchboxd
 
 **Last updated:** 2026-05-04
-**Session:** Phase 06 Plan 03 complete — restaurant map endpoint (GET /api/v1/restaurants/map) and reviewed list endpoint (GET /api/v1/restaurants/reviewed) created
+**Session:** Phase 06 Plan 04 complete — web notification bell (NotificationBell component in nav, unread polling, dropdown panel) and web map page at /map (Google Maps AdvancedMarker pins with social coloring, restaurant list with debounced search)
 
 ---
 
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 06 (notifications-location) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Plans: 5/5 planned (Wave 1: 06-01 | Wave 2: 06-02, 06-03 | Wave 3: 06-04, 06-05)
-**Status:** Plan 03 complete — Wave 2 complete; 06-04 and 06-05 (Wave 3 UI) still needed
+**Status:** Plan 04 complete — Wave 3 web UI done; 06-05 (mobile notifications + map) still needed
 
 ```
-Progress: [█████████░] 94%
-Phase 6 of 6 | 3/5 plans complete — restaurant map + reviewed endpoints implemented
+Progress: [█████████░] 97%
+Phase 6 of 6 | 4/5 plans complete — web notification bell + /map page implemented
 ```
 
 ---
@@ -51,7 +51,7 @@ Phase 6 of 6 | 3/5 plans complete — restaurant map + reviewed endpoints implem
 | 3 | Social Graph | Complete |
 | 4 | Feed | Complete |
 | 5 | Profiles | Complete |
-| 6 | Notifications & Location | Executing (1/5 plans complete) |
+| 6 | Notifications & Location | Executing (4/5 plans complete) |
 
 ---
 
@@ -160,6 +160,11 @@ Phase 6 of 6 | 3/5 plans complete — restaurant map + reviewed endpoints implem
 - null lat/lng restaurants included in /reviewed but excluded from /map — per D-11; they appear in list only, not on map (06-03)
 - restaurantReviewedQuerySchema validates q param (max 100) before ILIKE — prevents unbounded query size (06-03, T-06-03-02)
 - reviewedByFollowed computed server-side from authenticated user's follows — never from client-supplied data (06-03, T-06-03-01)
+- NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is browser-exposed by Maps JS API design — separate from server-only GOOGLE_PLACES_API_KEY; must be restricted by HTTP referrer in Cloud Console (06-04, T-06-04-01)
+- mapId on Map component required for AdvancedMarker rendering — falls back to 'DEMO_MAP_ID' literal if NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID not set (06-04)
+- parseFloat() on lat/lng is mandatory before passing to AdvancedMarker position — Drizzle numeric returns string, @vis.gl/react-google-maps expects number (06-04)
+- NotificationBell useInfiniteQuery panel list is enabled only when isOpen — avoids fetching before panel opened (06-04)
+- document.title set via useEffect in 'use client' map page — metadata export is not valid in Client Components (06-04)
 
 ### Todos
 
@@ -173,8 +178,8 @@ Phase 6 of 6 | 3/5 plans complete — restaurant map + reviewed endpoints implem
 
 ## Session Continuity
 
-Stopped at: Phase 06 Plan 03 complete
-Phase 06 Wave 2 complete. Next: Wave 3 — 06-04 (web map page) and 06-05 (mobile map screen)
+Stopped at: Phase 06 Plan 04 complete
+Phase 06 Wave 3 web UI complete. Next: 06-05 — mobile NotificationsScreen + MapScreen + Search tab Map button
 
 ---
 *State initialized: 2026-04-27*

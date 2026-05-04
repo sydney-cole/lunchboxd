@@ -181,7 +181,7 @@ Plans:
 3. A user can view an interactive map showing the locations of restaurants that have been reviewed on the platform
 4. A user can search for reviewed restaurants by neighborhood or city and see a list of results, prioritizing reviews from people they follow
 
-**Plans:** 3/5 plans executed
+**Plans:** 4/5 plans executed
 
 Plans:
 
@@ -193,7 +193,7 @@ Plans:
 - [x] 06-03-PLAN.md — Restaurant map endpoint (GET /api/v1/restaurants/map) + restaurant reviewed endpoint (GET /api/v1/restaurants/reviewed)
 
 **Wave 3** *(blocked on Wave 2 — 06-04 and 06-05 run in parallel)*:
-- [ ] 06-04-PLAN.md — Web notification bell + dropdown panel + map page at /map
+- [x] 06-04-PLAN.md — Web notification bell + dropdown panel + map page at /map
 - [ ] 06-05-PLAN.md — Mobile NotificationsScreen + profile header bell + mobile MapScreen + Search tab Map button
 
 **Cross-cutting constraints:**
@@ -214,7 +214,7 @@ Plans:
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 4/4 | Complete    | 2026-04-30 |
 | 5. Profiles | 6/6 | Complete   | 2026-04-30 |
-| 6. Notifications & Location | 3/5 | In Progress|  |
+| 6. Notifications & Location | 4/5 | In Progress|  |
 
 ---
 
