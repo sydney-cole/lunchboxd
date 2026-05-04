@@ -13,7 +13,7 @@
 - [x] **Phase 3: Social Graph** — Users can follow others, detect mutual friends, like reviews, and search for users (completed 2026-04-29)
 - [x] **Phase 4: Feed** — Users see a real-time, paginated feed of reviews from people they follow (completed 2026-04-30)
 - [x] **Phase 5: Profiles** — Users have complete public profiles with avatar, bio, review history, and follower/following display (completed 2026-04-30)
-- [ ] **Phase 6: Notifications & Location** — Users receive in-app notifications on social activity and can browse reviewed restaurants on a map
+- [x] **Phase 6: Notifications & Location** — Users receive in-app notifications on social activity and can browse reviewed restaurants on a map (completed 2026-05-04)
 
 ---
 
@@ -181,7 +181,7 @@ Plans:
 3. A user can view an interactive map showing the locations of restaurants that have been reviewed on the platform
 4. A user can search for reviewed restaurants by neighborhood or city and see a list of results, prioritizing reviews from people they follow
 
-**Plans:** 4/5 plans executed
+**Plans:** 5/5 plans complete
 
 Plans:
 
@@ -194,7 +194,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 — 06-04 and 06-05 run in parallel)*:
 - [x] 06-04-PLAN.md — Web notification bell + dropdown panel + map page at /map
-- [ ] 06-05-PLAN.md — Mobile NotificationsScreen + profile header bell + mobile MapScreen + Search tab Map button
+- [x] 06-05-PLAN.md — Mobile NotificationsScreen + profile header bell + mobile MapScreen + Search tab Map button
 
 **Cross-cutting constraints:**
 - All new API routes: `await auth()` → `resolveUserId()` before any logic — never accept userId from request body
@@ -214,7 +214,7 @@ Plans:
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 4/4 | Complete    | 2026-04-30 |
 | 5. Profiles | 6/6 | Complete   | 2026-04-30 |
-| 6. Notifications & Location | 4/5 | In Progress|  |
+| 6. Notifications & Location | 5/5 | Complete    | 2026-05-04 |
 
 ---
 

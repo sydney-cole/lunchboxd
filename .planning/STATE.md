@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 06 Plan 03 complete
-last_updated: "2026-05-04T15:39:35.995Z"
+stopped_at: Phase 06 Plan 05 complete
+last_updated: "2026-05-04T16:00:00.000Z"
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 31
-  completed_plans: 30
-  percent: 97
+  completed_plans: 31
+  percent: 100
 ---
 
 # State: Lunchboxd
 
 **Last updated:** 2026-05-04
-**Session:** Phase 06 Plan 04 complete — web notification bell (NotificationBell component in nav, unread polling, dropdown panel) and web map page at /map (Google Maps AdvancedMarker pins with social coloring, restaurant list with debounced search)
+**Session:** Phase 06 Plan 05 complete — mobile NotificationsScreen (FlatList + infinite scroll + read-all on mount), bell icon in Profile tab header (Ionicons + unread polling), MapScreen (react-native-maps MapView with social pin coloring + searchable list panel), Search tab Map button. Phase 6 and v1.0 milestone fully complete.
 
 ---
 
@@ -30,14 +30,14 @@ progress:
 
 ## Current Position
 
-Phase: 06 (notifications-location) — EXECUTING
-Plan: 4 of 5
+Phase: 06 (notifications-location) — COMPLETE
+Plan: 5 of 5
 Plans: 5/5 planned (Wave 1: 06-01 | Wave 2: 06-02, 06-03 | Wave 3: 06-04, 06-05)
-**Status:** Plan 04 complete — Wave 3 web UI done; 06-05 (mobile notifications + map) still needed
+**Status:** All plans complete — v1.0 milestone achieved
 
 ```
-Progress: [█████████░] 97%
-Phase 6 of 6 | 4/5 plans complete — web notification bell + /map page implemented
+Progress: [██████████] 100%
+Phase 6 of 6 | 5/5 plans complete — v1.0 milestone complete
 ```
 
 ---
@@ -51,7 +51,7 @@ Phase 6 of 6 | 4/5 plans complete — web notification bell + /map page implemen
 | 3 | Social Graph | Complete |
 | 4 | Feed | Complete |
 | 5 | Profiles | Complete |
-| 6 | Notifications & Location | Executing (4/5 plans complete) |
+| 6 | Notifications & Location | Complete |
 
 ---
 
@@ -165,6 +165,11 @@ Phase 6 of 6 | 4/5 plans complete — web notification bell + /map page implemen
 - parseFloat() on lat/lng is mandatory before passing to AdvancedMarker position — Drizzle numeric returns string, @vis.gl/react-google-maps expects number (06-04)
 - NotificationBell useInfiniteQuery panel list is enabled only when isOpen — avoids fetching before panel opened (06-04)
 - document.title set via useEffect in 'use client' map page — metadata export is not valid in Client Components (06-04)
+- react-native-maps plugin added to app.json — EAS dev build rebuild required before map screen can be tested on device (06-05)
+- Platform.OS check on PROVIDER_GOOGLE — Android uses Google Maps, iOS falls back to Apple Maps default (no iosGoogleMapsApiKey needed) (06-05)
+- Mobile bell uses Ionicons from @expo/vector-icons (already installed) instead of lucide-react-native — avoids new native dependency (06-05)
+- read-all PATCH fires on mount in mobile NotificationsScreen; queryClient.invalidateQueries(['notifications-unread']) clears bell badge immediately (06-05)
+- androidGoogleMapsApiKey in app.json uses placeholder — production key should be injected via EAS secrets, not committed (06-05, T-06-05-02)
 
 ### Todos
 
@@ -178,8 +183,8 @@ Phase 6 of 6 | 4/5 plans complete — web notification bell + /map page implemen
 
 ## Session Continuity
 
-Stopped at: Phase 06 Plan 04 complete
-Phase 06 Wave 3 web UI complete. Next: 06-05 — mobile NotificationsScreen + MapScreen + Search tab Map button
+Stopped at: Phase 06 Plan 05 complete — v1.0 milestone achieved
+All 31 plans across 6 phases complete. All 33 v1 requirements implemented. EAS rebuild required to activate react-native-maps on device.
 
 ---
 *State initialized: 2026-04-27*
