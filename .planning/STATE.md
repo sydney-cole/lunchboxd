@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 06 Plan 01 complete — Wave 1 schemas and tests done
-last_updated: "2026-05-04T15:28:32Z"
+stopped_at: Phase 06 Plan 02 complete — notification API routes + side effects done
+last_updated: "2026-05-04T16:00:00Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 31
-  completed_plans: 27
-  percent: 87
+  completed_plans: 28
+  percent: 90
 ---
 
 # State: Lunchboxd
 
 **Last updated:** 2026-05-04
-**Session:** Phase 06 Plan 01 complete — notificationQuerySchema and restaurantReviewedQuerySchema added to shared package; 17 unit tests passing
+**Session:** Phase 06 Plan 02 complete — 3 notification API routes created; notification INSERT side effects added to follows and likes routes
 
 ---
 
@@ -31,13 +31,13 @@ progress:
 ## Current Position
 
 Phase: 06 (notifications-location) — EXECUTING
-Plan: 1 of 5
+Plan: 2 of 5
 Plans: 5/5 planned (Wave 1: 06-01 | Wave 2: 06-02, 06-03 | Wave 3: 06-04, 06-05)
-**Status:** Plan 01 complete — Wave 1 schemas and tests done; Wave 2 ready to start
+**Status:** Plan 02 complete — notification API routes and side effects done; 06-03 still needed to complete Wave 2
 
 ```
-Progress: [█████████░] 87%
-Phase 6 of 6 | 1/5 plans complete — Phase 6 schemas and unit tests done
+Progress: [█████████░] 90%
+Phase 6 of 6 | 2/5 plans complete — notification API endpoints implemented
 ```
 
 ---
@@ -153,6 +153,9 @@ Phase 6 of 6 | 1/5 plans complete — Phase 6 schemas and unit tests done
 - notificationQuerySchema mirrors feedQuerySchema exactly — same cursor+limit contract for consistency (06-01)
 - restaurantReviewedQuerySchema uses optional q with max(100) to bound ILIKE query size before parameterization (06-01)
 - shouldSkipNotification and computeReviewedByFollowed tested as pure functions in Wave 0 — no DB dependency (06-01)
+- Notification INSERT in follows route placed after follow INSERT and before reverse-follow check — ordering ensures notification only fires if follow succeeded (06-02)
+- Like notification requires SELECT reviews.userId before INSERT — single-row SELECT in else branch only (06-02)
+- actorId always sourced from resolveUserId(clerkId), never request body — enforced in notification INSERTs in both follows and likes routes (06-02, T-06-02-04)
 
 ### Todos
 
@@ -166,8 +169,8 @@ Phase 6 of 6 | 1/5 plans complete — Phase 6 schemas and unit tests done
 
 ## Session Continuity
 
-Stopped at: Phase 06 Plan 01 complete
-Phase 06 Wave 1 done. Next: Wave 2 — 06-02 (notification API) and 06-03 (restaurant map/reviewed endpoints) in parallel
+Stopped at: Phase 06 Plan 02 complete
+Phase 06 Wave 2 in progress. Next: 06-03 (restaurant map/reviewed endpoints) to complete Wave 2, then Wave 3 (06-04, 06-05) for UI
 
 ---
 *State initialized: 2026-04-27*
