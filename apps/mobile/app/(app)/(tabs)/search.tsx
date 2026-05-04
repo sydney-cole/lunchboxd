@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react'
-import { View, Text, TextInput, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, TextInput, ScrollView, Pressable } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@clerk/expo'
+import { useRouter, useNavigation } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
+import { colors } from '@lunchboxd/shared'
 import { UserSearchCard } from '../../../components/user-search-card'
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000'
@@ -18,8 +21,27 @@ interface UserSearchResult {
 
 export default function SearchScreen() {
   const { getToken } = useAuth()
+  const router = useRouter()
+  const navigation = useNavigation()
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
+
+  // Add Map button to header
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      title: 'Search',
+      headerRight: () => (
+        <Pressable
+          onPress={() => router.push('/(app)/map')}
+          style={{ marginRight: 16, padding: 4 }}
+          accessibilityLabel="Open map"
+        >
+          <Ionicons name="map-outline" size={22} color={colors.textPrimary} />
+        </Pressable>
+      ),
+    })
+  }, [navigation, router])
 
   useEffect(() => {
     if (query.length < 2) {
