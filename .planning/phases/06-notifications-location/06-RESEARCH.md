@@ -718,22 +718,25 @@ Step 2.6: SKIPPED — This phase adds new routes and components. No rename/refac
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Google Cloud Console Map ID availability**
+1. **Google Cloud Console Map ID availability** **(RESOLVED)**
    - What we know: `AdvancedMarker` requires a Map ID; `DEMO_MAP_ID` works for development
    - What's unclear: Is a Map ID already created in the project's Google Cloud Console account?
    - Recommendation: Plan a Wave 0 task to create a Map ID in Cloud Console. Use `DEMO_MAP_ID` for local dev to unblock implementation.
+   - **Resolution:** 06-04 Task 2 uses `process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID ?? 'DEMO_MAP_ID'` fallback — unblocks local dev without a real Map ID.
 
-2. **iOS map provider choice (Apple Maps vs. Google Maps)**
+2. **iOS map provider choice (Apple Maps vs. Google Maps)** **(RESOLVED)**
    - What we know: `react-native-maps` defaults to Apple Maps on iOS; Google Maps on iOS requires `iosGoogleMapsApiKey`
    - What's unclear: Whether the project wants Google Maps on iOS (consistent cross-platform UX) or Apple Maps (no additional key needed)
    - Recommendation: Use Apple Maps on iOS for v1 (no key needed, familiar to iOS users). Plan adds `PROVIDER_GOOGLE` to Android only.
+   - **Resolution:** 06-05 Task 2 uses `Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined` — Google Maps on Android, Apple Maps on iOS, no extra key needed.
 
-3. **Nav component location for bell icon (web)**
+3. **Nav component location for bell icon (web)** **(RESOLVED)**
    - What we know: `app/(app)/layout.tsx` is a Server Component with no existing nav component
    - What's unclear: Whether a shared nav component already exists or needs to be created
    - Recommendation: Create a `NotificationBell` Client Component and import it into `app/(app)/layout.tsx`. The layout becomes a thin Server Component wrapper.
+   - **Resolution:** 06-04 Task 1 creates `apps/web/components/notification-bell.tsx` (`'use client'`) and imports it into `app/(app)/layout.tsx` as a Server Component — no shared nav component needed.
 
 ---
 
