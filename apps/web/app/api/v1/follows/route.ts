@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { follows, friendships, userStats, feedItems, reviews } from '@/lib/schema'
+import { follows, friendships, userStats, feedItems, reviews, notifications } from '@/lib/schema'
 import { followSchema } from '@lunchboxd/shared'
 import { resolveUserId } from '@/lib/queries'
 import { eq, and, sql, isNull, inArray } from 'drizzle-orm'
@@ -31,6 +31,18 @@ export async function POST(req: Request) {
   await db.insert(follows)
     .values({ followerId: actorUserId, followeeId: targetUserId })
     .onConflictDoNothing()
+
+  // D-01: notification INSERT inline — after successful follow INSERT
+  // D-02: skip self-notification (actorId === userId — already blocked by self-follow guard above, but guard here too)
+  // T-06-02-04: actorId always set to actorUserId from resolveUserId(clerkId) — never from request body
+  if (targetUserId !== actorUserId) {
+    await db.insert(notifications).values({
+      userId: targetUserId,   // who receives the notification (the person being followed)
+      type: 'follow',
+      actorId: actorUserId,   // who performed the action
+      // reviewId: omitted — defaults to null for follow notifications
+    })
+  }
 
   // 2. Check reverse follow for mutual friendship detection (per D-04, D-08)
   const [reverseFollow] = await db

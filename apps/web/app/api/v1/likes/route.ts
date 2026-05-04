@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { likes } from '@/lib/schema'
+import { likes, notifications, reviews } from '@/lib/schema'
 import { likeSchema } from '@lunchboxd/shared'
 import { resolveUserId } from '@/lib/queries'
 import { eq, and, sql } from 'drizzle-orm'
@@ -36,6 +36,24 @@ export async function POST(req: Request) {
     await db.insert(likes)
       .values({ userId: actorUserId, reviewId })
       .onConflictDoNothing()
+
+    // D-01: notification INSERT — like branch only (D-06 / T-06-02-05: no notification on unlike)
+    // Fetch review owner to determine userId for the notification
+    const [review] = await db
+      .select({ userId: reviews.userId })
+      .from(reviews)
+      .where(eq(reviews.id, reviewId))
+
+    // D-02: skip self-notification
+    // T-06-02-04: actorId always set to actorUserId from resolveUserId(clerkId) — never from request body
+    if (review && review.userId !== actorUserId) {
+      await db.insert(notifications).values({
+        userId: review.userId,   // who receives the notification (review owner)
+        type: 'like',
+        actorId: actorUserId,    // who liked the review
+        reviewId,
+      })
+    }
   }
 
   // Count current likes for response (not denormalized — COUNT query per research recommendation)
