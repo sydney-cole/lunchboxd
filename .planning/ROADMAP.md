@@ -186,7 +186,7 @@ Plans:
 Plans:
 
 **Wave 1:**
-- [ ] 06-01-PLAN.md — Zod schemas (notificationQuerySchema, restaurantReviewedQuerySchema) + unit test stubs
+- [x] 06-01-PLAN.md — Zod schemas (notificationQuerySchema, restaurantReviewedQuerySchema) + unit test stubs
 
 **Wave 2** *(blocked on Wave 1 — 06-02 and 06-03 run in parallel)*:
 - [ ] 06-02-PLAN.md — Notification API routes (GET list, GET unread, PATCH read-all) + notification side effects in follows/likes routes
@@ -214,7 +214,7 @@ Plans:
 | 3. Social Graph | 7/7 | Complete   | 2026-04-29 |
 | 4. Feed | 4/4 | Complete    | 2026-04-30 |
 | 5. Profiles | 6/6 | Complete   | 2026-04-30 |
-| 6. Notifications & Location | 0/5 | Not started | - |
+| 6. Notifications & Location | 1/5 | Executing | - |
 
 ---
 

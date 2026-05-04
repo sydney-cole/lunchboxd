@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_execute
-stopped_at: Phase 06 planned — 5 plans ready
-last_updated: "2026-05-04T00:00:00.000Z"
+status: executing
+stopped_at: Phase 06 Plan 01 complete — Wave 1 schemas and tests done
+last_updated: "2026-05-04T15:28:32Z"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 31
-  completed_plans: 26
-  percent: 84
+  completed_plans: 27
+  percent: 87
 ---
 
 # State: Lunchboxd
 
-**Last updated:** 2026-04-30
-**Session:** Phase 05 Profiles complete — all 6 plans executed; mobile profile screens shipped
+**Last updated:** 2026-05-04
+**Session:** Phase 06 Plan 01 complete — notificationQuerySchema and restaurantReviewedQuerySchema added to shared package; 17 unit tests passing
 
 ---
 
@@ -24,20 +24,20 @@ progress:
 
 **Core value:** A user should be able to post a meal review and immediately see it appear in their friends' feeds.
 
-**Current focus:** Phase 05 — profiles
+**Current focus:** Phase 06 — notifications & location
 
 ---
 
 ## Current Position
 
-Phase: 05 (profiles) — EXECUTING
-Plan: 6 of 6
-Plans: 6/6 planned (Wave 0: 05-01 | Wave 1: 05-02, 05-03 | Wave 2: 05-04, 05-05, 05-06)
-**Status:** Phase complete — ready for verification
+Phase: 06 (notifications-location) — EXECUTING
+Plan: 1 of 5
+Plans: 5/5 planned (Wave 1: 06-01 | Wave 2: 06-02, 06-03 | Wave 3: 06-04, 06-05)
+**Status:** Plan 01 complete — Wave 1 schemas and tests done; Wave 2 ready to start
 
 ```
-Progress: [█████████░] 92%
-Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages, mobile screens
+Progress: [█████████░] 87%
+Phase 6 of 6 | 1/5 plans complete — Phase 6 schemas and unit tests done
 ```
 
 ---
@@ -50,8 +50,8 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 | 2 | Reviews & Meals | Complete |
 | 3 | Social Graph | Complete |
 | 4 | Feed | Complete |
-| 5 | Profiles | Ready to execute (6 plans) |
-| 6 | Notifications & Location | Not started |
+| 5 | Profiles | Complete |
+| 6 | Notifications & Location | Executing (1/5 plans complete) |
 
 ---
 
@@ -150,6 +150,9 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 - ProfileContent exported from [username].tsx and imported by own-profile tab — single implementation for both contexts (05-06)
 - Mobile like mutation on profile page targets ['profile-reviews', username] — separate cache from ['feed'] and ['my-reviews'] (05-06)
 - Avatar upload on mobile: expo-image-picker + POST /api/v1/uploads (type: avatar) + PUT to R2 presigned URL (05-06)
+- notificationQuerySchema mirrors feedQuerySchema exactly — same cursor+limit contract for consistency (06-01)
+- restaurantReviewedQuerySchema uses optional q with max(100) to bound ILIKE query size before parameterization (06-01)
+- shouldSkipNotification and computeReviewedByFollowed tested as pure functions in Wave 0 — no DB dependency (06-01)
 
 ### Todos
 
@@ -163,8 +166,8 @@ Phase 5 of 6 | 6 plans created — proxy.ts rewrite, 4 API endpoints, web pages,
 
 ## Session Continuity
 
-Stopped at: Phase 06 context gathered
-Phase 05 complete. Next: Phase 06 — Notifications & Location
+Stopped at: Phase 06 Plan 01 complete
+Phase 06 Wave 1 done. Next: Wave 2 — 06-02 (notification API) and 06-03 (restaurant map/reviewed endpoints) in parallel
 
 ---
 *State initialized: 2026-04-27*
