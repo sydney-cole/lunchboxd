@@ -47,6 +47,9 @@ importers:
       expo-image:
         specifier: ~55.0.9
         version: 55.0.9(expo@55.0.18)(react-native-web@0.21.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)
+      expo-image-picker:
+        specifier: ~55.0.19
+        version: 55.0.19(expo@55.0.18)
       expo-linking:
         specifier: ~8.0.11
         version: 8.0.12(expo@55.0.18)(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)
@@ -120,6 +123,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.100.5
         version: 5.100.6(react@19.2.4)
+      '@vis.gl/react-google-maps':
+        specifier: ^1.8.3
+        version: 1.8.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@neondatabase/serverless@1.1.0)
@@ -1564,6 +1570,9 @@ packages:
     resolution: {integrity: sha512-wC562eD3gS6vO2tWHToFhlFnmHKfKHgF1oyvojeSkLK/ZYop1bMU+7cOMiF9Sq70CzcsLy/EMRy/uRc76QmNRw==}
     hasBin: true
 
+  '@googlemaps/js-api-loader@2.0.2':
+    resolution: {integrity: sha512-bKVuTqatS8Jven5aFqVB7rCHF1VFEzpzyi0ruzO0GUR+A7m9oMqMgtnmpANj7kMYEvvhty8Fk7TnJ1MKjWHu+Q==}
+
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
     engines: {node: '>=18.18.0'}
@@ -2905,6 +2914,9 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
+  '@types/google.maps@3.64.0':
+    resolution: {integrity: sha512-dN0H6tB4lgLQLovcbPXFYYOEV41TpyyJghzb5jrzjB96FZmjeOghevVdC+BMGd6YqyCqXaggyEtqRXLRjzCBZA==}
+
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
 
@@ -3105,6 +3117,12 @@ packages:
     resolution: {integrity: sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==}
     cpu: [x64]
     os: [win32]
+
+  '@vis.gl/react-google-maps@1.8.3':
+    resolution: {integrity: sha512-DW7nEuvOJ299DmdBnvGiUARrgS/+sTEO1iJgG9J8YaErZqLoq7S4TJ22f3EjJvR4dti4L4gft43JEK77nnKXDw==}
+    peerDependencies:
+      react: '>=16.8.0 || ^19.0 || ^19.0.0-rc'
+      react-dom: '>=16.8.0 || ^19.0 || ^19.0.0-rc'
 
   '@vitejs/plugin-react@4.7.0':
     resolution: {integrity: sha512-gUu9hwfWvvEDBBmgtAowQCojwZmJ5mcLn3aufeCsitijs3+f2NsrPtlAWIR6OPiqljl96GVCUbLe0HyqIpVaoA==}
@@ -4204,6 +4222,16 @@ packages:
       expo: '*'
       react: '*'
       react-native: '*'
+
+  expo-image-loader@55.0.0:
+    resolution: {integrity: sha512-NOjp56wDrfuA5aiNAybBIjqIn1IxKeGJ8CECWZncQ/GzjZfyTYAHTCyeApYkdKkMBLHINzI4BbTGSlbCa0fXXQ==}
+    peerDependencies:
+      expo: '*'
+
+  expo-image-picker@55.0.19:
+    resolution: {integrity: sha512-PqOOfRz7+hbB9IFN0LfNxpJJwuPlUG0Abr0qM3Wc61OJ7FFyuKJ50QJ/fFItzSuoXifET1YIFBiXx5nA8Gkinw==}
+    peerDependencies:
+      expo: '*'
 
   expo-image@55.0.9:
     resolution: {integrity: sha512-+NVgWv+tr7a6EpBEaIIVVp+XfruRA2JL5xOxvd6ajvFGdH0rOhagwX1m1piAII6w7sh6uAnBr8X+fDZsav7B2w==}
@@ -6438,6 +6466,7 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   validate-npm-package-name@5.0.1:
@@ -8616,6 +8645,10 @@ snapshots:
       chalk: 4.1.2
       js-yaml: 4.1.1
 
+  '@googlemaps/js-api-loader@2.0.2':
+    dependencies:
+      '@types/google.maps': 3.64.0
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -10146,6 +10179,8 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
+  '@types/google.maps@3.64.0': {}
+
   '@types/istanbul-lib-coverage@2.0.6': {}
 
   '@types/istanbul-lib-report@3.0.3':
@@ -10341,6 +10376,14 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.11.1':
     optional: true
+
+  '@vis.gl/react-google-maps@1.8.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@googlemaps/js-api-loader': 2.0.2
+      '@types/google.maps': 3.64.0
+      fast-deep-equal: 3.1.3
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
 
   '@vitejs/plugin-react@4.7.0(vite@7.3.2(@types/node@20.19.39)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
@@ -11613,6 +11656,15 @@ snapshots:
       expo: 55.0.18(@babel/core@7.29.0)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.10)(bufferutil@4.1.0)(expo-router@55.0.13)(react-dom@19.1.0(react@19.1.0))(react-native-worklets@0.8.1(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
       react: 19.1.0
       react-native: 0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6)
+
+  expo-image-loader@55.0.0(expo@55.0.18):
+    dependencies:
+      expo: 55.0.18(@babel/core@7.29.0)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.10)(bufferutil@4.1.0)(expo-router@55.0.13)(react-dom@19.1.0(react@19.1.0))(react-native-worklets@0.8.1(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
+
+  expo-image-picker@55.0.19(expo@55.0.18):
+    dependencies:
+      expo: 55.0.18(@babel/core@7.29.0)(@expo/dom-webview@55.0.5)(@expo/metro-runtime@55.0.10)(bufferutil@4.1.0)(expo-router@55.0.13)(react-dom@19.1.0(react@19.1.0))(react-native-worklets@0.8.1(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0)(typescript@5.9.3)(utf-8-validate@6.0.6)
+      expo-image-loader: 55.0.0(expo@55.0.18)
 
   expo-image@55.0.9(expo@55.0.18)(react-native-web@0.21.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-native@0.85.2(@babel/core@7.29.0)(@react-native/metro-config@0.85.2(@babel/core@7.29.0)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.1.17)(bufferutil@4.1.0)(react@19.1.0)(utf-8-validate@6.0.6))(react@19.1.0):
     dependencies:
