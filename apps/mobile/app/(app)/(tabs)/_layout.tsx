@@ -15,9 +15,11 @@ function ProfileHeaderRight() {
     queryKey: ['notifications-unread'],
     queryFn: async () => {
       const token = await getToken()
+      if (!token) return { hasUnread: false }
       const res = await fetch(`${API_BASE_URL}/api/v1/notifications/unread`, {
         headers: { Authorization: `Bearer ${token}` },
       })
+      if (!res.ok) throw new Error('Failed to check unread status')
       return res.json()
     },
     refetchInterval: 30_000,
