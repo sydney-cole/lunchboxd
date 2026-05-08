@@ -90,6 +90,7 @@ export default function EditProfilePage() {
   }
 
   async function handleSave() {
+    if (!meUser) return
     setSaveError(null)
     setIsSaving(true)
 
