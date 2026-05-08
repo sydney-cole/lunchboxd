@@ -32,7 +32,8 @@ export default function FollowingPage({
       if (token) headers['Authorization'] = `Bearer ${token}`
       const res = await fetch(`/api/v1/users/${username}/following`, { headers })
       if (!res.ok) throw new Error('Failed to load following')
-      return res.json()
+      const data = await res.json()
+      return data.items as UserCard[]
     },
     staleTime: 30_000,
   })

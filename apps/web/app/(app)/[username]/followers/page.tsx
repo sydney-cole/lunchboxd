@@ -32,7 +32,8 @@ export default function FollowersPage({
       if (token) headers['Authorization'] = `Bearer ${token}`
       const res = await fetch(`/api/v1/users/${username}/followers`, { headers })
       if (!res.ok) throw new Error('Failed to load followers')
-      return res.json()
+      const data = await res.json()
+      return data.items as UserCard[]
     },
     staleTime: 30_000,
   })
