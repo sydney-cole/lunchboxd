@@ -21,6 +21,9 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showManualForm, setShowManualForm] = useState(false)
+  const [manualAddress, setManualAddress] = useState('')
+  const [manualCity, setManualCity] = useState('')
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -101,13 +104,20 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
       const res = await fetch('/api/v1/restaurants', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: query.trim() }),
+        body: JSON.stringify({
+          name: query.trim(),
+          address: manualAddress.trim() || undefined,
+          city: manualCity.trim() || undefined,
+        }),
       })
       if (res.ok) {
         const restaurant: Restaurant = await res.json()
         onChange({ id: restaurant.id, name: restaurant.name })
         setQuery('')
         setIsOpen(false)
+        setShowManualForm(false)
+        setManualAddress('')
+        setManualCity('')
       } else {
         setError('Could not save restaurant. Please try again.')
       }
@@ -200,14 +210,52 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
                 </button>
               ))}
 
-              {showManually && (
+              {showManually && !showManualForm && (
                 <button
                   type="button"
                   className="w-full text-left px-3 py-2 min-h-[44px] flex items-center text-[14px] text-accent hover:bg-[#FFE8CC] cursor-pointer transition-colors focus:outline-none"
-                  onClick={handleAddManually}
+                  onClick={() => setShowManualForm(true)}
                 >
                   + Add &ldquo;{query}&rdquo; manually
                 </button>
+              )}
+
+              {showManually && showManualForm && (
+                <div className="px-3 py-3 flex flex-col gap-2">
+                  <p className="text-[13px] font-medium text-text-primary">Adding &ldquo;{query}&rdquo;</p>
+                  <input
+                    type="text"
+                    placeholder="Address (optional)"
+                    value={manualAddress}
+                    onChange={e => setManualAddress(e.target.value)}
+                    className="w-full h-[36px] px-2.5 bg-bg border border-border rounded-md text-[14px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-accent"
+                  />
+                  <input
+                    type="text"
+                    placeholder="City (optional)"
+                    value={manualCity}
+                    onChange={e => setManualCity(e.target.value)}
+                    className="w-full h-[36px] px-2.5 bg-bg border border-border rounded-md text-[14px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-accent"
+                  />
+                  <p className="text-[11px] text-text-secondary">Adding a city lets this restaurant appear on the map.</p>
+                  <div className="flex gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={handleAddManually}
+                      disabled={isLoading}
+                      className="flex-1 h-[32px] bg-accent text-white text-[13px] font-medium rounded-md hover:bg-accent/90 transition-colors disabled:opacity-50"
+                    >
+                      {isLoading ? 'Adding...' : 'Add restaurant'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowManualForm(false)}
+                      className="px-3 h-[32px] text-[13px] text-text-secondary border border-border rounded-md hover:bg-bg transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
               )}
             </>
           )}
