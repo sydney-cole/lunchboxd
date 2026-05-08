@@ -3,7 +3,6 @@
 import React, { useRef, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
-import { useUser } from '@clerk/nextjs'
 import { Loader2 } from 'lucide-react'
 import { ReviewCard } from '@/components/review-card'
 import { FollowButton } from '@/components/follow-button'
@@ -50,7 +49,6 @@ type InfiniteProfileData = {
 export default function ProfilePage() {
   const params = useParams()
   const username = params.username as string
-  const { user: clerkUser } = useUser()
   const queryClient = useQueryClient()
   const sentinelRef = useRef<HTMLDivElement>(null)
 
@@ -61,7 +59,7 @@ export default function ProfilePage() {
       const res = await fetch(`/api/v1/users/${username}`)
       if (res.status === 404) return null
       if (!res.ok) throw new Error('Failed to load profile')
-      return res.json() as Promise<{ user: ProfileUser; stats: ProfileStats }>
+      return res.json() as Promise<{ user: ProfileUser; stats: ProfileStats; isOwner: boolean }>
     },
     staleTime: 60_000,
   })
@@ -161,9 +159,7 @@ export default function ProfilePage() {
     )
   }
 
-  const { user, stats } = profile
-  // D-08: isOwner = viewer's Clerk username matches profile username
-  const isOwner = clerkUser?.username === user.username
+  const { user, stats, isOwner } = profile
 
   const allReviews = reviewsData?.pages.flatMap((p) => p.items) ?? []
 

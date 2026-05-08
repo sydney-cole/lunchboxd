@@ -6,6 +6,20 @@ import { patchUserSchema } from '@lunchboxd/shared'
 import { resolveUserId } from '@/lib/queries'
 import { eq } from 'drizzle-orm'
 
+export async function GET() {
+  const { userId: clerkId } = await auth()
+  if (!clerkId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const [user] = await db
+    .select({ id: users.id, username: users.username, displayName: users.displayName, bio: users.bio, avatarUrl: users.avatarUrl })
+    .from(users)
+    .where(eq(users.clerkId, clerkId))
+
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+  return NextResponse.json({ user })
+}
+
 export async function PATCH(req: Request) {
   const { userId: clerkId } = await auth()
   if (!clerkId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -31,7 +45,7 @@ export async function PATCH(req: Request) {
 
   // Construct avatarUrl server-side from key (prevents client from supplying arbitrary URLs)
   const avatarUrl = avatarKey
-    ? `${process.env.R2_PUBLIC_URL}/${avatarKey}`
+    ? `${process.env.BLOB_BASE_URL}/${avatarKey}`
     : undefined
 
   // Build update object — only include fields that were actually provided

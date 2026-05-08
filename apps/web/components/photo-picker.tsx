@@ -44,40 +44,18 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
     setIsUploading(true)
 
     try {
-      // Step 1: Get presigned URL
-      const uploadRes = await fetch('/api/v1/uploads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contentType: file.type }),
-      })
+      const body = new FormData()
+      body.append('file', file)
+      body.append('type', 'review')
 
-      if (!uploadRes.ok) {
-        if (uploadRes.status === 503) {
-          throw new Error('Photo upload is not configured.')
-        }
-        throw new Error('Failed to get upload URL')
-      }
+      const uploadRes = await fetch('/api/v1/uploads', { method: 'POST', body })
 
-      const { uploadUrl, key } = await uploadRes.json()
+      if (!uploadRes.ok) throw new Error('Upload failed')
 
-      // Step 2: PUT directly to R2 (no auth headers — presigned URL handles auth)
-      const putRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
-      })
-
-      if (!putRes.ok) {
-        throw new Error('Upload to storage failed')
-      }
-
-      // Success
+      const { key } = await uploadRes.json()
       onPhotoChange(key)
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : ''
-      setError(msg === 'Photo upload is not configured.' ? msg : 'Photo upload failed. Try again.')
+    } catch {
+      setError('Photo upload failed. Try again.')
       setPreviewUrl(null)
       onPhotoChange(null)
     } finally {

@@ -133,8 +133,8 @@ export default function FeedPage() {
   // Loading state (initial load)
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-bg flex items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-text-secondary" />
+      <div className="min-h-[calc(100vh-3.5rem)] bg-bg flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-text-secondary" />
       </div>
     )
   }
@@ -142,31 +142,31 @@ export default function FeedPage() {
   // Error state
   if (isError) {
     return (
-      <div className="min-h-screen bg-bg flex items-center justify-center">
+      <div className="min-h-[calc(100vh-3.5rem)] bg-bg flex items-center justify-center">
         <div className="text-center">
           <p className="text-[20px] font-semibold text-text-primary mb-2">Couldn&apos;t load your feed</p>
-          <p className="text-[16px] text-text-secondary">Something went wrong. Refresh the page to try again.</p>
+          <p className="text-[15px] text-text-secondary">Something went wrong. Refresh the page to try again.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-bg py-8 px-4">
-      <div className="w-full max-w-[600px] mx-auto">
-        <h1 className="text-[20px] font-semibold text-text-primary mb-6">Feed</h1>
+    <div className="min-h-[calc(100vh-3.5rem)] bg-bg">
+      <div className="w-full max-w-[640px] mx-auto px-4 py-10">
+        <h1 className="font-[family-name:--font-fraunces] text-[32px] text-text-primary mb-8 text-center">Feed</h1>
 
         {/* Empty state */}
         {allItems.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <UtensilsCrossed size={48} className="text-text-secondary mb-4" />
-            <h2 className="text-[20px] font-semibold text-text-primary mb-2">Nothing here yet</h2>
-            <p className="text-[16px] text-text-secondary mb-4">
-              Follow people to see their meals here.
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <UtensilsCrossed size={36} strokeWidth={1.5} className="text-border mb-5" />
+            <h2 className="text-[18px] font-semibold text-text-primary mb-1.5">Nothing here yet</h2>
+            <p className="text-[14px] text-text-secondary mb-7 max-w-[220px] leading-relaxed">
+              Follow people to see what they&apos;re eating.
             </p>
             <a
               href="/search"
-              className="text-[16px] text-accent hover:underline focus:outline-none focus:ring-2 focus:ring-accent rounded"
+              className="inline-flex items-center bg-accent text-white text-[13px] font-semibold px-5 py-2 rounded-full hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 tracking-wide"
             >
               Find people to follow
             </a>

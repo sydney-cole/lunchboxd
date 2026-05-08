@@ -12,12 +12,11 @@
     "test:unit": "vitest run"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1038.0",
-    "@aws-sdk/s3-request-presigner": "3.1038.0",
     "@clerk/nextjs": "^7.2.7",
     "@lunchboxd/shared": "workspace:*",
     "@neondatabase/serverless": "^1.1.0",
     "@tanstack/react-query": "^5.100.5",
+    "@vercel/blob": "^2.3.3",
     "@vis.gl/react-google-maps": "^1.8.3",
     "drizzle-orm": "^0.45.2",
     "lucide-react": "^1.12.0",

@@ -14,6 +14,13 @@ export async function GET(
   // Auth is optional for public profile (viewer may be unauthenticated)
   const { userId: clerkId } = await auth()
 
+  // Resolve viewer's internal user ID early (needed for isOwner + isLikedByMe)
+  let viewerUserId: string | null = null
+  if (clerkId) {
+    const [viewer] = await db.select({ id: users.id }).from(users).where(eq(users.clerkId, clerkId))
+    viewerUserId = viewer?.id ?? null
+  }
+
   // 1. Fetch user by username (safe fields only — no email, no clerkId)
   const [user] = await db
     .select({
@@ -72,13 +79,6 @@ export async function GET(
       .from(likes)
       .where(inArray(likes.reviewId, reviewIds))
 
-    // Resolve viewer userId for isLikedByMe (optional auth)
-    let viewerUserId: string | null = null
-    if (clerkId) {
-      const [viewer] = await db.select({ id: users.id }).from(users).where(eq(users.clerkId, clerkId))
-      viewerUserId = viewer?.id ?? null
-    }
-
     const tagMap = new Map<string, string[]>()
     for (const t of tags) {
       const arr = tagMap.get(t.reviewId) ?? []
@@ -105,5 +105,6 @@ export async function GET(
     user,
     stats: stats ?? { followerCount: '0', followingCount: '0', reviewCount: '0' },
     reviews: enrichedReviews,
+    isOwner: viewerUserId === user.id,
   })
 }

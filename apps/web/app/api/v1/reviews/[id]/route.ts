@@ -88,7 +88,7 @@ export async function PATCH(
   if (input.rating !== undefined) updateSet.rating = input.rating?.toString() ?? null
   if (input.photoKey !== undefined) {
     updateSet.photoUrl = input.photoKey
-      ? `${process.env.R2_PUBLIC_URL}/${input.photoKey}`
+      ? `${process.env.BLOB_BASE_URL}/${input.photoKey}`
       : null
   }
   if (input.mealDate !== undefined) updateSet.mealDate = input.mealDate ?? null

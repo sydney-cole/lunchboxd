@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   }
 
   const photoUrl = input.photoKey
-    ? `${process.env.R2_PUBLIC_URL}/${input.photoKey}`
+    ? `${process.env.BLOB_BASE_URL}/${input.photoKey}`
     : null
 
   const [review] = await db.insert(reviews).values({

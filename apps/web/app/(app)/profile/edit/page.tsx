@@ -2,15 +2,22 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
 import { useQueryClient } from '@tanstack/react-query'
 import { Loader2, Camera } from 'lucide-react'
 
+interface MeUser {
+  username: string
+  displayName: string | null
+  bio: string | null
+  avatarUrl: string | null
+}
+
 export default function EditProfilePage() {
   const router = useRouter()
-  const { user: clerkUser, isLoaded } = useUser()
   const queryClient = useQueryClient()
 
+  const [meUser, setMeUser] = useState<MeUser | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [bio, setBio] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
@@ -20,45 +27,33 @@ export default function EditProfilePage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  // Track original values to detect dirty fields
   const originalBio = useRef('')
   const originalDisplayName = useRef('')
 
-  // Pre-fill form with current profile data once Clerk user is loaded
-  // Fetch current profile to get bio (bio is in our DB, not Clerk)
   useEffect(() => {
-    if (!isLoaded || !clerkUser) return
-    const initial = clerkUser.fullName ?? ''
-    setDisplayName(initial)
-    originalDisplayName.current = initial
-    fetch(`/api/v1/users/${encodeURIComponent(clerkUser.username ?? '')}`)
+    fetch('/api/v1/users/me')
       .then(r => r.json())
-      .then((data: { user?: { bio?: string; displayName?: string; avatarUrl?: string } }) => {
-        if (data.user?.bio) {
-          setBio(data.user.bio)
-          originalBio.current = data.user.bio
-        }
-        if (data.user?.displayName) {
-          setDisplayName(data.user.displayName)
-          originalDisplayName.current = data.user.displayName
-        }
-        if (data.user?.avatarUrl) setAvatarPreview(data.user.avatarUrl)
+      .then((data: { user?: MeUser }) => {
+        if (!data.user) { router.push('/sign-in'); return }
+        setMeUser(data.user)
+        const dn = data.user.displayName ?? ''
+        const b = data.user.bio ?? ''
+        setDisplayName(dn)
+        originalDisplayName.current = dn
+        setBio(b)
+        originalBio.current = b
+        if (data.user.avatarUrl) setAvatarPreview(data.user.avatarUrl)
       })
-      .catch(() => {})
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, clerkUser?.id])
+      .catch(() => router.push('/sign-in'))
+      .finally(() => setIsLoading(false))
+  }, [router])
 
-  if (!isLoaded) {
+  if (isLoading || !meUser) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
         <Loader2 size={32} className="animate-spin text-text-secondary" />
       </div>
     )
-  }
-
-  if (!clerkUser) {
-    router.push('/sign-in')
-    return null
   }
 
   async function handleAvatarSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -76,23 +71,14 @@ export default function EditProfilePage() {
     setIsUploadingAvatar(true)
 
     try {
-      // Step 1: Get presigned URL from our upload endpoint
-      const uploadRes = await fetch('/api/v1/uploads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contentType: file.type, type: 'avatar' }),
-      })
-      if (!uploadRes.ok) throw new Error('Upload setup failed')
-      const { uploadUrl, key } = await uploadRes.json() as { uploadUrl: string; key: string }
+      const body = new FormData()
+      body.append('file', file)
+      body.append('type', 'avatar')
 
-      // Step 2: PUT file directly to R2
-      const putRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': file.type },
-      })
-      if (!putRes.ok) throw new Error('Upload to storage failed')
+      const uploadRes = await fetch('/api/v1/uploads', { method: 'POST', body })
+      if (!uploadRes.ok) throw new Error('Upload failed')
 
+      const { key } = await uploadRes.json() as { key: string }
       setAvatarKey(key)
     } catch {
       setAvatarError('Photo upload failed. Try a different image.')
@@ -115,7 +101,7 @@ export default function EditProfilePage() {
       if (avatarKey) body.avatarKey = avatarKey
 
       if (Object.keys(body).length === 0) {
-        router.push(`/@${clerkUser!.username}`)
+        router.push(`/@${meUser.username}`)
         return
       }
 
@@ -130,9 +116,8 @@ export default function EditProfilePage() {
         return
       }
 
-      // Invalidate profile cache so the profile page refetches
-      queryClient.invalidateQueries({ queryKey: ['profile', clerkUser!.username] })
-      router.push(`/@${clerkUser!.username}`)
+      queryClient.invalidateQueries({ queryKey: ['profile', meUser.username] })
+      router.push(`/@${meUser.username}`)
     } catch {
       setSaveError('Failed to save changes. Please try again.')
     } finally {
@@ -145,7 +130,7 @@ export default function EditProfilePage() {
       <div className="w-full max-w-[480px] mx-auto">
         {/* Back link */}
         <a
-          href={`/@${clerkUser.username}`}
+          href={`/@${meUser.username}`}
           className="text-[14px] text-text-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-accent rounded mb-6 inline-block"
         >
           ← Back to profile
@@ -166,7 +151,7 @@ export default function EditProfilePage() {
             ) : (
               <div className="w-full h-full bg-accent/20 flex items-center justify-center">
                 <span className="text-[28px] font-medium text-accent" aria-hidden="true">
-                  {clerkUser.username?.[0]?.toUpperCase() ?? '?'}
+                  {meUser.username[0]?.toUpperCase() ?? '?'}
                 </span>
               </div>
             )}
