@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, UtensilsCrossed } from 'lucide-react'
 import { ReviewCard } from '@/components/review-card'
 import { FloatingActionButton } from '@/components/floating-action-button'
+import { DeleteDialog } from '@/components/delete-dialog'
 
 interface FeedAuthor {
   id: string
@@ -41,7 +43,10 @@ type InfiniteFeedData = {
 
 export default function FeedPage() {
   const queryClient = useQueryClient()
+  const router = useRouter()
   const sentinelRef = useRef<HTMLDivElement>(null)
+  // HI-03: deleteTarget state for delete dialog
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
   const {
     data,
@@ -128,6 +133,18 @@ export default function FeedPage() {
     },
   })
 
+  // HI-03: Delete mutation — invalidates ['feed'] so deleted item disappears
+  const deleteMutation = useMutation({
+    mutationFn: async (reviewId: string) => {
+      const res = await fetch(`/api/v1/reviews/${reviewId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Delete failed')
+    },
+    onSuccess: () => {
+      setDeleteTarget(null)
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
+    },
+  })
+
   const allItems = data?.pages.flatMap((page) => page.items) ?? []
 
   // Loading state (initial load)
@@ -195,8 +212,8 @@ export default function FeedPage() {
                 }}
                 showAuthor={true}
                 isOwnReview={item.isOwnReview}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onEdit={(id) => router.push(`/reviews/${id}/edit`)}
+                onDelete={(id) => setDeleteTarget(id)}
                 onLike={(id) => likeMutation.mutate({ reviewId: id })}
               />
             ))}
@@ -221,6 +238,14 @@ export default function FeedPage() {
 
       {/* FAB — same as reviews page */}
       <FloatingActionButton href="/reviews/new" />
+
+      {/* HI-03: Delete confirmation dialog */}
+      <DeleteDialog
+        open={deleteTarget !== null}
+        onClose={() => { if (!deleteMutation.isPending) setDeleteTarget(null) }}
+        onConfirm={() => { if (deleteTarget) deleteMutation.mutate(deleteTarget) }}
+        loading={deleteMutation.isPending}
+      />
     </div>
   )
 }

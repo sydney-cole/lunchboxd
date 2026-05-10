@@ -80,7 +80,9 @@ export default function EditReviewPage() {
     restaurantName: review.restaurant?.name ?? undefined,
     rating: review.rating ? parseFloat(review.rating) : 0,
     note: review.body ?? '',
-    photoKey: review.photoUrl ?? null,
+    // ME-04: photoKey must be null in edit mode — reviewer.photoUrl is a URL (not an upload key).
+    // ReviewComposer initializes photoKey as null always; only sends it in PATCH payload if user changes photo.
+    photoKey: null,
     tags: review.tags ?? [],
     mealDate: review.mealDate ?? undefined,
   }

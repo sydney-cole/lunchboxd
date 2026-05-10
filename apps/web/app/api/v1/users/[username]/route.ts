@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
-import { users, userStats, reviews, reviewTags, likes } from '@/lib/schema'
+import { users, userStats, reviews, reviewTags, likes, follows, friendships } from '@/lib/schema'
 import { eq, and, isNull, desc, inArray } from 'drizzle-orm'
 
 export async function GET(
@@ -101,10 +101,44 @@ export async function GET(
     }))
   }
 
+  // HI-06: Include followState for authenticated viewers so the profile page FollowButton
+  // can show the correct initial state instead of always defaulting to 'none'.
+  let followState: 'none' | 'following' | 'friends' = 'none'
+  if (viewerUserId && viewerUserId !== user.id) {
+    const [followRow] = await db
+      .select({ id: follows.id })
+      .from(follows)
+      .where(and(eq(follows.followerId, viewerUserId), eq(follows.followeeId, user.id)))
+    if (followRow) {
+      // Check if mutual (friendship)
+      const [friendRow] = await db
+        .select({ id: friendships.id })
+        .from(friendships)
+        .where(
+          and(
+            eq(friendships.userAId, viewerUserId),
+            eq(friendships.userBId, user.id)
+          )
+        )
+      // Also check reverse direction (friendships stored as (A, B) not necessarily (viewer, target))
+      const [friendRowReverse] = friendRow ? [friendRow] : await db
+        .select({ id: friendships.id })
+        .from(friendships)
+        .where(
+          and(
+            eq(friendships.userAId, user.id),
+            eq(friendships.userBId, viewerUserId)
+          )
+        )
+      followState = (friendRow || friendRowReverse) ? 'friends' : 'following'
+    }
+  }
+
   return NextResponse.json({
     user,
     stats: stats ?? { followerCount: '0', followingCount: '0', reviewCount: '0' },
     reviews: enrichedReviews,
     isOwner: viewerUserId === user.id,
+    followState,
   })
 }

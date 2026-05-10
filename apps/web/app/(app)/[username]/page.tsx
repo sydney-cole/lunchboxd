@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import React, { useState, useRef, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { ReviewCard } from '@/components/review-card'
 import { FollowButton } from '@/components/follow-button'
+import { DeleteDialog } from '@/components/delete-dialog'
 
 // Types
 interface ProfileUser {
@@ -50,16 +51,19 @@ export default function ProfilePage() {
   const params = useParams()
   const username = params.username as string
   const queryClient = useQueryClient()
+  const router = useRouter()
   const sentinelRef = useRef<HTMLDivElement>(null)
+  // HI-02: deleteTarget state for delete dialog
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
-  // Fetch profile data
+  // Fetch profile data (includes followState for HI-06)
   const { data: profile, isLoading: profileLoading, isError: profileError } = useQuery({
     queryKey: ['profile', username],
     queryFn: async () => {
       const res = await fetch(`/api/v1/users/${username}`)
       if (res.status === 404) return null
       if (!res.ok) throw new Error('Failed to load profile')
-      return res.json() as Promise<{ user: ProfileUser; stats: ProfileStats; isOwner: boolean }>
+      return res.json() as Promise<{ user: ProfileUser; stats: ProfileStats; isOwner: boolean; followState: 'none' | 'following' | 'friends' }>
     },
     staleTime: 60_000,
   })
@@ -139,6 +143,18 @@ export default function ProfilePage() {
     },
   })
 
+  // HI-02: Delete mutation for profile page review cards
+  const deleteMutation = useMutation({
+    mutationFn: async (reviewId: string) => {
+      const res = await fetch(`/api/v1/reviews/${reviewId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Delete failed')
+    },
+    onSuccess: () => {
+      setDeleteTarget(null)
+      queryClient.invalidateQueries({ queryKey: ['profile-reviews', username] })
+    },
+  })
+
   if (profileLoading) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
@@ -159,7 +175,7 @@ export default function ProfilePage() {
     )
   }
 
-  const { user, stats, isOwner } = profile
+  const { user, stats, isOwner, followState } = profile
 
   const allReviews = reviewsData?.pages.flatMap((p) => p.items) ?? []
 
@@ -226,7 +242,8 @@ export default function ProfilePage() {
                 Edit profile
               </a>
             ) : (
-              <FollowButton targetUserId={user.id} initialState="none" />
+              // HI-06: Pass actual followState from profile API instead of hardcoding 'none'
+              <FollowButton targetUserId={user.id} initialState={followState ?? 'none'} />
             )}
           </div>
         </div>
@@ -271,8 +288,8 @@ export default function ProfilePage() {
                 }}
                 showAuthor={false}
                 isOwnReview={isOwner}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onEdit={(id) => router.push(`/reviews/${id}/edit`)}
+                onDelete={(id) => setDeleteTarget(id)}
                 onLike={(id) => likeMutation.mutate({ reviewId: id })}
               />
             ))}
@@ -292,6 +309,14 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+
+      {/* HI-02: Delete confirmation dialog */}
+      <DeleteDialog
+        open={deleteTarget !== null}
+        onClose={() => { if (!deleteMutation.isPending) setDeleteTarget(null) }}
+        onConfirm={() => { if (deleteTarget) deleteMutation.mutate(deleteTarget) }}
+        loading={deleteMutation.isPending}
+      />
     </div>
   )
 }

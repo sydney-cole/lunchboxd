@@ -73,6 +73,17 @@ export default function MapPage() {
     staleTime: 30_000,
   })
 
+  // LO-03: Guard for missing API key — avoids passing undefined to APIProvider which breaks silently
+  if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+    return (
+      <div className="flex h-full items-center justify-center p-8 text-center">
+        <p className="text-text-secondary">
+          Map unavailable — Google Maps API key not configured.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col md:flex-row h-[calc(100vh-64px)]">
       {/* Map area */}
@@ -82,7 +93,7 @@ export default function MapPage() {
             <Loader2 size={32} className="animate-spin text-text-secondary" />
           </div>
         )}
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID ?? 'DEMO_MAP_ID'}
             defaultZoom={12}
