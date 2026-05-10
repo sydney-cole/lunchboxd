@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
 import { users, follows, friendships } from '@/lib/schema'
 import { followListQuerySchema } from '@lunchboxd/shared'
-import { eq, and, or, inArray, gt } from 'drizzle-orm'
+import { eq, and, or, inArray, gt, asc } from 'drizzle-orm'
 
 export async function GET(
   req: Request,
@@ -42,6 +42,7 @@ export async function GET(
 
   // limit+1 trick: fetch one extra to determine if there's a next page
   const fetchLimit = limit + 1
+  // HI-05: Add .orderBy(asc(users.id)) for deterministic cursor-based pagination
   const followerRows = await db
     .select({
       id: users.id,
@@ -52,6 +53,7 @@ export async function GET(
     .from(follows)
     .innerJoin(users, eq(follows.followerId, users.id))
     .where(and(...conditions))
+    .orderBy(asc(users.id))
     .limit(fetchLimit)
 
   const hasMore = followerRows.length === fetchLimit

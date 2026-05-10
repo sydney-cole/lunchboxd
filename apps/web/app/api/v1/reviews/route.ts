@@ -1,10 +1,10 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { reviews, reviewTags, restaurants, likes } from '@/lib/schema'
+import { reviews, reviewTags, restaurants, likes, userStats } from '@/lib/schema'
 import { reviewSchema } from '@lunchboxd/shared'
 import { resolveUserId, fanOutToFollowers } from '@/lib/queries'
-import { eq, isNull, desc, and, inArray } from 'drizzle-orm'
+import { eq, isNull, desc, and, inArray, sql } from 'drizzle-orm'
 
 export async function POST(req: Request) {
   const { userId: clerkId } = await auth()
@@ -63,6 +63,21 @@ export async function POST(req: Request) {
     await fanOutToFollowers(review.id, userId, review.createdAt)
   } catch (err) {
     console.error('[fanOutToFollowers] failed for review', review.id, err)
+  }
+
+  // ME-09: Increment reviewCount in userStats
+  try {
+    await db.insert(userStats)
+      .values({ userId, reviewCount: '1' })
+      .onConflictDoUpdate({
+        target: userStats.userId,
+        set: {
+          reviewCount: sql`${userStats.reviewCount} + 1`,
+          updatedAt: new Date(),
+        },
+      })
+  } catch (err) {
+    console.error('[userStats] failed to increment reviewCount for user', userId, err)
   }
 
   return NextResponse.json(review, { status: 201 })

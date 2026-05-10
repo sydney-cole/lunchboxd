@@ -15,6 +15,12 @@ export async function POST(req: Request) {
 
   const type = (formData.get('type') as string) === 'avatar' ? 'avatar' : 'review'
 
+  // ME-01: Server-side file size check (client-side limit is not trustworthy for direct API calls)
+  const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+  if (file.size > MAX_SIZE) {
+    return NextResponse.json({ error: 'File too large. Maximum size is 10MB.' }, { status: 413 })
+  }
+
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json(
       { error: 'Invalid file type. Allowed: JPEG, PNG, WebP' },

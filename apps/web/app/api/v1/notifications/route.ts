@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { notifications, users, reviews, restaurants } from '@/lib/schema'
 import { resolveUserId } from '@/lib/queries'
 import { notificationQuerySchema } from '@lunchboxd/shared'
-import { eq, lt, and, desc, inArray } from 'drizzle-orm'
+import { eq, lt, and, desc, inArray, isNull } from 'drizzle-orm'
 
 export async function GET(req: Request) {
   const { userId: clerkId } = await auth()
@@ -66,10 +66,11 @@ export async function GET(req: Request) {
   const reviewIds = [...new Set(pageRows.map(r => r.reviewId).filter((id): id is string => id !== null))]
   const restaurantNameMap: Record<string, string | null> = {}
   if (reviewIds.length > 0) {
+    // ME-08: Filter soft-deleted reviews so notifications don't show restaurant names for deleted reviews
     const reviewRows = await db
       .select({ id: reviews.id, restaurantId: reviews.restaurantId })
       .from(reviews)
-      .where(inArray(reviews.id, reviewIds))
+      .where(and(inArray(reviews.id, reviewIds), isNull(reviews.deletedAt)))
     const restaurantIds = reviewRows
       .map(r => r.restaurantId)
       .filter((id): id is string => id !== null)

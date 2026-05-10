@@ -2,10 +2,10 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
-import { reviews, reviewTags, feedItems, restaurants } from '@/lib/schema'
+import { reviews, reviewTags, feedItems, restaurants, userStats } from '@/lib/schema'
 import { reviewSchema, updateReviewSchema } from '@lunchboxd/shared'
 import { resolveUserId } from '@/lib/queries'
-import { eq, and, isNull } from 'drizzle-orm'
+import { eq, and, isNull, sql } from 'drizzle-orm'
 
 export async function GET(
   _req: NextRequest,
@@ -18,8 +18,10 @@ export async function GET(
   const userId = await resolveUserId(clerkId)
   if (!userId) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
+  // CR-07: Remove userId filter from GET — any authenticated user can fetch a review by ID.
+  // Ownership check is kept for PATCH and DELETE handlers only.
   const [review] = await db.select().from(reviews)
-    .where(and(eq(reviews.id, id), eq(reviews.userId, userId), isNull(reviews.deletedAt)))
+    .where(and(eq(reviews.id, id), isNull(reviews.deletedAt)))
 
   if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 })
 
@@ -144,6 +146,17 @@ export async function DELETE(
 
   // Hard-delete feed_items for this review (denormalized cache rows)
   await db.delete(feedItems).where(eq(feedItems.reviewId, id))
+
+  // ME-09: Decrement reviewCount in userStats (floor at 0)
+  await db.insert(userStats)
+    .values({ userId, reviewCount: '0' })
+    .onConflictDoUpdate({
+      target: userStats.userId,
+      set: {
+        reviewCount: sql`GREATEST(${userStats.reviewCount} - 1, 0)`,
+        updatedAt: new Date(),
+      },
+    })
 
   return NextResponse.json({ success: true })
 }

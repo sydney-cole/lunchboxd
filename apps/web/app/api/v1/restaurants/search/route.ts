@@ -43,7 +43,12 @@ export async function GET(req: NextRequest) {
     const { places = [] } = await placesRes.json()
 
     // 3. Upsert into local restaurants table (cache)
-    const upserted = await Promise.all(
+    // NOTE: Two concurrent requests for the same query can both miss the cache
+    // and call Google Places. The onConflictDoUpdate handles DB-level duplicates,
+    // but the combined response may briefly return duplicate-looking rows from
+    // two concurrent in-flight results. A distributed lock would be needed to
+    // eliminate this; acceptable at MVP scale. (ME-06)
+    const results = await Promise.all(
       places.slice(0, 5).map(async (p: any) => {
         const [row] = await db.insert(restaurants).values({
           placeId: p.id,
@@ -64,6 +69,9 @@ export async function GET(req: NextRequest) {
         return row
       })
     )
+
+    // CR-08: Filter out undefined entries (can occur if Neon HTTP driver returns empty array for any upsert)
+    const upserted = results.filter((r): r is NonNullable<typeof r> => r !== undefined)
 
     // 4. Merge: cached rows not already in upserted results + fresh Places results
     const upsertedIds = new Set(upserted.map(r => r.id))
