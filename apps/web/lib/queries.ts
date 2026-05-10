@@ -32,6 +32,7 @@ export async function fanOutToFollowers(
   ]
 
   if (feedRows.length > 0) {
-    await db.insert(feedItems).values(feedRows)
+    // HI-04: onConflictDoNothing makes fanOut idempotent; feedItemsUniqueIdx enforces uniqueness on (ownerUserId, reviewId)
+    await db.insert(feedItems).values(feedRows).onConflictDoNothing()
   }
 }

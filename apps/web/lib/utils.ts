@@ -1,5 +1,7 @@
 export function formatRelativeTime(isoString: string): string {
   const diff = Date.now() - new Date(isoString).getTime()
+  // LO-07: Handle negative diff (future timestamp due to clock skew) gracefully
+  if (diff < 0) return 'just now'
   const minutes = Math.floor(diff / 60_000)
   if (minutes < 1) return 'just now'
   if (minutes < 60) return `${minutes}m`

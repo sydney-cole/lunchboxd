@@ -91,6 +91,8 @@ export const feedItems = pgTable('feed_items', {
 }, (table) => ({
   // Index required for fan-out-on-write feed queries
   feedItemsOwnerIdx: index('feed_items_owner_idx').on(table.ownerUserId),
+  // Unique constraint enables onConflictDoNothing in fanOutToFollowers (HI-04)
+  feedItemsUniqueIdx: uniqueIndex('feed_items_unique_idx').on(table.ownerUserId, table.reviewId),
 }))
 
 export const likes = pgTable('likes', {
