@@ -15,8 +15,8 @@ progress:
 
 # State: Lunchboxd
 
-**Last updated:** 2026-05-04
-**Session:** Phase 06 Plan 05 complete — mobile NotificationsScreen (FlatList + infinite scroll + read-all on mount), bell icon in Profile tab header (Ionicons + unread polling), MapScreen (react-native-maps MapView with social pin coloring + searchable list panel), Search tab Map button. Phase 6 and v1.0 milestone fully complete.
+**Last updated:** 2026-04-29
+**Session:** Quick task 260429-a01 complete — stripped mobile app from monorepo; fixed 27 web bugs (7 critical, 8 high, 7 medium, 5 low) across API routes, lib, components, and pages.
 
 ---
 
@@ -178,6 +178,14 @@ Phase 6 of 6 | 5/5 plans complete — v1.0 milestone complete
 ### Blockers
 
 - None
+
+---
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260429-a01 | Strip mobile app and fix all web bugs from REVIEW.md | 2026-04-29 | 18fae3f | [260429-a01-strip-mobile-fix-bugs](./../quick/260429-a01-strip-mobile-fix-bugs/) |
 
 ---
 
