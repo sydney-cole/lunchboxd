@@ -60,22 +60,25 @@ export async function POST(req: Request) {
     followState = 'friends'
   }
 
-  // 3. Upsert userStats for actor (increment followingCount)
-  // CRITICAL: Use upsert, NOT bare update — userStats row may not exist (Pitfall 1)
-  await db.insert(userStats)
-    .values({ userId: actorUserId, followingCount: '1', followerCount: '0' })
-    .onConflictDoUpdate({
-      target: userStats.userId,
-      set: { followingCount: sql`${userStats.followingCount} + 1`, updatedAt: new Date() },
-    })
+  // CR-04: Gate stats upserts on inserted.length > 0 — prevents counter corruption on repeated POST
+  if (inserted.length > 0) {
+    // 3. Upsert userStats for actor (increment followingCount)
+    // CRITICAL: Use upsert, NOT bare update — userStats row may not exist (Pitfall 1)
+    await db.insert(userStats)
+      .values({ userId: actorUserId, followingCount: '1', followerCount: '0' })
+      .onConflictDoUpdate({
+        target: userStats.userId,
+        set: { followingCount: sql`${userStats.followingCount} + 1`, updatedAt: new Date() },
+      })
 
-  // 4. Upsert userStats for target (increment followerCount)
-  await db.insert(userStats)
-    .values({ userId: targetUserId, followerCount: '1', followingCount: '0' })
-    .onConflictDoUpdate({
-      target: userStats.userId,
-      set: { followerCount: sql`${userStats.followerCount} + 1`, updatedAt: new Date() },
-    })
+    // 4. Upsert userStats for target (increment followerCount)
+    await db.insert(userStats)
+      .values({ userId: targetUserId, followerCount: '1', followingCount: '0' })
+      .onConflictDoUpdate({
+        target: userStats.userId,
+        set: { followerCount: sql`${userStats.followerCount} + 1`, updatedAt: new Date() },
+      })
+  }
 
   return NextResponse.json({ followState })
 }
@@ -96,9 +99,10 @@ export async function DELETE(req: Request) {
 
   const { targetUserId } = parsed.data
 
-  // 1. Delete the follow row (per D-05)
-  await db.delete(follows)
+  // 1. Delete the follow row (per D-05) — use .returning() to check if a row was actually deleted
+  const deleted = await db.delete(follows)
     .where(and(eq(follows.followerId, actorUserId), eq(follows.followeeId, targetUserId)))
+    .returning({ id: follows.id })
 
   // 2. Delete friendship row if it exists (either direction — per D-05, D-08)
   await db.delete(friendships)
@@ -127,21 +131,24 @@ export async function DELETE(req: Request) {
       )
   }
 
-  // 4. Decrement userStats for actor (followingCount - 1, floor at 0)
-  await db.insert(userStats)
-    .values({ userId: actorUserId, followingCount: '0', followerCount: '0' })
-    .onConflictDoUpdate({
-      target: userStats.userId,
-      set: { followingCount: sql`GREATEST(${userStats.followingCount} - 1, 0)`, updatedAt: new Date() },
-    })
+  // CR-05: Gate stat decrements on deleted.length > 0 — only decrement if a follow row was actually removed
+  if (deleted.length > 0) {
+    // 4. Decrement userStats for actor (followingCount - 1, floor at 0)
+    await db.insert(userStats)
+      .values({ userId: actorUserId, followingCount: '0', followerCount: '0' })
+      .onConflictDoUpdate({
+        target: userStats.userId,
+        set: { followingCount: sql`GREATEST(${userStats.followingCount} - 1, 0)`, updatedAt: new Date() },
+      })
 
-  // 5. Decrement userStats for target (followerCount - 1, floor at 0)
-  await db.insert(userStats)
-    .values({ userId: targetUserId, followerCount: '0', followingCount: '0' })
-    .onConflictDoUpdate({
-      target: userStats.userId,
-      set: { followerCount: sql`GREATEST(${userStats.followerCount} - 1, 0)`, updatedAt: new Date() },
-    })
+    // 5. Decrement userStats for target (followerCount - 1, floor at 0)
+    await db.insert(userStats)
+      .values({ userId: targetUserId, followerCount: '0', followingCount: '0' })
+      .onConflictDoUpdate({
+        target: userStats.userId,
+        set: { followerCount: sql`GREATEST(${userStats.followerCount} - 1, 0)`, updatedAt: new Date() },
+      })
+  }
 
   return NextResponse.json({ followState: 'none' })
 }

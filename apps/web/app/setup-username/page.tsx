@@ -14,6 +14,7 @@ export default function SetupUsernamePage() {
 
   function validate(value: string): string | undefined {
     if (!value) return 'This field is required.'
+    if (value.length < 2) return 'Username must be at least 2 characters.'
     if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Username can only contain letters, numbers, and underscores.'
     if (value.length > 30) return 'Username must be 30 characters or fewer.'
   }
@@ -87,6 +88,8 @@ export default function SetupUsernamePage() {
                 aria-describedby={error ? 'username-error' : undefined}
                 aria-invalid={!!error}
                 placeholder="yourhandle"
+                minLength={2}
+                maxLength={30}
                 className={`w-full h-[44px] pl-8 pr-10 bg-surface border rounded-lg text-[16px] font-[family-name:--font-inter] text-text-primary placeholder:text-text-secondary outline-none focus:ring-2 focus:ring-accent focus:ring-offset-0 transition-colors ${
                   error ? 'border-destructive' : 'border-border'
                 }`}

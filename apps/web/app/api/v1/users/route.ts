@@ -22,14 +22,23 @@ export async function POST(req: Request) {
   const email = clerkUser?.emailAddresses[0]?.emailAddress ?? ''
 
   // Upsert — the webhook may have already created the row
-  await db.insert(users).values({
-    clerkId,
-    username,
-    email,
-  }).onConflictDoUpdate({
-    target: users.clerkId,
-    set: { username, email, updatedAt: new Date() },
-  })
+  // CR-09: Wrap in try/catch to detect username uniqueness violations (code '23505') and return 409
+  try {
+    await db.insert(users).values({
+      clerkId,
+      username,
+      email,
+    }).onConflictDoUpdate({
+      target: users.clerkId,
+      set: { username, email, updatedAt: new Date() },
+    })
+  } catch (err: unknown) {
+    const dbError = err as { code?: string }
+    if (dbError?.code === '23505') {
+      return NextResponse.json({ error: 'Username already taken' }, { status: 409 })
+    }
+    throw err
+  }
 
   return NextResponse.json({ success: true }, { status: 201 })
 }
