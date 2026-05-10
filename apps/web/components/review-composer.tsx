@@ -36,7 +36,11 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
   )
   const [rating, setRating] = useState<number>(initialData?.rating ?? 0)
   const [note, setNote] = useState<string>(initialData?.note ?? '')
-  const [photoKey, setPhotoKey] = useState<string | null>(initialData?.photoKey ?? null)
+  // ME-04 / LO-05: photoKey always starts as null in both create and edit mode.
+  // In edit mode, the existing photo URL is for display only (not sent unless changed).
+  const [photoKey, setPhotoKey] = useState<string | null>(null)
+  // Track whether user has explicitly changed the photo field
+  const [photoChanged, setPhotoChanged] = useState(false)
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? [])
   const [mealDate, setMealDate] = useState<string>(
     initialData?.mealDate ?? getTodayDateString()
@@ -74,12 +78,15 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
     setFormError(null)
     setIsSubmitting(true)
 
+    // ME-04: In edit mode, only include photoKey in payload when the user has changed the photo.
+    // Omitting photoKey from the PATCH payload means "no change to photo" (updateReviewSchema uses .partial()).
+    // If photoChanged is true, include photoKey (may be null for "remove photo" or a key for "new photo").
     const payload: CreateReviewInput = {
       mealType,
       restaurantId: mealType === 'restaurant' && restaurant ? restaurant.id : null,
       rating,
       note: note.trim() || undefined,
-      photoKey: photoKey || null,
+      ...(mode === 'edit' ? (photoChanged ? { photoKey: photoKey || null } : {}) : { photoKey: photoKey || null }),
       tags,
       mealDate: mealDate || null,
     }
@@ -186,7 +193,13 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
             <label className="block text-[14px] text-text-secondary mb-1">
               Photo
             </label>
-            <PhotoPicker photoKey={photoKey} onPhotoChange={setPhotoKey} />
+            <PhotoPicker
+              photoKey={photoKey}
+              onPhotoChange={(key) => {
+                setPhotoKey(key)
+                setPhotoChanged(true)
+              }}
+            />
           </div>
 
           {/* Tag input */}

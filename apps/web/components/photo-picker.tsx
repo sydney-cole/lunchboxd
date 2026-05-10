@@ -15,14 +15,16 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // ME-05: Use a ref to track the preview URL for cleanup — avoids closure over stale state value
+  const previewUrlRef = useRef<string | null>(null)
   const errorId = 'photo-picker-error'
 
-  // Revoke object URL when previewUrl changes or component unmounts to prevent memory leaks
+  // Revoke object URL only on unmount — avoids premature revocation when state changes
   useEffect(() => {
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
     }
-  }, [previewUrl])
+  }, []) // empty deps — runs only on unmount
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -38,8 +40,9 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
       return
     }
 
-    // Create preview immediately
+    // Create preview immediately — track via ref for stable cleanup reference
     const objectUrl = URL.createObjectURL(file)
+    previewUrlRef.current = objectUrl
     setPreviewUrl(objectUrl)
     setIsUploading(true)
 
@@ -66,8 +69,9 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
   }
 
   const handleRemove = () => {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current)
+      previewUrlRef.current = null
     }
     setPreviewUrl(null)
     setError(null)

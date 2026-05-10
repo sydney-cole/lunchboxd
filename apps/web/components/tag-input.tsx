@@ -13,7 +13,8 @@ export function TagInput({ tags, onChange }: TagInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const commitTag = (raw: string) => {
-    const trimmed = raw.trim()
+    // LO-01: Normalize to lowercase before deduplication — matches server-side normalization
+    const trimmed = raw.trim().toLowerCase()
     if (!trimmed) return
     if (!tags.includes(trimmed)) {
       onChange([...tags, trimmed])

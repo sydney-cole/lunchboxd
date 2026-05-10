@@ -108,6 +108,8 @@ export function NotificationBell() {
       // non-critical — badge will clear on next poll
     }
     queryClient.invalidateQueries({ queryKey: ['notifications-unread'] })
+    // HI-08: Also invalidate the notifications list so panel items reflect updated read state immediately
+    queryClient.invalidateQueries({ queryKey: ['notifications'] })
   }, [queryClient])
 
   const handleClose = useCallback(() => {

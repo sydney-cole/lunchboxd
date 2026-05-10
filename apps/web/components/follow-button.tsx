@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 type FollowState = 'none' | 'following' | 'friends'
@@ -11,6 +12,8 @@ interface FollowButtonProps {
 
 export function FollowButton({ targetUserId, initialState }: FollowButtonProps) {
   const queryClient = useQueryClient()
+  // HI-01: Track local follow state via useState — initialState is prop for first-render only
+  const [currentState, setCurrentState] = useState<FollowState>(initialState)
 
   const followMutation = useMutation({
     mutationFn: async ({ action }: { action: 'follow' | 'unfollow' }) => {
@@ -22,13 +25,14 @@ export function FollowButton({ targetUserId, initialState }: FollowButtonProps) 
       if (!res.ok) throw new Error('Follow action failed')
       return res.json() as Promise<{ followState: FollowState }>
     },
-    onSuccess: () => {
-      // Invalidate search results to refresh follow states
+    onSuccess: (data) => {
+      // Update local state from the API response (authoritative follow state)
+      setCurrentState(data.followState)
+      // Invalidate search results to refresh follow states in other UI
       queryClient.invalidateQueries({ queryKey: ['user-search'] })
     },
   })
 
-  const currentState = initialState
   const isLoading = followMutation.isPending
 
   // Per D-07: three label states, label change only — no badge or icon

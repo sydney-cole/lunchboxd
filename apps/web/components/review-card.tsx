@@ -49,8 +49,14 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
     if (el) setIsClamped(el.scrollHeight > el.clientHeight)
   }, [])
 
+  // LO-02: Use ResizeObserver to recheck clamped state on element resize (window resize, layout change)
   useEffect(() => {
+    const el = bodyRef.current
+    if (!el) return
     checkClamped()
+    const ro = new ResizeObserver(() => checkClamped())
+    ro.observe(el)
+    return () => ro.disconnect()
   }, [checkClamped])
 
   const ratingValue = review.rating ? parseFloat(review.rating) : 0
