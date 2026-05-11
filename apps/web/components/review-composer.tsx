@@ -36,9 +36,9 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
   )
   const [rating, setRating] = useState<number>(initialData?.rating ?? 0)
   const [note, setNote] = useState<string>(initialData?.note ?? '')
-  // ME-04 / LO-05: photoKey always starts as null in both create and edit mode.
+  // ME-04 / LO-05: photoUrl always starts as null in both create and edit mode.
   // In edit mode, the existing photo URL is for display only (not sent unless changed).
-  const [photoKey, setPhotoKey] = useState<string | null>(null)
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   // Track whether user has explicitly changed the photo field
   const [photoChanged, setPhotoChanged] = useState(false)
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? [])
@@ -78,15 +78,15 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
     setFormError(null)
     setIsSubmitting(true)
 
-    // ME-04: In edit mode, only include photoKey in payload when the user has changed the photo.
-    // Omitting photoKey from the PATCH payload means "no change to photo" (updateReviewSchema uses .partial()).
-    // If photoChanged is true, include photoKey (may be null for "remove photo" or a key for "new photo").
+    // ME-04: In edit mode, only include photoUrl in payload when the user has changed the photo.
+    // Omitting photoUrl from the PATCH payload means "no change to photo" (updateReviewSchema uses .partial()).
+    // If photoChanged is true, include photoUrl (may be null for "remove photo" or a URL for "new photo").
     const payload: CreateReviewInput = {
       mealType,
       restaurantId: mealType === 'restaurant' && restaurant ? restaurant.id : null,
       rating,
       note: note.trim() || undefined,
-      ...(mode === 'edit' ? (photoChanged ? { photoKey: photoKey || null } : {}) : { photoKey: photoKey || null }),
+      ...(mode === 'edit' ? (photoChanged ? { photoUrl: photoUrl || null } : {}) : { photoUrl: photoUrl || null }),
       tags,
       mealDate: mealDate || null,
     }
@@ -194,9 +194,9 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
               Photo
             </label>
             <PhotoPicker
-              photoKey={photoKey}
-              onPhotoChange={(key) => {
-                setPhotoKey(key)
+              photoUrl={photoUrl}
+              onPhotoChange={(url) => {
+                setPhotoUrl(url)
                 setPhotoChanged(true)
               }}
             />

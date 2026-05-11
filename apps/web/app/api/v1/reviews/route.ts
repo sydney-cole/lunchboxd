@@ -21,21 +21,22 @@ export async function POST(req: Request) {
 
   const input = parsed.data
 
-  // Validate photoKey ownership: key must be reviews/<clerkId>/<uuid>
-  if (input.photoKey) {
-    const photoKeyPattern = /^reviews\/[a-zA-Z0-9_-]+\/[0-9a-f-]{36}$/
-    if (!photoKeyPattern.test(input.photoKey)) {
-      return NextResponse.json({ error: 'Invalid photoKey format' }, { status: 400 })
-    }
-    const keyClerkId = input.photoKey.split('/')[1]
-    if (keyClerkId !== clerkId) {
-      return NextResponse.json({ error: 'photoKey does not belong to authenticated user' }, { status: 400 })
+  // Validate photoUrl ownership: pathname must be reviews/<clerkId>/<uuid>
+  if (input.photoUrl) {
+    try {
+      const parsed = new URL(input.photoUrl)
+      const parts = parsed.pathname.split('/')
+      // pathname: /<prefix>/reviews/<clerkId>/<uuid> or /reviews/<clerkId>/<uuid>
+      const reviewsIdx = parts.indexOf('reviews')
+      if (reviewsIdx === -1 || parts[reviewsIdx + 1] !== clerkId) {
+        return NextResponse.json({ error: 'photoUrl does not belong to authenticated user' }, { status: 400 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid photoUrl' }, { status: 400 })
     }
   }
 
-  const photoUrl = input.photoKey
-    ? `${process.env.BLOB_BASE_URL}/${input.photoKey}`
-    : null
+  const photoUrl = input.photoUrl ?? null
 
   const [review] = await db.insert(reviews).values({
     userId,

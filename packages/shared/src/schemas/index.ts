@@ -27,7 +27,7 @@ export const reviewSchema = z.object({
   restaurantId: z.string().uuid().optional().nullable(),
   rating: z.number().min(0.5).max(5).multipleOf(0.5),
   note: z.string().max(2000).optional(),
-  photoKey: z.string().optional().nullable(),
+  photoUrl: z.string().url().optional().nullable(),
   tags: z.array(z.string().max(50)).max(50).default([]),
   mealDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().nullable(),
 })

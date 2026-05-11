@@ -4,13 +4,13 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Camera, X, Loader2 } from 'lucide-react'
 
 interface PhotoPickerProps {
-  photoKey: string | null
-  onPhotoChange: (key: string | null) => void
+  photoUrl: string | null
+  onPhotoChange: (url: string | null) => void
 }
 
 const MAX_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
 
-export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
+export function PhotoPicker({ photoUrl, onPhotoChange }: PhotoPickerProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -55,8 +55,8 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
 
       if (!uploadRes.ok) throw new Error('Upload failed')
 
-      const { key } = await uploadRes.json()
-      onPhotoChange(key)
+      const { url } = await uploadRes.json()
+      onPhotoChange(url)
     } catch {
       setError('Photo upload failed. Try again.')
       setPreviewUrl(null)
@@ -79,7 +79,7 @@ export function PhotoPicker({ photoKey, onPhotoChange }: PhotoPickerProps) {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  const hasPhoto = photoKey && previewUrl
+  const hasPhoto = photoUrl && previewUrl
 
   return (
     <div className="w-full">
