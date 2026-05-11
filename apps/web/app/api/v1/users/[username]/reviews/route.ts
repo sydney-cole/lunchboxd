@@ -47,6 +47,7 @@ export async function GET(
   const rows = await db
     .select({
       id: reviews.id,
+      mealName: reviews.mealName,
       body: reviews.body,
       rating: reviews.rating,
       photoUrl: reviews.photoUrl,
@@ -117,6 +118,7 @@ export async function GET(
 
   const enriched = items.map(r => ({
     id: r.id,
+    mealName: r.mealName,
     body: r.body,
     rating: r.rating,
     photoUrl: r.photoUrl,

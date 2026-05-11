@@ -28,6 +28,7 @@ export interface Review {
   userId: string
   restaurantId: string | null  // nullable for homemade meals
   mealType: 'restaurant' | 'homemade'
+  mealName: string | null
   body: string | null
   rating: number | null
   photoUrl: string | null

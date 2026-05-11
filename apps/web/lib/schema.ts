@@ -45,6 +45,7 @@ export const reviews = pgTable('reviews', {
   userId: uuid('user_id').references(() => users.id).notNull(),
   restaurantId: uuid('restaurant_id').references(() => restaurants.id),  // nullable for homemade
   mealType: text('meal_type').notNull(),  // 'restaurant' | 'homemade'
+  mealName: text('meal_name'),
   body: text('body'),
   rating: numeric('rating', { precision: 2, scale: 1 }),
   photoUrl: text('photo_url'),

@@ -88,6 +88,7 @@ export async function PATCH(
   const updateSet: Record<string, unknown> = { updatedAt: new Date() }
   if (input.mealType !== undefined) updateSet.mealType = input.mealType
   if (input.restaurantId !== undefined) updateSet.restaurantId = input.restaurantId ?? null
+  if (input.mealName !== undefined) updateSet.mealName = input.mealName ?? null
   if (input.note !== undefined) updateSet.body = input.note ?? null
   if (input.rating !== undefined) updateSet.rating = input.rating?.toString() ?? null
   if (input.photoUrl !== undefined) {

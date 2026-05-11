@@ -34,6 +34,7 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
       ? { id: initialData.restaurantId, name: initialData.restaurantName ?? '' }
       : null
   )
+  const [mealName, setMealName] = useState<string>(initialData?.mealName ?? '')
   const [rating, setRating] = useState<number>(initialData?.rating ?? 0)
   const [note, setNote] = useState<string>(initialData?.note ?? '')
   // ME-04 / LO-05: photoUrl always starts as null in both create and edit mode.
@@ -84,6 +85,7 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
     const payload: CreateReviewInput = {
       mealType,
       restaurantId: mealType === 'restaurant' && restaurant ? restaurant.id : null,
+      mealName: mealName.trim() || null,
       rating,
       note: note.trim() || undefined,
       ...(mode === 'edit' ? (photoChanged ? { photoUrl: photoUrl || null } : {}) : { photoUrl: photoUrl || null }),
@@ -148,6 +150,25 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
               <RestaurantSearch value={restaurant} onChange={setRestaurant} />
             </div>
           )}
+
+          {/* Meal name */}
+          <div>
+            <label
+              htmlFor="meal-name"
+              className="block text-[14px] text-text-secondary mb-1"
+            >
+              Meal name
+            </label>
+            <input
+              id="meal-name"
+              type="text"
+              value={mealName}
+              onChange={(e) => setMealName(e.target.value)}
+              maxLength={100}
+              placeholder="e.g. Tacos al Pastor, Ramen Bowl..."
+              className="w-full h-[44px] px-3 bg-surface border border-border rounded-[8px] text-[16px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+            />
+          </div>
 
           {/* Star rating */}
           <div>

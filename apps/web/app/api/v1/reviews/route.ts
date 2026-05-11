@@ -42,6 +42,7 @@ export async function POST(req: Request) {
     userId,
     restaurantId: input.restaurantId ?? null,
     mealType: input.mealType,
+    mealName: input.mealName ?? null,
     body: input.note ?? null,
     rating: input.rating?.toString() ?? null,
     photoUrl,

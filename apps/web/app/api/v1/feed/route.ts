@@ -108,6 +108,7 @@ export async function GET(req: Request) {
       if (!review) return null
       return {
         id: review.id,
+        mealName: review.mealName,
         body: review.body,
         rating: review.rating,
         photoUrl: review.photoUrl,

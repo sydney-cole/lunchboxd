@@ -25,6 +25,7 @@ export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>
 export const reviewSchema = z.object({
   mealType: z.enum(['restaurant', 'homemade']),
   restaurantId: z.string().uuid().optional().nullable(),
+  mealName: z.string().max(100).optional().nullable(),
   rating: z.number().min(0.5).max(5).multipleOf(0.5),
   note: z.string().max(2000).optional(),
   photoUrl: z.string().url().optional().nullable(),

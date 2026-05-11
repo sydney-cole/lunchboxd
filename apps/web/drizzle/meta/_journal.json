@@ -15,6 +15,13 @@
       "when": 1777471004690,
       "tag": "0001_deep_tigra",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746982800000,
+      "tag": "0002_add_meal_name",
+      "breakpoints": true
     }
   ]
 }

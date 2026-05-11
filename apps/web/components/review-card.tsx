@@ -1,13 +1,14 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { Pencil, Trash2, MoreHorizontal, Heart } from 'lucide-react'
+import { Pencil, Trash2, MoreHorizontal, Heart, MapPin } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
 import { formatRelativeTime } from '@/lib/utils'
 
 interface ReviewCardProps {
   review: {
     id: string
+    mealName: string | null
     body: string | null
     rating: string | null
     photoUrl: string | null
@@ -74,22 +75,24 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
     return () => document.removeEventListener('mousedown', handleOutsideClick)
   }, [menuOpen])
 
-  const restaurantName =
+  const locationLabel =
     review.mealType === 'homemade'
       ? 'Homemade'
-      : review.restaurant?.name ?? 'Unknown Restaurant'
+      : [review.restaurant?.name, review.restaurant?.address]
+          .filter(Boolean)
+          .join(' · ')
 
   return (
     <div
       className="bg-surface border border-border rounded-[12px] shadow-[0_1px_4px_0_rgba(28,25,23,0.08)] overflow-hidden hover:border-accent transition-colors"
     >
-      {/* Photo thumbnail */}
+      {/* Photo — fixed 16:9 aspect ratio for consistent card height */}
       {review.photoUrl && (
-        <div className="w-full h-[160px] overflow-hidden">
+        <div className="w-full aspect-[16/9] overflow-hidden">
           <img
             src={review.photoUrl}
             alt="Meal photo"
-            className="w-full h-full object-cover rounded-t-[12px]"
+            className="w-full h-full object-cover"
           />
         </div>
       )}
@@ -120,12 +123,18 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
           </div>
         )}
 
-        {/* Header row: restaurant name + kebab menu */}
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span className="text-[16px] font-semibold text-text-primary truncate">
-              {restaurantName}
+        {/* Header row: meal name + kebab menu */}
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <div className="flex-1 min-w-0">
+            <span className="block text-[16px] font-semibold text-text-primary truncate">
+              {review.mealName || 'Untitled'}
             </span>
+            {locationLabel && (
+              <span className="flex items-center gap-1 mt-0.5">
+                <MapPin size={12} className="text-text-secondary flex-shrink-0" />
+                <span className="text-[13px] text-text-secondary truncate">{locationLabel}</span>
+              </span>
+            )}
           </div>
 
           {/* Kebab menu — hidden when isOwnReview is explicitly false */}
