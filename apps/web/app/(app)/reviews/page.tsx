@@ -13,6 +13,7 @@ interface ReviewWithLike {
   userId: string
   restaurantId: string | null
   mealType: 'restaurant' | 'homemade'
+  mealName: string | null
   body: string | null
   rating: string | null
   photoUrl: string | null

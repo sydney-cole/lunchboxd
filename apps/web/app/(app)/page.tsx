@@ -16,6 +16,7 @@ interface FeedAuthor {
 
 interface FeedItem {
   id: string
+  mealName: string | null
   body: string | null
   rating: string | null
   photoUrl: string | null
@@ -198,6 +199,7 @@ export default function FeedPage() {
                 key={item.id}
                 review={{
                   id: item.id,
+                  mealName: item.mealName,
                   body: item.body,
                   rating: item.rating,
                   photoUrl: item.photoUrl,

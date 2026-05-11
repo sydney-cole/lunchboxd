@@ -25,6 +25,7 @@ interface ProfileStats {
 
 interface ProfileReview {
   id: string
+  mealName: string | null
   body: string | null
   rating: string | null
   photoUrl: string | null
@@ -275,6 +276,7 @@ export default function ProfilePage() {
                 key={review.id}
                 review={{
                   id: review.id,
+                  mealName: review.mealName,
                   body: review.body,
                   rating: review.rating,
                   photoUrl: review.photoUrl,
