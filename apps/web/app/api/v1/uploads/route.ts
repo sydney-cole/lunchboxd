@@ -34,9 +34,11 @@ export async function POST(req: Request) {
   try {
     const blob = await put(key, file, { access: 'public', contentType: file.type })
     return NextResponse.json({ url: blob.url, key: blob.pathname })
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[uploads] put() failed:', message)
     return NextResponse.json(
-      { error: 'Upload failed. Check that BLOB_READ_WRITE_TOKEN is configured.' },
+      { error: 'Upload failed.', detail: message },
       { status: 503 }
     )
   }
