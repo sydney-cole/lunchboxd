@@ -138,7 +138,8 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div className="min-h-[calc(100vh-4rem)] bg-bg">
+    <div className="w-full max-w-[640px] mx-auto px-4 py-10">
       {/* Header */}
       <div className="mb-5">
         <h1 className="text-2xl font-bold text-text-primary mb-1">Search</h1>
@@ -373,6 +374,7 @@ export default function SearchPage() {
 
         </div>
       )}
+    </div>
     </div>
   )
 }
