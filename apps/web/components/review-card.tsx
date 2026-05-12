@@ -83,15 +83,15 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
     <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(28,25,23,0.06),0_1px_2px_rgba(28,25,23,0.04)] hover:shadow-[0_8px_24px_rgba(28,25,23,0.10),0_2px_6px_rgba(28,25,23,0.05)] hover:-translate-y-0.5 transition-all duration-200 group flex">
 
       {/* Left: Square image */}
-      <div className="relative w-[148px] flex-shrink-0 self-stretch">
+      <div className="relative w-[148px] flex-shrink-0 self-stretch bg-surface-subtle">
         {review.photoUrl ? (
           <img
             src={review.photoUrl}
             alt="Meal photo"
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-300"
+            className="absolute inset-0 w-full h-full object-contain"
           />
         ) : (
-          <div className="absolute inset-0 bg-accent-subtle flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center">
             <UtensilsCrossed size={28} strokeWidth={1.5} className="text-accent/30" />
           </div>
         )}
@@ -186,7 +186,7 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
 
         {/* Stars */}
         <div className="mb-2">
-          <StarRating value={ratingValue} onChange={() => {}} readOnly size="sm" />
+          <StarRating value={ratingValue} onChange={() => {}} readOnly size="sm" showLabel={false} />
         </div>
 
         {/* Body text */}

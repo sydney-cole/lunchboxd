@@ -7,9 +7,10 @@ interface StarRatingProps {
   onChange: (value: number) => void
   readOnly?: boolean
   size?: 'sm' | 'md'
+  showLabel?: boolean
 }
 
-export function StarRating({ value, onChange, readOnly = false, size = 'md' }: StarRatingProps) {
+export function StarRating({ value, onChange, readOnly = false, size = 'md', showLabel = true }: StarRatingProps) {
   const starSize = size === 'md' ? 32 : 20
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -118,9 +119,11 @@ export function StarRating({ value, onChange, readOnly = false, size = 'md' }: S
         <div className="flex items-center gap-1">
           {stars.map(renderStar)}
         </div>
-        <span className="text-[14px] text-text-secondary">
-          {value > 0 ? `${value} / 5` : '— / 5'}
-        </span>
+        {showLabel && (
+          <span className="text-[14px] text-text-secondary">
+            {value > 0 ? `${value} / 5` : '— / 5'}
+          </span>
+        )}
       </div>
     )
   }
