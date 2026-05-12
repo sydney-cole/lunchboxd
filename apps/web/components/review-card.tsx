@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { Pencil, Trash2, MoreHorizontal, Heart, MapPin } from 'lucide-react'
+import { Pencil, Trash2, MoreHorizontal, Heart, MapPin, UtensilsCrossed } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
 import { formatRelativeTime } from '@/lib/utils'
 
@@ -80,98 +80,94 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
           .join(' · ')
 
   return (
-    <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(28,25,23,0.06),0_1px_2px_rgba(28,25,23,0.04)] hover:shadow-[0_8px_24px_rgba(28,25,23,0.10),0_2px_6px_rgba(28,25,23,0.05)] hover:-translate-y-0.5 transition-all duration-200 group">
-      {/* Photo */}
-      {review.photoUrl && (
-        <div className="w-full aspect-[16/9] overflow-hidden">
+    <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(28,25,23,0.06),0_1px_2px_rgba(28,25,23,0.04)] hover:shadow-[0_8px_24px_rgba(28,25,23,0.10),0_2px_6px_rgba(28,25,23,0.05)] hover:-translate-y-0.5 transition-all duration-200 group flex">
+
+      {/* Left: Square image */}
+      <div className="relative w-[148px] flex-shrink-0 self-stretch">
+        {review.photoUrl ? (
           <img
             src={review.photoUrl}
             alt="Meal photo"
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-300"
           />
-        </div>
-      )}
+        ) : (
+          <div className="absolute inset-0 bg-accent-subtle flex items-center justify-center">
+            <UtensilsCrossed size={28} strokeWidth={1.5} className="text-accent/30" />
+          </div>
+        )}
+      </div>
 
-      {/* Card body */}
-      <div className="p-5">
+      {/* Right: Content */}
+      <div className="flex-1 p-4 flex flex-col min-w-0">
+
         {/* Author row */}
         {showAuthor && review.author && (
           <a
             href={`/@${review.author.username}`}
-            className="flex items-center gap-2.5 mb-4 group/author"
+            className="flex items-center gap-2 mb-2.5 group/author"
           >
             {review.author.avatarUrl ? (
               <img
                 src={review.author.avatarUrl}
-                className="w-8 h-8 rounded-full object-cover flex-shrink-0 ring-2 ring-white"
+                className="w-6 h-6 rounded-full object-cover flex-shrink-0"
                 alt=""
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
-                <span className="text-[12px] text-accent font-bold">
+              <div className="w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
+                <span className="text-[10px] text-accent font-bold">
                   {review.author.username.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
-            <div className="flex items-baseline gap-1.5 min-w-0">
-              <span className="text-[13px] font-semibold text-text-primary group-hover/author:text-accent transition-colors duration-150 truncate">
-                @{review.author.username}
+            <span className="text-[12px] font-semibold text-text-secondary group-hover/author:text-accent transition-colors duration-150 truncate">
+              @{review.author.username}
+            </span>
+            {review.createdAt && (
+              <span className="text-[12px] text-text-tertiary flex-shrink-0">
+                · {formatRelativeTime(
+                  typeof review.createdAt === 'string'
+                    ? review.createdAt
+                    : (review.createdAt as Date).toISOString()
+                )}
               </span>
-              {review.createdAt && (
-                <span className="text-[12px] text-text-tertiary flex-shrink-0">
-                  · {formatRelativeTime(
-                    typeof review.createdAt === 'string'
-                      ? review.createdAt
-                      : (review.createdAt as Date).toISOString()
-                  )}
-                </span>
-              )}
-            </div>
+            )}
           </a>
         )}
 
-        {/* Meal name + location + kebab menu */}
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-[family-name:--font-fraunces] text-[20px] font-semibold text-text-primary leading-tight truncate">
-              {review.mealName || 'Untitled'}
-            </h3>
-            {locationLabel && (
-              <span className="flex items-center gap-1 mt-1">
-                <MapPin size={12} className="text-accent flex-shrink-0" />
-                <span className="text-[13px] text-text-secondary truncate">{locationLabel}</span>
-              </span>
-            )}
-          </div>
+        {/* Meal name + kebab */}
+        <div className="flex items-start justify-between gap-1.5 mb-1">
+          <h3 className="font-[family-name:--font-fraunces] text-[17px] font-semibold text-text-primary leading-snug">
+            {review.mealName || 'Untitled'}
+          </h3>
 
           {isOwnReview !== false && (
-            <div className="relative flex-shrink-0" ref={menuRef}>
+            <div className="relative flex-shrink-0 -mt-0.5" ref={menuRef}>
               <button
                 type="button"
                 onClick={() => setMenuOpen((prev) => !prev)}
-                className="p-1.5 rounded-full text-text-tertiary hover:text-text-secondary hover:bg-surface-subtle transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent"
+                className="p-1 rounded-full text-text-tertiary hover:text-text-secondary hover:bg-surface-subtle transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent"
                 aria-label="Review actions"
                 aria-expanded={menuOpen}
               >
-                <MoreHorizontal size={18} />
+                <MoreHorizontal size={16} />
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 top-9 z-10 min-w-[152px] bg-surface border border-border rounded-xl shadow-[0_8px_24px_rgba(28,25,23,0.10),0_2px_6px_rgba(28,25,23,0.05)] py-1.5 overflow-hidden">
+                <div className="absolute right-0 top-8 z-10 min-w-[144px] bg-surface border border-border rounded-xl shadow-[0_8px_24px_rgba(28,25,23,0.10)] py-1.5 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => { setMenuOpen(false); onEdit(review.id) }}
-                    className="flex items-center gap-2.5 w-full px-3.5 py-2.5 text-[13px] font-medium text-text-primary hover:bg-surface-subtle transition-colors duration-150"
+                    className="flex items-center gap-2.5 w-full px-3.5 py-2 text-[13px] font-medium text-text-primary hover:bg-surface-subtle transition-colors duration-150"
                   >
-                    <Pencil size={15} />
+                    <Pencil size={14} />
                     Edit
                   </button>
                   <button
                     type="button"
                     onClick={() => { setMenuOpen(false); onDelete(review.id) }}
-                    className="flex items-center gap-2.5 w-full px-3.5 py-2.5 text-[13px] font-medium text-destructive hover:bg-red-50 transition-colors duration-150"
+                    className="flex items-center gap-2.5 w-full px-3.5 py-2 text-[13px] font-medium text-destructive hover:bg-red-50 transition-colors duration-150"
                   >
-                    <Trash2 size={15} />
+                    <Trash2 size={14} />
                     Delete
                   </button>
                 </div>
@@ -180,17 +176,25 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
           )}
         </div>
 
-        {/* Star rating */}
-        <div className="mb-3">
+        {/* Location */}
+        {locationLabel && (
+          <span className="flex items-center gap-1 mb-2">
+            <MapPin size={11} className="text-accent flex-shrink-0" />
+            <span className="text-[12px] text-text-secondary truncate">{locationLabel}</span>
+          </span>
+        )}
+
+        {/* Stars */}
+        <div className="mb-2">
           <StarRating value={ratingValue} onChange={() => {}} readOnly size="sm" />
         </div>
 
-        {/* Review body */}
+        {/* Body text */}
         {review.body && (
-          <div className="mb-3">
+          <div className="mb-2">
             <p
               ref={bodyRef}
-              className={`text-[14px] text-text-secondary leading-relaxed ${!expanded ? 'line-clamp-3' : ''}`}
+              className={`text-[13px] text-text-secondary leading-relaxed ${!expanded ? 'line-clamp-2' : ''}`}
             >
               {review.body}
             </p>
@@ -198,7 +202,7 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
               <button
                 type="button"
                 onClick={() => setExpanded((prev) => !prev)}
-                className="mt-1 text-[13px] font-medium text-accent hover:text-accent-hover focus:outline-none"
+                className="text-[12px] font-medium text-accent hover:text-accent-hover focus:outline-none"
               >
                 {expanded ? 'Show less' : 'Show more'}
               </button>
@@ -206,41 +210,46 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
           </div>
         )}
 
-        {/* Tags — pill style */}
+        {/* Tags */}
         {review.tags && review.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            {review.tags.map((tag) => (
+          <div className="flex flex-wrap gap-1 mb-2">
+            {review.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-accent-subtle text-accent"
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-accent-subtle text-accent"
               >
                 {tag}
               </span>
             ))}
+            {review.tags.length > 3 && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium text-text-tertiary">
+                +{review.tags.length - 3}
+              </span>
+            )}
           </div>
         )}
 
+        {/* Spacer pushes footer to bottom */}
+        <div className="flex-1" />
+
         {/* Footer: date + like */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+        <div className="flex items-center justify-between pt-2.5 border-t border-border mt-2">
           {review.mealDate ? (
-            <span className="text-[12px] text-text-tertiary">{formatMealDate(review.mealDate)}</span>
+            <span className="text-[11px] text-text-tertiary">{formatMealDate(review.mealDate)}</span>
           ) : (
             <span />
           )}
           <button
             type="button"
             onClick={() => onLike(review.id)}
-            className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors duration-150 ${
+            className={`flex items-center gap-1 text-[12px] font-medium transition-colors duration-150 ${
               review.isLikedByMe
                 ? 'text-destructive'
                 : 'text-text-tertiary hover:text-destructive'
             }`}
             aria-label={review.isLikedByMe ? 'Unlike review' : 'Like review'}
           >
-            <Heart
-              size={15}
-              className={review.isLikedByMe ? 'fill-destructive' : ''}
-            />
+            <Heart size={13} className={review.isLikedByMe ? 'fill-destructive' : ''} />
             <span>{review.likeCount}</span>
           </button>
         </div>
