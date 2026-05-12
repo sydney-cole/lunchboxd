@@ -46,7 +46,6 @@ export default function FeedPage() {
   const queryClient = useQueryClient()
   const router = useRouter()
   const sentinelRef = useRef<HTMLDivElement>(null)
-  // HI-03: deleteTarget state for delete dialog
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
   const {
@@ -71,8 +70,6 @@ export default function FeedPage() {
     staleTime: 60_000,
   })
 
-  // IntersectionObserver sentinel — triggers fetchNextPage when bottom div enters viewport
-  // Per D-06: infinite scroll only, no "Load more" button
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -89,8 +86,6 @@ export default function FeedPage() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
-  // Feed like mutation — targets ['feed'] query key, NOT ['my-reviews']
-  // Per RESEARCH.md Pitfall 3: separate cache entry from my-reviews
   const likeMutation = useMutation({
     mutationFn: async ({ reviewId }: { reviewId: string }) => {
       const res = await fetch('/api/v1/likes', {
@@ -134,7 +129,6 @@ export default function FeedPage() {
     },
   })
 
-  // HI-03: Delete mutation — invalidates ['feed'] so deleted item disappears
   const deleteMutation = useMutation({
     mutationFn: async (reviewId: string) => {
       const res = await fetch(`/api/v1/reviews/${reviewId}`, { method: 'DELETE' })
@@ -148,43 +142,51 @@ export default function FeedPage() {
 
   const allItems = data?.pages.flatMap((page) => page.items) ?? []
 
-  // Loading state (initial load)
   if (isLoading) {
     return (
-      <div className="min-h-[calc(100vh-3.5rem)] bg-bg flex items-center justify-center">
-        <Loader2 size={28} className="animate-spin text-text-secondary" />
+      <div className="min-h-[calc(100vh-4rem)] bg-bg flex items-center justify-center">
+        <Loader2 size={28} className="animate-spin text-text-tertiary" />
       </div>
     )
   }
 
-  // Error state
   if (isError) {
     return (
-      <div className="min-h-[calc(100vh-3.5rem)] bg-bg flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-[20px] font-semibold text-text-primary mb-2">Couldn&apos;t load your feed</p>
-          <p className="text-[15px] text-text-secondary">Something went wrong. Refresh the page to try again.</p>
+      <div className="min-h-[calc(100vh-4rem)] bg-bg flex items-center justify-center">
+        <div className="text-center px-4">
+          <p className="font-[family-name:--font-fraunces] text-[22px] font-semibold text-text-primary mb-2">
+            Couldn&apos;t load your feed
+          </p>
+          <p className="text-[15px] text-text-secondary">
+            Something went wrong. Refresh the page to try again.
+          </p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] bg-bg">
+    <div className="min-h-[calc(100vh-4rem)] bg-bg">
       <div className="w-full max-w-[640px] mx-auto px-4 py-10">
-        <h1 className="font-[family-name:--font-fraunces] text-[32px] text-text-primary mb-8 text-center">Feed</h1>
+        <h1 className="font-[family-name:--font-fraunces] text-[36px] font-bold text-text-primary mb-8 tracking-tight">
+          Feed
+        </h1>
 
         {/* Empty state */}
         {allItems.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <UtensilsCrossed size={36} strokeWidth={1.5} className="text-border mb-5" />
-            <h2 className="text-[18px] font-semibold text-text-primary mb-1.5">Nothing here yet</h2>
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-surface-subtle border border-border flex items-center justify-center mb-5">
+              <UtensilsCrossed size={28} strokeWidth={1.5} className="text-text-tertiary" />
+            </div>
+            <h2 className="font-[family-name:--font-fraunces] text-[20px] font-semibold text-text-primary mb-2">
+              Nothing here yet
+            </h2>
             <p className="text-[14px] text-text-secondary mb-7 max-w-[220px] leading-relaxed">
               Follow people to see what they&apos;re eating.
             </p>
             <a
               href="/search"
-              className="inline-flex items-center bg-accent text-white text-[13px] font-semibold px-5 py-2 rounded-full hover:bg-accent-hover transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 tracking-wide"
+              className="inline-flex items-center bg-accent text-white text-[14px] font-semibold px-6 py-2.5 rounded-full hover:bg-accent-hover transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 shadow-[0_1px_3px_rgba(249,115,22,0.20)]"
             >
               Find people to follow
             </a>
@@ -193,7 +195,7 @@ export default function FeedPage() {
 
         {/* Feed list */}
         {allItems.length > 0 && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5">
             {allItems.map((item) => (
               <ReviewCard
                 key={item.id}
@@ -220,28 +222,24 @@ export default function FeedPage() {
               />
             ))}
 
-            {/* Infinite scroll sentinel — invisible div; IntersectionObserver triggers fetchNextPage */}
             <div ref={sentinelRef} />
 
-            {/* Footer: loading spinner or end-of-feed indicator */}
             {isFetchingNextPage && (
-              <div className="flex justify-center py-4">
-                <Loader2 size={20} className="animate-spin text-text-secondary" />
+              <div className="flex justify-center py-5">
+                <Loader2 size={20} className="animate-spin text-text-tertiary" />
               </div>
             )}
             {!hasNextPage && allItems.length > 0 && (
-              <p className="text-center text-[14px] text-text-secondary py-4">
-                You&apos;re all caught up.
+              <p className="text-center text-[13px] text-text-tertiary py-5">
+                You&apos;re all caught up
               </p>
             )}
           </div>
         )}
       </div>
 
-      {/* FAB — same as reviews page */}
       <FloatingActionButton href="/reviews/new" />
 
-      {/* HI-03: Delete confirmation dialog */}
       <DeleteDialog
         open={deleteTarget !== null}
         onClose={() => { if (!deleteMutation.isPending) setDeleteTarget(null) }}

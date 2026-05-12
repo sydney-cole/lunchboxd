@@ -29,25 +29,27 @@ function NotificationRow({ item, isLast }: { item: NotificationItem; isLast: boo
   return (
     <li
       role="article"
-      className={`flex items-center gap-2 px-4 py-3 ${item.read ? '' : 'border-l-2 border-accent'} ${isLast ? '' : 'border-b border-border'}`}
+      className={`flex items-center gap-3 px-4 py-3.5 transition-colors ${
+        item.read ? 'hover:bg-surface-subtle' : 'bg-accent-subtle hover:bg-accent-subtle/70 border-l-2 border-accent'
+      } ${isLast ? '' : 'border-b border-border'}`}
     >
       {item.actor?.avatarUrl ? (
         <img
           src={item.actor.avatarUrl}
-          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+          className="w-9 h-9 rounded-full object-cover flex-shrink-0 ring-2 ring-white"
           alt=""
         />
       ) : (
-        <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
-          <span className="text-[11px] text-accent font-medium">
+        <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
+          <span className="text-[12px] text-accent font-bold">
             {item.actor?.username.charAt(0).toUpperCase() ?? '?'}
           </span>
         </div>
       )}
-      <span className="text-[13px] text-text-secondary flex-1 min-w-0">
+      <span className="text-[13px] text-text-secondary flex-1 min-w-0 leading-snug">
         <span className="font-semibold text-text-primary">@{item.actor?.username ?? 'unknown'}</span>
         {' '}{actionText}
-        {' · '}{formatRelativeTime(item.createdAt)}
+        <span className="text-text-tertiary ml-1">· {formatRelativeTime(item.createdAt)}</span>
       </span>
     </li>
   )
@@ -59,7 +61,6 @@ export function NotificationBell() {
   const panelRef = useRef<HTMLDivElement>(null)
   const sentinelRef = useRef<HTMLLIElement>(null)
 
-  // Unread badge query — polls every 30s
   const { data: unreadData } = useQuery<{ hasUnread: boolean }>({
     queryKey: ['notifications-unread'],
     queryFn: async () => {
@@ -73,7 +74,6 @@ export function NotificationBell() {
 
   const hasUnread = unreadData?.hasUnread ?? false
 
-  // Panel notification list — only fetched when panel is open
   const {
     data,
     isLoading,
@@ -101,14 +101,12 @@ export function NotificationBell() {
 
   const handleOpen = useCallback(async () => {
     setIsOpen(true)
-    // Fire read-all and invalidate unread badge
     try {
       await fetch('/api/v1/notifications/read-all', { method: 'PATCH' })
     } catch {
-      // non-critical — badge will clear on next poll
+      // non-critical
     }
     queryClient.invalidateQueries({ queryKey: ['notifications-unread'] })
-    // HI-08: Also invalidate the notifications list so panel items reflect updated read state immediately
     queryClient.invalidateQueries({ queryKey: ['notifications'] })
   }, [queryClient])
 
@@ -116,7 +114,6 @@ export function NotificationBell() {
     setIsOpen(false)
   }, [])
 
-  // Click-outside handler
   useEffect(() => {
     function handleMouseDown(e: MouseEvent) {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
@@ -129,7 +126,6 @@ export function NotificationBell() {
     return () => document.removeEventListener('mousedown', handleMouseDown)
   }, [isOpen, handleClose])
 
-  // IntersectionObserver sentinel — triggers fetchNextPage
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -150,15 +146,18 @@ export function NotificationBell() {
     <div className="relative" ref={panelRef}>
       <button
         onClick={isOpen ? handleClose : handleOpen}
-        className="relative p-2.5 rounded-full hover:bg-bg transition-colors"
+        className="relative p-2 rounded-full hover:bg-accent-subtle transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent"
         aria-label={hasUnread ? 'Notifications — new activity' : 'Notifications'}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <Bell size={20} className="text-text-secondary hover:text-text-primary" />
+        <Bell
+          size={20}
+          className={`transition-colors duration-150 ${isOpen ? 'text-accent' : 'text-text-secondary hover:text-text-primary'}`}
+        />
         {hasUnread && (
           <span
-            className="absolute top-0 right-0 w-2 h-2 rounded-full bg-red-500"
+            className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-destructive ring-2 ring-white"
             aria-hidden="true"
           />
         )}
@@ -166,35 +165,35 @@ export function NotificationBell() {
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2 w-[360px] max-h-[480px] overflow-y-auto bg-surface border border-border rounded-[12px] shadow-[0_4px_12px_rgba(28,25,23,0.12)] z-50"
+          className="absolute right-0 top-full mt-2.5 w-[380px] max-h-[480px] overflow-y-auto bg-surface border border-border rounded-2xl shadow-[0_16px_48px_rgba(28,25,23,0.14),0_4px_16px_rgba(28,25,23,0.08)] z-50"
           role="dialog"
           aria-label="Notifications"
         >
-          <div className="px-4 pt-4 pb-3 border-b border-border">
-            <h2 className="text-[16px] font-semibold text-text-primary">Notifications</h2>
+          <div className="px-5 pt-4 pb-3.5 border-b border-border">
+            <h2 className="font-[family-name:--font-fraunces] text-[18px] font-semibold text-text-primary">
+              Notifications
+            </h2>
           </div>
 
-          {/* Loading state */}
           {isLoading && (
-            <div className="flex justify-center py-8">
-              <Loader2 size={16} className="animate-spin text-text-secondary" />
+            <div className="flex justify-center py-10">
+              <Loader2 size={18} className="animate-spin text-text-tertiary" />
             </div>
           )}
 
-          {/* Error state */}
           {isError && (
-            <p className="text-[14px] text-destructive px-4 py-4">
-              Could not load notifications. Pull down to retry.
+            <p className="text-[14px] text-destructive px-5 py-5">
+              Could not load notifications.
             </p>
           )}
 
-          {/* Notification list */}
           {!isLoading && !isError && (
             <ul>
               {allItems.length === 0 && (
-                <li className="px-4 py-8 text-center">
-                  <p className="text-[16px] font-semibold text-text-primary mb-1">No notifications yet</p>
-                  <p className="text-[14px] text-text-secondary">
+                <li className="px-5 py-10 text-center">
+                  <Bell size={28} strokeWidth={1.5} className="text-border mx-auto mb-3" />
+                  <p className="text-[15px] font-semibold text-text-primary mb-1">No notifications yet</p>
+                  <p className="text-[13px] text-text-secondary leading-relaxed">
                     When someone follows you or likes a review, you&apos;ll see it here.
                   </p>
                 </li>
@@ -206,14 +205,13 @@ export function NotificationBell() {
                   isLast={idx === allItems.length - 1}
                 />
               ))}
-              {/* Sentinel for infinite scroll */}
               <li ref={sentinelRef} />
             </ul>
           )}
 
           {isFetchingNextPage && (
             <div className="flex justify-center py-3">
-              <Loader2 size={14} className="animate-spin text-text-secondary" />
+              <Loader2 size={14} className="animate-spin text-text-tertiary" />
             </div>
           )}
         </div>

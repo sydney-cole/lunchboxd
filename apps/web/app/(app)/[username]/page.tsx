@@ -3,12 +3,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { Loader2, UtensilsCrossed } from 'lucide-react'
 import { ReviewCard } from '@/components/review-card'
 import { FollowButton } from '@/components/follow-button'
 import { DeleteDialog } from '@/components/delete-dialog'
 
-// Types
 interface ProfileUser {
   id: string
   username: string
@@ -54,10 +53,8 @@ export default function ProfilePage() {
   const queryClient = useQueryClient()
   const router = useRouter()
   const sentinelRef = useRef<HTMLDivElement>(null)
-  // HI-02: deleteTarget state for delete dialog
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
-  // Fetch profile data (includes followState for HI-06)
   const { data: profile, isLoading: profileLoading, isError: profileError } = useQuery({
     queryKey: ['profile', username],
     queryFn: async () => {
@@ -69,7 +66,6 @@ export default function ProfilePage() {
     staleTime: 60_000,
   })
 
-  // Infinite scroll for review list
   const {
     data: reviewsData,
     fetchNextPage,
@@ -91,7 +87,6 @@ export default function ProfilePage() {
     staleTime: 60_000,
   })
 
-  // IntersectionObserver sentinel
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -106,7 +101,6 @@ export default function ProfilePage() {
     return () => { if (el) observer.unobserve(el) }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
-  // Like mutation — targets ['profile-reviews', username] cache (NOT 'my-reviews' or 'feed')
   const likeMutation = useMutation({
     mutationFn: async ({ reviewId }: { reviewId: string }) => {
       const res = await fetch('/api/v1/likes', {
@@ -144,7 +138,6 @@ export default function ProfilePage() {
     },
   })
 
-  // HI-02: Delete mutation for profile page review cards
   const deleteMutation = useMutation({
     mutationFn: async (reviewId: string) => {
       const res = await fetch(`/api/v1/reviews/${reviewId}`, { method: 'DELETE' })
@@ -159,36 +152,38 @@ export default function ProfilePage() {
   if (profileLoading) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-text-secondary" />
+        <Loader2 size={28} className="animate-spin text-text-tertiary" />
       </div>
     )
   }
 
-  // notFound() cannot be called in Client Components — render a custom not-found UI instead
   if (profileError || profile == null) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-[20px] font-semibold text-text-primary mb-2">Profile not found</p>
-          <p className="text-[16px] text-text-secondary">This account doesn&apos;t exist or may have been removed.</p>
+        <div className="text-center px-4">
+          <p className="font-[family-name:--font-fraunces] text-[22px] font-semibold text-text-primary mb-2">
+            Profile not found
+          </p>
+          <p className="text-[15px] text-text-secondary">
+            This account doesn&apos;t exist or may have been removed.
+          </p>
         </div>
       </div>
     )
   }
 
   const { user, stats, isOwner, followState } = profile
-
   const allReviews = reviewsData?.pages.flatMap((p) => p.items) ?? []
 
   return (
-    <div className="min-h-screen bg-bg py-6 px-4">
+    <div className="min-h-screen bg-bg py-8 px-4">
       <div className="w-full max-w-[600px] mx-auto">
 
         {/* Profile header card */}
-        <div className="bg-surface border border-border rounded-xl p-6 mb-6">
-          {/* Avatar */}
-          <div className="flex flex-col items-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center overflow-hidden mb-3">
+        <div className="bg-surface border border-border rounded-2xl p-7 mb-6 shadow-[0_2px_8px_rgba(28,25,23,0.06),0_1px_2px_rgba(28,25,23,0.04)]">
+          <div className="flex flex-col items-center">
+            {/* Avatar */}
+            <div className="w-24 h-24 rounded-full bg-accent/15 flex items-center justify-center overflow-hidden mb-4 ring-4 ring-white shadow-[0_2px_12px_rgba(28,25,23,0.10)]">
               {user.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
@@ -196,72 +191,83 @@ export default function ProfilePage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-[28px] font-medium text-accent" aria-hidden="true">
+                <span className="text-[32px] font-bold text-accent" aria-hidden="true">
                   {user.username[0]?.toUpperCase() ?? '?'}
                 </span>
               )}
             </div>
 
-            {/* Username + display name */}
-            <p className="text-[20px] font-semibold text-text-primary">{user.username}</p>
-            {user.displayName && (
-              <p className="text-[16px] text-text-secondary mt-0.5">{user.displayName}</p>
-            )}
+            {/* Name */}
+            <h1 className="font-[family-name:--font-fraunces] text-[24px] font-bold text-text-primary leading-tight">
+              {user.displayName ?? user.username}
+            </h1>
+            <p className="text-[14px] text-text-secondary mt-0.5">@{user.username}</p>
 
             {/* Bio */}
             {user.bio && (
-              <p className="text-[16px] text-text-primary leading-relaxed mt-3 text-center">{user.bio}</p>
+              <p className="text-[15px] text-text-primary leading-relaxed mt-3 text-center max-w-[360px]">
+                {user.bio}
+              </p>
             )}
-          </div>
 
-          {/* Stats row */}
-          <div className="flex items-center justify-center gap-1 text-[14px] text-text-secondary mb-4">
-            <a
-              href={`/@${user.username}/followers`}
-              className="hover:underline hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-accent rounded"
-              aria-label={`${stats.followerCount} followers`}
-            >
-              {stats.followerCount} followers
-            </a>
-            <span className="mx-1" aria-hidden="true">·</span>
-            <a
-              href={`/@${user.username}/following`}
-              className="hover:underline hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-accent rounded"
-              aria-label={`${stats.followingCount} following`}
-            >
-              {stats.followingCount} following
-            </a>
-          </div>
+            {/* Stats row */}
+            <div className="flex items-center gap-6 mt-5 mb-5">
+              <a
+                href={`/@${user.username}/followers`}
+                className="flex flex-col items-center hover:text-accent transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent rounded"
+              >
+                <span className="text-[18px] font-bold text-text-primary">{stats.followerCount}</span>
+                <span className="text-[12px] text-text-secondary">followers</span>
+              </a>
+              <div className="w-px h-8 bg-border" />
+              <a
+                href={`/@${user.username}/following`}
+                className="flex flex-col items-center hover:text-accent transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent rounded"
+              >
+                <span className="text-[18px] font-bold text-text-primary">{stats.followingCount}</span>
+                <span className="text-[12px] text-text-secondary">following</span>
+              </a>
+              <div className="w-px h-8 bg-border" />
+              <div className="flex flex-col items-center">
+                <span className="text-[18px] font-bold text-text-primary">{stats.reviewCount}</span>
+                <span className="text-[12px] text-text-secondary">reviews</span>
+              </div>
+            </div>
 
-          {/* CTA: Edit Profile (own) or Follow button (others) */}
-          <div className="flex justify-center">
+            {/* CTA */}
             {isOwner ? (
               <a
                 href="/profile/edit"
-                className="px-4 py-2 rounded-md bg-accent text-white text-[16px] font-medium hover:bg-accent/90 focus:outline-none focus:ring-2 focus:ring-accent transition-colors"
+                className="px-6 py-2.5 rounded-full border border-border-strong text-text-primary text-[14px] font-semibold hover:border-accent hover:text-accent transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-accent"
               >
                 Edit profile
               </a>
             ) : (
-              // HI-06: Pass actual followState from profile API instead of hardcoding 'none'
               <FollowButton targetUserId={user.id} initialState={followState ?? 'none'} />
             )}
           </div>
         </div>
 
         {/* Reviews section */}
-        <h2 className="text-[20px] font-semibold text-text-primary mb-4">Reviews</h2>
+        <h2 className="font-[family-name:--font-fraunces] text-[22px] font-bold text-text-primary mb-5">
+          Reviews
+        </h2>
 
         {reviewsLoading && (
-          <div className="flex justify-center py-8">
-            <Loader2 size={24} className="animate-spin text-text-secondary" />
+          <div className="flex justify-center py-10">
+            <Loader2 size={24} className="animate-spin text-text-tertiary" />
           </div>
         )}
 
         {!reviewsLoading && allReviews.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-[20px] font-semibold text-text-primary mb-2">No reviews yet</p>
-            <p className="text-[16px] text-text-secondary">
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-surface border border-border flex items-center justify-center mb-4">
+              <UtensilsCrossed size={24} strokeWidth={1.5} className="text-text-tertiary" />
+            </div>
+            <p className="font-[family-name:--font-fraunces] text-[18px] font-semibold text-text-primary mb-1.5">
+              No reviews yet
+            </p>
+            <p className="text-[14px] text-text-secondary leading-relaxed">
               {isOwner
                 ? 'Post your first meal to see it here.'
                 : `${user.username} hasn't posted any reviews.`}
@@ -270,7 +276,7 @@ export default function ProfilePage() {
         )}
 
         {allReviews.length > 0 && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5">
             {allReviews.map((review) => (
               <ReviewCard
                 key={review.id}
@@ -299,20 +305,19 @@ export default function ProfilePage() {
             <div ref={sentinelRef} />
 
             {isFetchingNextPage && (
-              <div className="flex justify-center py-4">
-                <Loader2 size={20} className="animate-spin text-text-secondary" />
+              <div className="flex justify-center py-5">
+                <Loader2 size={20} className="animate-spin text-text-tertiary" />
               </div>
             )}
             {!hasNextPage && allReviews.length > 0 && (
-              <p className="text-center text-[14px] text-text-secondary py-4">
-                All reviews loaded.
+              <p className="text-center text-[13px] text-text-tertiary py-5">
+                All reviews loaded
               </p>
             )}
           </div>
         )}
       </div>
 
-      {/* HI-02: Delete confirmation dialog */}
       <DeleteDialog
         open={deleteTarget !== null}
         onClose={() => { if (!deleteMutation.isPending) setDeleteTarget(null) }}

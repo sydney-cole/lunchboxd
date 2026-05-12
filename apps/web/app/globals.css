@@ -2,19 +2,28 @@
 
 @theme {
   --color-bg: #FFF8F0;
-  --color-surface: #FFF0E0;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #FFF8F0;
   --color-accent: #F97316;
   --color-accent-hover: #EA6C10;
   --color-accent-active: #D96209;
+  --color-accent-subtle: #FFF4EC;
   --color-text-primary: #1C1917;
   --color-text-secondary: #78716C;
-  --color-border: #E7D5C5;
+  --color-text-tertiary: #A8A29E;
+  --color-border: #EDE4D9;
+  --color-border-strong: #DDD0C2;
   --color-destructive: #EF4444;
   --color-white: #FFFFFF;
 
   --font-inter: 'Inter Variable', sans-serif;
   --font-fraunces: 'Fraunces', serif;
 
-  --radius-auth-card: 12px;
-  --shadow-auth-card: 0 1px 4px 0 rgba(28, 25, 23, 0.08);
+  --radius-auth-card: 16px;
+  --shadow-auth-card: 0 4px 24px 0 rgba(28, 25, 23, 0.08), 0 1px 4px 0 rgba(28, 25, 23, 0.04);
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

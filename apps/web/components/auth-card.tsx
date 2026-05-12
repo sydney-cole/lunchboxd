@@ -10,22 +10,16 @@ interface AuthCardProps {
 export default function AuthCard({ heading, children }: AuthCardProps) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-bg px-4 py-8">
-      {/* Wordmark above card */}
-      <div className="mb-6 text-center">
-        <span
-          className="font-[family-name:--font-fraunces] text-[32px] font-semibold text-accent leading-none"
-        >
+      {/* Wordmark */}
+      <div className="mb-8 text-center">
+        <span className="font-[family-name:--font-fraunces] text-[36px] font-bold text-accent leading-none tracking-tight">
           lunchboxd
         </span>
       </div>
 
-      {/* Auth card */}
-      <div
-        className="w-full max-w-[400px] bg-surface border border-border rounded-xl px-8 py-12 shadow-[0_1px_4px_0_rgba(28,25,23,0.08)] max-sm:px-6 max-sm:py-6"
-      >
-        <h1
-          className="font-[family-name:--font-fraunces] text-[32px] font-semibold text-text-primary leading-[1.15] mb-8"
-        >
+      {/* Card */}
+      <div className="w-full max-w-[420px] bg-surface border border-border rounded-2xl px-8 py-10 shadow-[0_4px_24px_rgba(28,25,23,0.08),0_1px_4px_rgba(28,25,23,0.04)] max-sm:px-6 max-sm:py-8">
+        <h1 className="font-[family-name:--font-fraunces] text-[28px] font-semibold text-text-primary leading-tight mb-7">
           {heading}
         </h1>
         {children}

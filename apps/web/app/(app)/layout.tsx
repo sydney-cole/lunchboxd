@@ -29,37 +29,55 @@ export default async function AppLayout({
 
   return (
     <>
-      <nav className="h-14 border-b border-border bg-surface/80 backdrop-blur-sm flex items-center px-6 sticky top-0 z-40">
+      <nav className="h-16 border-b border-border bg-white/90 backdrop-blur-lg flex items-center px-6 sticky top-0 z-40">
         {/* Left: Logo */}
-        <a href="/" className="font-[family-name:--font-fraunces] text-[20px] text-text-primary shrink-0 w-40">
-          Lunchboxd
+        <a
+          href="/"
+          className="font-[family-name:--font-fraunces] text-[22px] font-bold text-text-primary shrink-0 w-44 hover:text-accent transition-colors duration-150"
+        >
+          lunchboxd
         </a>
 
         {/* Center: Nav links */}
-        <div className="flex-1 flex items-center justify-center gap-1">
-          <a href="/search" className="text-[13px] font-medium text-text-secondary hover:text-text-primary px-3 py-1.5 rounded-lg hover:bg-black/5 transition-colors">
+        <div className="flex-1 flex items-center justify-center gap-0.5">
+          <a
+            href="/"
+            className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
+          >
+            Feed
+          </a>
+          <a
+            href="/search"
+            className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
+          >
             Search
           </a>
-          <a href="/reviews" className="text-[13px] font-medium text-text-secondary hover:text-text-primary px-3 py-1.5 rounded-lg hover:bg-black/5 transition-colors">
+          <a
+            href="/reviews"
+            className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
+          >
             My Reviews
           </a>
-          <a href="/map" className="text-[13px] font-medium text-text-secondary hover:text-text-primary px-3 py-1.5 rounded-lg hover:bg-black/5 transition-colors">
+          <a
+            href="/map"
+            className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
+          >
             Map
           </a>
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2 w-40 justify-end">
+        <div className="flex items-center gap-2 w-44 justify-end">
           <NotificationBell />
           <a
             href={`/@${user.username}`}
             aria-label="Your profile"
-            className="w-8 h-8 rounded-full bg-accent/20 hover:bg-accent/30 transition-colors flex items-center justify-center overflow-hidden shrink-0 ring-2 ring-transparent hover:ring-accent/30"
+            className="w-9 h-9 rounded-full bg-accent/15 hover:bg-accent/25 transition-all duration-150 flex items-center justify-center overflow-hidden shrink-0 ring-2 ring-transparent hover:ring-accent/40 ring-offset-1"
           >
             {user.avatarUrl ? (
               <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-[13px] font-semibold text-accent">{initial}</span>
+              <span className="text-[13px] font-bold text-accent">{initial}</span>
             )}
           </a>
         </div>
