@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
 import { restaurants } from '@/lib/schema'
-import { ilike } from 'drizzle-orm'
+import { ilike, sql } from 'drizzle-orm'
 
 export async function GET(req: NextRequest) {
   const { userId: clerkId } = await auth()
@@ -60,6 +60,7 @@ export async function GET(req: NextRequest) {
         })
         .onConflictDoUpdate({
           target: restaurants.placeId,
+          targetWhere: sql`place_id IS NOT NULL`,
           set: {
             name: p.displayName?.text ?? '',
             address: p.formattedAddress ?? null,
