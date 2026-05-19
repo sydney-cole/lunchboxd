@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { users, follows, friendships, reviews, restaurants, reviewTags, likes } from '@/lib/schema'
 import { resolveUserId } from '@/lib/queries'
-import { eq, and, or, ilike, inArray, isNull, ne } from 'drizzle-orm'
+import { eq, and, or, ilike, inArray, isNull, ne, sql } from 'drizzle-orm'
 import { z } from 'zod/v4'
 
 const searchSchema = z.object({
@@ -97,6 +97,55 @@ export async function GET(req: Request) {
       .where(ilike(reviewTags.label, term))
       .limit(200),
   ])
+
+  // Augment restaurant results with Places API when local cache is thin
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY
+  if (apiKey && restaurantRows.length < 5) {
+    try {
+      const placesRes = await fetch('https://places.googleapis.com/v1/places:searchText', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': apiKey,
+          'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location',
+        },
+        body: JSON.stringify({ textQuery: q, includedType: 'restaurant' }),
+      })
+      if (placesRes.ok) {
+        const { places = [] } = await placesRes.json()
+        const upserted = await Promise.all(
+          places.slice(0, 5).map(async (p: any) => {
+            const [row] = await db.insert(restaurants).values({
+              placeId: p.id,
+              source: 'google_places',
+              name: p.displayName?.text ?? '',
+              address: p.formattedAddress ?? null,
+              lat: p.location?.latitude?.toString() ?? null,
+              lng: p.location?.longitude?.toString() ?? null,
+            })
+            .onConflictDoUpdate({
+              target: restaurants.placeId,
+              targetWhere: sql`place_id IS NOT NULL`,
+              set: {
+                name: p.displayName?.text ?? '',
+                address: p.formattedAddress ?? null,
+              },
+            })
+            .returning()
+            return row
+          })
+        )
+        const existingIds = new Set(restaurantRows.map(r => r.id))
+        for (const row of upserted) {
+          if (row && !existingIds.has(row.id)) {
+            restaurantRows.push({ id: row.id, name: row.name, address: row.address, city: row.city ?? null })
+          }
+        }
+      }
+    } catch {
+      // Places API failure is non-fatal — local results still returned
+    }
+  }
 
   // Fetch reviews for matching tags (excluding soft-deleted)
   const tagReviewIds = [...new Set(tagRows.map(t => t.reviewId))]
