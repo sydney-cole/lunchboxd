@@ -21,7 +21,7 @@ export default function EditProfilePage() {
   const [bio, setBio] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
-  const [avatarKey, setAvatarKey] = useState<string | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [avatarError, setAvatarError] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
@@ -78,12 +78,12 @@ export default function EditProfilePage() {
       const uploadRes = await fetch('/api/v1/uploads', { method: 'POST', body })
       if (!uploadRes.ok) throw new Error('Upload failed')
 
-      const { key } = await uploadRes.json() as { key: string }
-      setAvatarKey(key)
+      const { url } = await uploadRes.json() as { url: string }
+      setAvatarUrl(url)
     } catch {
       setAvatarError('Photo upload failed. Try a different image.')
       setAvatarPreview(null)
-      setAvatarKey(null)
+      setAvatarUrl(null)
     } finally {
       setIsUploadingAvatar(false)
     }
@@ -99,7 +99,7 @@ export default function EditProfilePage() {
       // Only send fields that were actually modified
       if (bio !== originalBio.current) body.bio = bio
       if (displayName !== originalDisplayName.current) body.displayName = displayName
-      if (avatarKey) body.avatarKey = avatarKey
+      if (avatarUrl) body.avatarUrl = avatarUrl
 
       if (Object.keys(body).length === 0) {
         router.push(`/@${meUser.username}`)

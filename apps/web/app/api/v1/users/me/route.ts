@@ -33,20 +33,20 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Validation failed', issues: parsed.error.issues }, { status: 400 })
   }
 
-  const { bio, displayName, avatarKey } = parsed.data
+  const { bio, displayName, avatarUrl } = parsed.data
 
-  // Security: avatarKey ownership check — key segment [1] must match authenticated clerkId
-  if (avatarKey) {
-    const keyClerkId = avatarKey.split('/')[1]
-    if (keyClerkId !== clerkId) {
-      return NextResponse.json({ error: 'avatarKey does not belong to authenticated user' }, { status: 403 })
+  // Security: avatarUrl ownership check — path must contain /avatars/<clerkId>/
+  if (avatarUrl) {
+    try {
+      const parts = new URL(avatarUrl).pathname.split('/')
+      const avatarsIdx = parts.indexOf('avatars')
+      if (avatarsIdx === -1 || parts[avatarsIdx + 1] !== clerkId) {
+        return NextResponse.json({ error: 'avatarUrl does not belong to authenticated user' }, { status: 403 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid avatarUrl' }, { status: 400 })
     }
   }
-
-  // Construct avatarUrl server-side from key (prevents client from supplying arbitrary URLs)
-  const avatarUrl = avatarKey
-    ? `${process.env.BLOB_BASE_URL}/${avatarKey}`
-    : undefined
 
   // Build update object — only include fields that were actually provided
   const updateData: Record<string, string | undefined | Date> = {

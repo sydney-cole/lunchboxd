@@ -22,9 +22,9 @@ describe('patchUserSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts partial updates — avatarKey only', () => {
+  it('accepts partial updates — avatarUrl only', () => {
     const result = patchUserSchema.safeParse({
-      avatarKey: 'avatars/user_clerk_123/550e8400-e29b-41d4-a716-446655440000',
+      avatarUrl: 'https://abc123.public.blob.vercel-storage.com/avatars/user_clerk_123/550e8400-e29b-41d4-a716-446655440000',
     })
     expect(result.success).toBe(true)
   })
@@ -33,7 +33,7 @@ describe('patchUserSchema', () => {
     const result = patchUserSchema.safeParse({
       bio: 'Hello world',
       displayName: 'Jane Doe',
-      avatarKey: 'avatars/user_clerk_123/550e8400-e29b-41d4-a716-446655440000',
+      avatarUrl: 'https://abc123.public.blob.vercel-storage.com/avatars/user_clerk_123/550e8400-e29b-41d4-a716-446655440000',
     })
     expect(result.success).toBe(true)
   })
@@ -43,8 +43,8 @@ describe('patchUserSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects malformed avatarKey (path traversal attempt)', () => {
-    const result = patchUserSchema.safeParse({ avatarKey: '../../etc/passwd' })
+  it('rejects malformed avatarUrl (not a URL)', () => {
+    const result = patchUserSchema.safeParse({ avatarUrl: '../../etc/passwd' })
     expect(result.success).toBe(false)
   })
 })

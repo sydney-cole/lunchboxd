@@ -80,9 +80,7 @@ export type FeedQueryInput = z.infer<typeof feedQuerySchema>
 export const patchUserSchema = z.object({
   bio: z.string().max(500).optional(),
   displayName: z.string().max(50).optional(),
-  // R2 key returned by POST /api/v1/uploads; server constructs the public URL
-  // Pattern: avatars/<clerkId>/<uuid> — only avatars/ prefix allowed for profile photos
-  avatarKey: z.string().regex(/^avatars\/[a-zA-Z0-9_-]+\/[0-9a-f-]{36}$/).optional(),
+  avatarUrl: z.string().url().optional(),
 })
 export type PatchUserInput = z.infer<typeof patchUserSchema>
 

@@ -41,6 +41,7 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
   const [expanded, setExpanded] = useState(false)
   const [isClamped, setIsClamped] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [photoError, setPhotoError] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const bodyRef = useRef<HTMLParagraphElement>(null)
 
@@ -84,11 +85,12 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
 
       {/* Left: Square image */}
       <div className="relative w-[148px] flex-shrink-0 self-stretch bg-surface-subtle">
-        {review.photoUrl ? (
+        {review.photoUrl && !photoError ? (
           <img
             src={review.photoUrl}
             alt="Meal photo"
             className="absolute inset-0 w-full h-full object-contain"
+            onError={() => setPhotoError(true)}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
