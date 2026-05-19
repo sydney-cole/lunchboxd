@@ -13,14 +13,14 @@ interface MapPin {
   reviewedByFollowed: boolean
 }
 
-interface ReviewedRestaurant {
+interface ListRestaurant {
   id: string
   name: string
-  city: string | null
+  city?: string | null
   address: string | null
   lat: string | null
   lng: string | null
-  reviewedByFollowed: boolean
+  reviewedByFollowed?: boolean
 }
 
 const NYC_FALLBACK = { lat: 40.7128, lng: -74.006 }
@@ -75,12 +75,12 @@ export default function MapPage() {
     staleTime: 60_000,
   })
 
-  // List — all reviewed restaurants with optional search filter (includes null lat/lng — D-11)
-  const { data: listRestaurants, isLoading: listLoading } = useQuery<ReviewedRestaurant[]>({
-    queryKey: ['restaurants-reviewed', debouncedQuery],
+  // List — Places search when query present, reviewed restaurants otherwise
+  const { data: listRestaurants, isLoading: listLoading } = useQuery<ListRestaurant[]>({
+    queryKey: ['restaurants-list', debouncedQuery],
     queryFn: async () => {
       const url = debouncedQuery.trim()
-        ? `/api/v1/restaurants/reviewed?q=${encodeURIComponent(debouncedQuery)}`
+        ? `/api/v1/restaurants/search?q=${encodeURIComponent(debouncedQuery)}`
         : '/api/v1/restaurants/reviewed'
       const res = await fetch(url)
       if (!res.ok) throw new Error('Failed to load restaurants')
@@ -152,7 +152,7 @@ export default function MapPage() {
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
-            placeholder="Search by neighborhood or city"
+            placeholder="Search restaurants"
             className="w-full px-3 py-2 rounded-[8px] border border-border bg-white text-[14px] focus:outline-none focus:ring-2 focus:ring-accent"
             aria-label="Search restaurants by neighborhood or city"
           />
@@ -168,7 +168,7 @@ export default function MapPage() {
               <MapPinIcon size={32} className="text-text-secondary mx-auto mb-3" />
               <p className="text-[16px] font-semibold text-text-primary mb-1">No restaurants found</p>
               <p className="text-[14px] text-text-secondary">
-                Try a different neighborhood or city name.
+                {debouncedQuery.trim() ? 'Try a different search term.' : 'No reviewed restaurants yet.'}
               </p>
             </div>
           )}
