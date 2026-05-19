@@ -23,15 +23,31 @@ interface ReviewedRestaurant {
   reviewedByFollowed: boolean
 }
 
+const NYC_FALLBACK = { lat: 40.7128, lng: -74.006 }
+
 export default function MapPage() {
   const [selectedPin, setSelectedPin] = useState<MapPin | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null)
 
   // Set document title (can't use metadata export in 'use client' page)
   useEffect(() => {
     document.title = 'Map · Lunchboxd'
+  }, [])
+
+  // Request geolocation on mount; fall back to NYC if denied or unsupported
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setMapCenter(NYC_FALLBACK)
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setMapCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => setMapCenter(NYC_FALLBACK),
+      { timeout: 8000 }
+    )
   }, [])
 
   // 300ms debounce on search input — same pattern as Phase 3 SearchPage
@@ -88,16 +104,17 @@ export default function MapPage() {
     <div className="flex flex-col md:flex-row h-[calc(100vh-64px)]">
       {/* Map area */}
       <div className="flex-1 relative">
-        {mapLoading && (
+        {(mapLoading || !mapCenter) && (
           <div className="absolute inset-0 flex items-center justify-center bg-bg">
             <Loader2 size={32} className="animate-spin text-text-secondary" />
           </div>
         )}
+        {mapCenter && (
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}>
           <Map
             mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID ?? 'DEMO_MAP_ID'}
             defaultZoom={12}
-            defaultCenter={{ lat: 40.7128, lng: -74.006 }}
+            defaultCenter={mapCenter}
             gestureHandling="greedy"
             disableDefaultUI={false}
             style={{ width: '100%', height: '100%' }}
@@ -125,6 +142,7 @@ export default function MapPage() {
             )}
           </Map>
         </APIProvider>
+        )}
       </div>
 
       {/* List panel */}
