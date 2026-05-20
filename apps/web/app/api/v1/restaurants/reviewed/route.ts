@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
       ? ilike(restaurants.name, `%${q}%`)
       : undefined
 
+    // 'anywhere' has no user restriction — all reviewed restaurants
     const userCondition =
       filter === 'mine' ? eq(reviews.userId, userId)
       : filter === 'friends' ? inArray(reviews.userId, Array.from(followingSet))

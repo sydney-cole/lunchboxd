@@ -108,6 +108,6 @@ export type NotificationQueryInput = z.infer<typeof notificationQuerySchema>
 // Restaurant list search — optional q param validated before ILIKE
 export const restaurantReviewedQuerySchema = z.object({
   q: z.string().max(100).optional(),
-  filter: z.enum(['anyone', 'friends', 'mine']).optional().default('anyone'),
+  filter: z.enum(['anywhere', 'friends', 'mine']).optional().default('anywhere'),
 })
 export type RestaurantReviewedQueryInput = z.infer<typeof restaurantReviewedQuerySchema>

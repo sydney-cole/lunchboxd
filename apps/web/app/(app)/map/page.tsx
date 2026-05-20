@@ -6,7 +6,7 @@ import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react
 import { Loader2, MapPin as MapPinIcon } from 'lucide-react'
 import Link from 'next/link'
 
-type MapFilter = 'anyone' | 'friends' | 'mine'
+type MapFilter = 'anywhere' | 'friends' | 'mine'
 
 interface MapPin {
   id: string
@@ -29,7 +29,7 @@ interface ListRestaurant {
 const NYC_FALLBACK = { lat: 40.7128, lng: -74.006 }
 
 const FILTER_LABELS: Record<MapFilter, string> = {
-  anyone: 'Anyone',
+  anywhere: 'Anywhere',
   friends: 'Friends',
   mine: 'Mine',
 }
@@ -38,7 +38,7 @@ export default function MapPage() {
   const [selectedPin, setSelectedPin] = useState<MapPin | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
-  const [activeFilter, setActiveFilter] = useState<MapFilter>('anyone')
+  const [activeFilter, setActiveFilter] = useState<MapFilter>('anywhere')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -81,11 +81,22 @@ export default function MapPage() {
     staleTime: 60_000,
   })
 
+  // Anywhere + query → Places API (all restaurants); Anywhere + no query → empty (prompt to search)
+  // Friends/Mine → reviewed route with filter param
+  const isAnywhere = activeFilter === 'anywhere'
+  const hasQuery = debouncedQuery.trim().length > 0
+
   const { data: listRestaurants, isLoading: listLoading } = useQuery<ListRestaurant[]>({
     queryKey: ['restaurants-list', debouncedQuery, activeFilter],
     queryFn: async () => {
+      if (isAnywhere) {
+        if (!hasQuery) return []
+        const res = await fetch(`/api/v1/restaurants/search?q=${encodeURIComponent(debouncedQuery.trim())}`)
+        if (!res.ok) throw new Error('Failed to load restaurants')
+        return res.json()
+      }
       const params = new URLSearchParams({ filter: activeFilter })
-      if (debouncedQuery.trim()) params.set('q', debouncedQuery.trim())
+      if (hasQuery) params.set('q', debouncedQuery.trim())
       const res = await fetch(`/api/v1/restaurants/reviewed?${params}`)
       if (!res.ok) throw new Error('Failed to load restaurants')
       return res.json()
@@ -171,7 +182,7 @@ export default function MapPage() {
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
-            placeholder="Search restaurants"
+            placeholder={isAnywhere ? 'Search any restaurant…' : 'Search restaurants'}
             className="w-full px-3 py-2 rounded-[8px] border border-border bg-white text-[14px] focus:outline-none focus:ring-2 focus:ring-accent"
             aria-label="Search restaurants by name"
           />
@@ -201,15 +212,17 @@ export default function MapPage() {
           {!listLoading && (listRestaurants ?? []).length === 0 && (
             <div className="px-4 py-8 text-center">
               <MapPinIcon size={32} className="text-text-secondary mx-auto mb-3" />
-              <p className="text-[16px] font-semibold text-text-primary mb-1">No restaurants found</p>
+              <p className="text-[16px] font-semibold text-text-primary mb-1">
+                {isAnywhere && !hasQuery ? 'Find any restaurant' : 'No restaurants found'}
+              </p>
               <p className="text-[14px] text-text-secondary">
-                {debouncedQuery.trim()
-                  ? 'Try a different search term.'
-                  : activeFilter === 'mine'
-                    ? "You haven't reviewed any restaurants yet."
-                    : activeFilter === 'friends'
-                      ? "None of your friends have reviewed restaurants yet."
-                      : 'No reviewed restaurants yet.'}
+                {isAnywhere && !hasQuery
+                  ? 'Search by name to find any restaurant.'
+                  : hasQuery
+                    ? 'Try a different search term.'
+                    : activeFilter === 'mine'
+                      ? "You haven't reviewed any restaurants yet."
+                      : "None of your friends have reviewed restaurants yet."}
               </p>
             </div>
           )}
