@@ -4,13 +4,17 @@ import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps'
 import { Loader2, MapPin as MapPinIcon } from 'lucide-react'
+import Link from 'next/link'
+
+type MapFilter = 'anyone' | 'friends' | 'mine'
 
 interface MapPin {
   id: string
   name: string
-  lat: string   // string — Drizzle numeric returns string; parseFloat() before use in coordinates
+  lat: string
   lng: string
   reviewedByFollowed: boolean
+  reviewedByMe: boolean
 }
 
 interface ListRestaurant {
@@ -20,24 +24,28 @@ interface ListRestaurant {
   address: string | null
   lat: string | null
   lng: string | null
-  reviewedByFollowed?: boolean
 }
 
 const NYC_FALLBACK = { lat: 40.7128, lng: -74.006 }
+
+const FILTER_LABELS: Record<MapFilter, string> = {
+  anyone: 'Anyone',
+  friends: 'Friends',
+  mine: 'Mine',
+}
 
 export default function MapPage() {
   const [selectedPin, setSelectedPin] = useState<MapPin | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [activeFilter, setActiveFilter] = useState<MapFilter>('anyone')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null)
 
-  // Set document title (can't use metadata export in 'use client' page)
   useEffect(() => {
     document.title = 'Map · Lunchboxd'
   }, [])
 
-  // Request geolocation on mount; fall back to NYC if denied or unsupported
   useEffect(() => {
     if (!navigator.geolocation) {
       setMapCenter(NYC_FALLBACK)
@@ -50,7 +58,6 @@ export default function MapPage() {
     )
   }, [])
 
-  // 300ms debounce on search input — same pattern as Phase 3 SearchPage
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     setSearchQuery(val)
@@ -64,7 +71,6 @@ export default function MapPage() {
     }
   }, [])
 
-  // Map pins — full dataset, no pagination (coordinates-bearing restaurants only)
   const { data: mapPins, isLoading: mapLoading } = useQuery<MapPin[]>({
     queryKey: ['restaurants-map'],
     queryFn: async () => {
@@ -75,21 +81,25 @@ export default function MapPage() {
     staleTime: 60_000,
   })
 
-  // List — Places search when query present, reviewed restaurants otherwise
   const { data: listRestaurants, isLoading: listLoading } = useQuery<ListRestaurant[]>({
-    queryKey: ['restaurants-list', debouncedQuery],
+    queryKey: ['restaurants-list', debouncedQuery, activeFilter],
     queryFn: async () => {
-      const url = debouncedQuery.trim()
-        ? `/api/v1/restaurants/search?q=${encodeURIComponent(debouncedQuery)}`
-        : '/api/v1/restaurants/reviewed'
-      const res = await fetch(url)
+      const params = new URLSearchParams({ filter: activeFilter })
+      if (debouncedQuery.trim()) params.set('q', debouncedQuery.trim())
+      const res = await fetch(`/api/v1/restaurants/reviewed?${params}`)
       if (!res.ok) throw new Error('Failed to load restaurants')
       return res.json()
     },
     staleTime: 30_000,
   })
 
-  // LO-03: Guard for missing API key — avoids passing undefined to APIProvider which breaks silently
+  // Filter map pins client-side based on active filter
+  const visiblePins = (mapPins ?? []).filter(pin => {
+    if (activeFilter === 'mine') return pin.reviewedByMe
+    if (activeFilter === 'friends') return pin.reviewedByFollowed
+    return true
+  })
+
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     return (
       <div className="flex h-full items-center justify-center p-8 text-center">
@@ -119,16 +129,16 @@ export default function MapPage() {
             disableDefaultUI={false}
             style={{ width: '100%', height: '100%' }}
           >
-            {(mapPins ?? []).map(pin => (
+            {visiblePins.map(pin => (
               <AdvancedMarker
                 key={pin.id}
                 position={{ lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) }}
                 onClick={() => setSelectedPin(pin)}
               >
                 <Pin
-                  background={pin.reviewedByFollowed ? '#E85D4A' : '#9CA3AF'}
+                  background={pin.reviewedByMe ? '#E85D4A' : pin.reviewedByFollowed ? '#F5A623' : '#9CA3AF'}
                   glyphColor="#FFFFFF"
-                  borderColor={pin.reviewedByFollowed ? '#C24332' : '#6B7280'}
+                  borderColor={pin.reviewedByMe ? '#C24332' : pin.reviewedByFollowed ? '#C47D0D' : '#6B7280'}
                 />
               </AdvancedMarker>
             ))}
@@ -136,8 +146,17 @@ export default function MapPage() {
               <InfoWindow
                 position={{ lat: parseFloat(selectedPin.lat), lng: parseFloat(selectedPin.lng) }}
                 onCloseClick={() => setSelectedPin(null)}
+                disableAutoPan
               >
-                <p className="text-[14px] font-semibold text-text-primary">{selectedPin.name}</p>
+                <div className="p-1 min-w-[160px]">
+                  <p className="text-[14px] font-semibold text-text-primary mb-2">{selectedPin.name}</p>
+                  <Link
+                    href="/reviews/new"
+                    className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors"
+                  >
+                    Write a Review
+                  </Link>
+                </div>
               </InfoWindow>
             )}
           </Map>
@@ -147,15 +166,31 @@ export default function MapPage() {
 
       {/* List panel */}
       <aside className="w-full md:w-[320px] overflow-y-auto border-t md:border-t-0 md:border-l border-border bg-bg flex flex-col">
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border space-y-3">
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search restaurants"
             className="w-full px-3 py-2 rounded-[8px] border border-border bg-white text-[14px] focus:outline-none focus:ring-2 focus:ring-accent"
-            aria-label="Search restaurants by neighborhood or city"
+            aria-label="Search restaurants by name"
           />
+          {/* Filter tabs */}
+          <div className="flex gap-1">
+            {(Object.keys(FILTER_LABELS) as MapFilter[]).map(f => (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f)}
+                className={`flex-1 text-[13px] font-medium py-1.5 rounded-[6px] transition-colors ${
+                  activeFilter === f
+                    ? 'bg-accent text-white'
+                    : 'bg-bg-secondary text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                {FILTER_LABELS[f]}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto">
           {listLoading && (
@@ -168,31 +203,30 @@ export default function MapPage() {
               <MapPinIcon size={32} className="text-text-secondary mx-auto mb-3" />
               <p className="text-[16px] font-semibold text-text-primary mb-1">No restaurants found</p>
               <p className="text-[14px] text-text-secondary">
-                {debouncedQuery.trim() ? 'Try a different search term.' : 'No reviewed restaurants yet.'}
+                {debouncedQuery.trim()
+                  ? 'Try a different search term.'
+                  : activeFilter === 'mine'
+                    ? "You haven't reviewed any restaurants yet."
+                    : activeFilter === 'friends'
+                      ? "None of your friends have reviewed restaurants yet."
+                      : 'No reviewed restaurants yet.'}
               </p>
             </div>
           )}
           {(listRestaurants ?? []).map(restaurant => (
             <div
               key={restaurant.id}
-              className="px-4 py-3 border-b border-border flex items-center gap-2"
+              className="px-4 py-3 border-b border-border"
             >
-              {restaurant.reviewedByFollowed && (
-                <span className="text-[11px] font-semibold text-accent bg-accent/10 px-1.5 py-0.5 rounded shrink-0">
-                  Following
-                </span>
+              <p className="text-[14px] font-semibold text-text-primary truncate">{restaurant.name}</p>
+              {(restaurant.city ?? restaurant.address) && (
+                <p className="text-[13px] text-text-secondary truncate">
+                  {restaurant.city ?? restaurant.address}
+                </p>
               )}
-              <div className="min-w-0">
-                <p className="text-[14px] font-semibold text-text-primary truncate">{restaurant.name}</p>
-                {(restaurant.city ?? restaurant.address) && (
-                  <p className="text-[13px] text-text-secondary truncate">
-                    {restaurant.city ?? restaurant.address}
-                  </p>
-                )}
-                {!restaurant.lat && (
-                  <p className="text-[11px] text-text-secondary">No map location</p>
-                )}
-              </div>
+              {!restaurant.lat && (
+                <p className="text-[11px] text-text-secondary">No map location</p>
+              )}
             </div>
           ))}
         </div>

@@ -5,7 +5,7 @@ import { db } from '@/lib/db'
 import { restaurants, reviews, follows } from '@/lib/schema'
 import { resolveUserId } from '@/lib/queries'
 import { restaurantReviewedQuerySchema } from '@lunchboxd/shared'
-import { eq, and, isNull, ilike, or } from 'drizzle-orm'
+import { eq, and, isNull, ilike, inArray, type SQL } from 'drizzle-orm'
 
 export async function GET(req: NextRequest) {
   const { userId: clerkId } = await auth()
@@ -16,31 +16,39 @@ export async function GET(req: NextRequest) {
 
   const parsed = restaurantReviewedQuerySchema.safeParse({
     q: req.nextUrl.searchParams.get('q') ?? undefined,
+    filter: req.nextUrl.searchParams.get('filter') ?? undefined,
   })
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid query params', issues: parsed.error.issues }, { status: 400 })
   }
-  const { q } = parsed.data
+  const { q, filter } = parsed.data
 
   try {
-    // Fetch following set for social signal
     const followingRows = await db
       .select({ followeeId: follows.followeeId })
       .from(follows)
       .where(eq(follows.followerId, userId))
     const followingSet = new Set(followingRows.map(f => f.followeeId))
 
-    // Build WHERE: must have at least one review (INNER JOIN); optional ILIKE filter on city OR address
-    const searchCondition = q && q.trim().length > 0
-      ? or(
-          ilike(restaurants.city, `%${q}%`),
-          ilike(restaurants.address, `%${q}%`)
-        )
+    // Short-circuit: friends filter with no follows returns empty
+    if (filter === 'friends' && followingRows.length === 0) {
+      return NextResponse.json([])
+    }
+
+    const nameCondition = q && q.trim().length > 0
+      ? ilike(restaurants.name, `%${q}%`)
       : undefined
 
-    const whereCondition = searchCondition
-      ? and(isNull(reviews.deletedAt), searchCondition)
-      : isNull(reviews.deletedAt)
+    const userCondition =
+      filter === 'mine' ? eq(reviews.userId, userId)
+      : filter === 'friends' ? inArray(reviews.userId, Array.from(followingSet))
+      : undefined
+
+    const conditions: SQL[] = [isNull(reviews.deletedAt) as SQL]
+    if (nameCondition) conditions.push(nameCondition as SQL)
+    if (userCondition) conditions.push(userCondition as SQL)
+
+    const whereCondition = conditions.length > 1 ? and(...conditions) : conditions[0]
 
     const reviewedRows = await db
       .selectDistinct({
@@ -56,7 +64,6 @@ export async function GET(req: NextRequest) {
       .innerJoin(reviews, eq(reviews.restaurantId, restaurants.id))
       .where(whereCondition)
 
-    // Deduplicate by restaurant ID; compute reviewedByFollowed
     type ReviewedRestaurant = {
       id: string; name: string; city: string | null; address: string | null;
       lat: string | null; lng: string | null; reviewedByFollowed: boolean

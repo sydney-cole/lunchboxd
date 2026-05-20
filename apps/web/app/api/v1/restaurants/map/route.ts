@@ -30,17 +30,19 @@ export async function GET() {
       .from(reviews)
       .where(isNull(reviews.deletedAt))
 
-    // Collect unique restaurant IDs and whether any reviewer is followed
-    type RestaurantMeta = { reviewedByFollowed: boolean }
+    // Collect unique restaurant IDs and whether any reviewer is followed or is the current user
+    type RestaurantMeta = { reviewedByFollowed: boolean; reviewedByMe: boolean }
     const restaurantMeta = new Map<string, RestaurantMeta>()
     for (const row of reviewedRestaurantRows) {
       if (!row.restaurantId) continue
       const existing = restaurantMeta.get(row.restaurantId)
       const isFollowed = followingSet.has(row.reviewUserId)
+      const isMe = row.reviewUserId === userId
       if (!existing) {
-        restaurantMeta.set(row.restaurantId, { reviewedByFollowed: isFollowed })
-      } else if (isFollowed && !existing.reviewedByFollowed) {
-        existing.reviewedByFollowed = true
+        restaurantMeta.set(row.restaurantId, { reviewedByFollowed: isFollowed, reviewedByMe: isMe })
+      } else {
+        if (isFollowed && !existing.reviewedByFollowed) existing.reviewedByFollowed = true
+        if (isMe && !existing.reviewedByMe) existing.reviewedByMe = true
       }
     }
 
@@ -67,13 +69,14 @@ export async function GET() {
       )
 
     // Step 3: Merge restaurant details with follow metadata
-    type MapPin = { id: string; name: string; lat: string; lng: string; reviewedByFollowed: boolean }
+    type MapPin = { id: string; name: string; lat: string; lng: string; reviewedByFollowed: boolean; reviewedByMe: boolean }
     const mapPins: MapPin[] = restaurantRows.map(row => ({
       id: row.id,
       name: row.name,
       lat: row.lat!,   // non-null guaranteed by WHERE isNotNull
       lng: row.lng!,
       reviewedByFollowed: restaurantMeta.get(row.id)?.reviewedByFollowed ?? false,
+      reviewedByMe: restaurantMeta.get(row.id)?.reviewedByMe ?? false,
     }))
 
     return NextResponse.json(mapPins)
