@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow } from '@vis.gl/react-google-maps'
+import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow, useMap } from '@vis.gl/react-google-maps'
 import { Loader2, MapPin as MapPinIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -28,6 +28,14 @@ interface ListRestaurant {
 
 const NYC_FALLBACK = { lat: 40.7128, lng: -74.006 }
 
+function MapController({ focusLocation }: { focusLocation: { lat: number; lng: number } | null }) {
+  const map = useMap()
+  useEffect(() => {
+    if (map && focusLocation) map.panTo(focusLocation)
+  }, [map, focusLocation])
+  return null
+}
+
 const FILTER_LABELS: Record<MapFilter, string> = {
   anywhere: 'Anywhere',
   friends: 'Friends',
@@ -39,6 +47,7 @@ export default function MapPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<MapFilter>('anywhere')
+  const [focusLocation, setFocusLocation] = useState<{ lat: number; lng: number } | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -140,6 +149,7 @@ export default function MapPage() {
             disableDefaultUI={false}
             style={{ width: '100%', height: '100%' }}
           >
+            <MapController focusLocation={focusLocation} />
             {visiblePins.map(pin => (
               <AdvancedMarker
                 key={pin.id}
@@ -229,7 +239,14 @@ export default function MapPage() {
           {(listRestaurants ?? []).map(restaurant => (
             <div
               key={restaurant.id}
-              className="px-4 py-3 border-b border-border"
+              className={`px-4 py-3 border-b border-border ${restaurant.lat ? 'cursor-pointer hover:bg-bg-secondary transition-colors' : ''}`}
+              onClick={() => {
+                if (!restaurant.lat || !restaurant.lng) return
+                const loc = { lat: parseFloat(restaurant.lat), lng: parseFloat(restaurant.lng) }
+                setFocusLocation(loc)
+                const pin = (mapPins ?? []).find(p => p.id === restaurant.id)
+                if (pin) setSelectedPin(pin)
+              }}
             >
               <p className="text-[14px] font-semibold text-text-primary truncate">{restaurant.name}</p>
               {(restaurant.city ?? restaurant.address) && (
