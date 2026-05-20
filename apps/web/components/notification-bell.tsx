@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { Bell, Loader2 } from 'lucide-react'
 import { useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { formatRelativeTime } from '@/lib/utils'
@@ -33,21 +34,35 @@ function NotificationRow({ item, isLast }: { item: NotificationItem; isLast: boo
         item.read ? 'hover:bg-surface-subtle' : 'bg-accent-subtle hover:bg-accent-subtle/70 border-l-2 border-accent'
       } ${isLast ? '' : 'border-b border-border'}`}
     >
-      {item.actor?.avatarUrl ? (
-        <img
-          src={item.actor.avatarUrl}
-          className="w-9 h-9 rounded-full object-cover flex-shrink-0 ring-2 ring-white"
-          alt=""
-        />
+      {item.actor ? (
+        <Link href={`/@${item.actor.username}`} className="flex-shrink-0">
+          {item.actor.avatarUrl ? (
+            <img
+              src={item.actor.avatarUrl}
+              className="w-9 h-9 rounded-full object-cover ring-2 ring-white"
+              alt=""
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center">
+              <span className="text-[12px] text-accent font-bold">
+                {item.actor.username.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </Link>
       ) : (
         <div className="w-9 h-9 rounded-full bg-accent/15 flex items-center justify-center flex-shrink-0">
-          <span className="text-[12px] text-accent font-bold">
-            {item.actor?.username.charAt(0).toUpperCase() ?? '?'}
-          </span>
+          <span className="text-[12px] text-accent font-bold">?</span>
         </div>
       )}
       <span className="text-[13px] text-text-secondary flex-1 min-w-0 leading-snug">
-        <span className="font-semibold text-text-primary">@{item.actor?.username ?? 'unknown'}</span>
+        {item.actor ? (
+          <Link href={`/@${item.actor.username}`} className="font-semibold text-text-primary hover:underline">
+            @{item.actor.username}
+          </Link>
+        ) : (
+          <span className="font-semibold text-text-primary">unknown</span>
+        )}
         {' '}{actionText}
         <span className="text-text-tertiary ml-1">· {formatRelativeTime(item.createdAt)}</span>
       </span>

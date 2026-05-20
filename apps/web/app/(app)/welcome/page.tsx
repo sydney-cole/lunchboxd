@@ -1,11 +1,14 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
+import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 
 export default function WelcomePage() {
-  const { user } = useUser()
-  const username = user?.username ?? user?.firstName ?? 'there'
+  const { data } = useQuery<{ user: { username: string } }>({
+    queryKey: ['me'],
+    queryFn: () => fetch('/api/v1/users/me').then(r => r.json()),
+  })
+  const username = data?.user.username ?? 'there'
 
   return (
     <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-4 py-12">
