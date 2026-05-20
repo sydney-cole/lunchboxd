@@ -12,6 +12,12 @@ export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get('q') ?? ''
   if (q.length < 2) return NextResponse.json([])
 
+  const rawLat = req.nextUrl.searchParams.get('lat')
+  const rawLng = req.nextUrl.searchParams.get('lng')
+  const lat = rawLat ? parseFloat(rawLat) : null
+  const lng = rawLng ? parseFloat(rawLng) : null
+  const hasLocation = lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng)
+
   // 1. Check local cache
   const cached = await db.select().from(restaurants)
     .where(ilike(restaurants.name, `%${q}%`))
@@ -35,7 +41,15 @@ export async function GET(req: NextRequest) {
         'X-Goog-Api-Key': apiKey,
         'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location',
       },
-      body: JSON.stringify({ textQuery: q, includedType: 'restaurant' }),
+      body: JSON.stringify({
+        textQuery: q,
+        includedType: 'restaurant',
+        ...(hasLocation && {
+          locationBias: {
+            circle: { center: { latitude: lat, longitude: lng }, radius: 50000 },
+          },
+        }),
+      }),
     })
 
     if (!placesRes.ok) return NextResponse.json(cached)

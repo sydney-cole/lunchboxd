@@ -96,11 +96,16 @@ export default function MapPage() {
   const hasQuery = debouncedQuery.trim().length > 0
 
   const { data: listRestaurants, isLoading: listLoading } = useQuery<ListRestaurant[]>({
-    queryKey: ['restaurants-list', debouncedQuery, activeFilter],
+    queryKey: ['restaurants-list', debouncedQuery, activeFilter, mapCenter],
     queryFn: async () => {
       if (isAnywhere) {
         if (!hasQuery) return []
-        const res = await fetch(`/api/v1/restaurants/search?q=${encodeURIComponent(debouncedQuery.trim())}`)
+        const params = new URLSearchParams({ q: debouncedQuery.trim() })
+        if (mapCenter) {
+          params.set('lat', mapCenter.lat.toString())
+          params.set('lng', mapCenter.lng.toString())
+        }
+        const res = await fetch(`/api/v1/restaurants/search?${params}`)
         if (!res.ok) throw new Error('Failed to load restaurants')
         return res.json()
       }
