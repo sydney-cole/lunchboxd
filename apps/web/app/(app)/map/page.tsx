@@ -17,6 +17,13 @@ interface MapPin {
   reviewedByMe: boolean
 }
 
+interface FocusPin {
+  id: string
+  name: string
+  lat: number
+  lng: number
+}
+
 interface ListRestaurant {
   id: string
   name: string
@@ -31,7 +38,10 @@ const NYC_FALLBACK = { lat: 40.7128, lng: -74.006 }
 function MapController({ focusLocation }: { focusLocation: { lat: number; lng: number } | null }) {
   const map = useMap()
   useEffect(() => {
-    if (map && focusLocation) map.panTo(focusLocation)
+    if (map && focusLocation) {
+      map.panTo(focusLocation)
+      map.setZoom(15)
+    }
   }, [map, focusLocation])
   return null
 }
@@ -44,6 +54,8 @@ const FILTER_LABELS: Record<MapFilter, string> = {
 
 export default function MapPage() {
   const [selectedPin, setSelectedPin] = useState<MapPin | null>(null)
+  const [focusPin, setFocusPin] = useState<FocusPin | null>(null)
+  const [activeRestaurantId, setActiveRestaurantId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<MapFilter>('anywhere')
@@ -90,8 +102,6 @@ export default function MapPage() {
     staleTime: 60_000,
   })
 
-  // Anywhere + query → Places API (all restaurants); Anywhere + no query → empty (prompt to search)
-  // Friends/Mine → reviewed route with filter param
   const isAnywhere = activeFilter === 'anywhere'
   const hasQuery = debouncedQuery.trim().length > 0
 
@@ -118,12 +128,26 @@ export default function MapPage() {
     staleTime: 30_000,
   })
 
-  // Filter map pins client-side based on active filter
   const visiblePins = (mapPins ?? []).filter(pin => {
     if (activeFilter === 'mine') return pin.reviewedByMe
     if (activeFilter === 'friends') return pin.reviewedByFollowed
     return true
   })
+
+  const handleRestaurantClick = (restaurant: ListRestaurant) => {
+    if (!restaurant.lat || !restaurant.lng) return
+    const loc = { lat: parseFloat(restaurant.lat), lng: parseFloat(restaurant.lng) }
+    setFocusLocation(loc)
+    setActiveRestaurantId(restaurant.id)
+    const pin = (mapPins ?? []).find(p => p.id === restaurant.id)
+    if (pin) {
+      setSelectedPin(pin)
+      setFocusPin(null)
+    } else {
+      setFocusPin({ id: restaurant.id, name: restaurant.name, lat: loc.lat, lng: loc.lng })
+      setSelectedPin(null)
+    }
+  }
 
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     return (
@@ -155,11 +179,12 @@ export default function MapPage() {
             style={{ width: '100%', height: '100%' }}
           >
             <MapController focusLocation={focusLocation} />
+
             {visiblePins.map(pin => (
               <AdvancedMarker
                 key={pin.id}
                 position={{ lat: parseFloat(pin.lat), lng: parseFloat(pin.lng) }}
-                onClick={() => setSelectedPin(pin)}
+                onClick={() => { setSelectedPin(pin); setFocusPin(null); setActiveRestaurantId(pin.id) }}
               >
                 <Pin
                   background={pin.reviewedByMe ? '#E85D4A' : pin.reviewedByFollowed ? '#F5A623' : '#9CA3AF'}
@@ -168,14 +193,43 @@ export default function MapPage() {
                 />
               </AdvancedMarker>
             ))}
+
+            {/* Temporary pin for restaurants not yet in mapPins (e.g. Anywhere search results) */}
+            {focusPin && (
+              <AdvancedMarker
+                position={{ lat: focusPin.lat, lng: focusPin.lng }}
+                onClick={() => {}}
+              >
+                <Pin background="#3B82F6" glyphColor="#FFFFFF" borderColor="#1D4ED8" />
+              </AdvancedMarker>
+            )}
+
             {selectedPin && (
               <InfoWindow
                 position={{ lat: parseFloat(selectedPin.lat), lng: parseFloat(selectedPin.lng) }}
-                onCloseClick={() => setSelectedPin(null)}
+                onCloseClick={() => { setSelectedPin(null); setActiveRestaurantId(null) }}
                 disableAutoPan
               >
                 <div className="p-1 min-w-[160px]">
                   <p className="text-[14px] font-semibold text-text-primary mb-2">{selectedPin.name}</p>
+                  <Link
+                    href="/reviews/new"
+                    className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors"
+                  >
+                    Write a Review
+                  </Link>
+                </div>
+              </InfoWindow>
+            )}
+
+            {focusPin && (
+              <InfoWindow
+                position={{ lat: focusPin.lat, lng: focusPin.lng }}
+                onCloseClick={() => { setFocusPin(null); setActiveRestaurantId(null) }}
+                disableAutoPan
+              >
+                <div className="p-1 min-w-[160px]">
+                  <p className="text-[14px] font-semibold text-text-primary mb-2">{focusPin.name}</p>
                   <Link
                     href="/reviews/new"
                     className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors"
@@ -201,7 +255,6 @@ export default function MapPage() {
             className="w-full px-3 py-2 rounded-[8px] border border-border bg-white text-[14px] focus:outline-none focus:ring-2 focus:ring-accent"
             aria-label="Search restaurants by name"
           />
-          {/* Filter tabs */}
           <div className="flex gap-1">
             {(Object.keys(FILTER_LABELS) as MapFilter[]).map(f => (
               <button
@@ -241,29 +294,37 @@ export default function MapPage() {
               </p>
             </div>
           )}
-          {(listRestaurants ?? []).map(restaurant => (
-            <div
-              key={restaurant.id}
-              className={`px-4 py-3 border-b border-border ${restaurant.lat ? 'cursor-pointer hover:bg-bg-secondary transition-colors' : ''}`}
-              onClick={() => {
-                if (!restaurant.lat || !restaurant.lng) return
-                const loc = { lat: parseFloat(restaurant.lat), lng: parseFloat(restaurant.lng) }
-                setFocusLocation(loc)
-                const pin = (mapPins ?? []).find(p => p.id === restaurant.id)
-                if (pin) setSelectedPin(pin)
-              }}
-            >
-              <p className="text-[14px] font-semibold text-text-primary truncate">{restaurant.name}</p>
-              {(restaurant.city ?? restaurant.address) && (
-                <p className="text-[13px] text-text-secondary truncate">
-                  {restaurant.city ?? restaurant.address}
+          {(listRestaurants ?? []).map(restaurant => {
+            const isActive = activeRestaurantId === restaurant.id
+            const hasLocation = Boolean(restaurant.lat && restaurant.lng)
+            return (
+              <div
+                key={restaurant.id}
+                onClick={() => handleRestaurantClick(restaurant)}
+                className={`group px-4 py-3 border-b border-border transition-colors ${
+                  hasLocation ? 'cursor-pointer' : ''
+                } ${isActive ? 'bg-accent/8' : hasLocation ? 'hover:bg-bg-secondary active:bg-bg-secondary/80' : ''}`}
+              >
+                <p className={`text-[14px] font-semibold truncate transition-colors ${
+                  isActive
+                    ? 'text-accent'
+                    : hasLocation
+                      ? 'text-text-primary group-hover:text-accent group-hover:underline'
+                      : 'text-text-primary'
+                }`}>
+                  {restaurant.name}
                 </p>
-              )}
-              {!restaurant.lat && (
-                <p className="text-[11px] text-text-secondary">No map location</p>
-              )}
-            </div>
-          ))}
+                {(restaurant.city ?? restaurant.address) && (
+                  <p className="text-[13px] text-text-secondary truncate">
+                    {restaurant.city ?? restaurant.address}
+                  </p>
+                )}
+                {!hasLocation && (
+                  <p className="text-[11px] text-text-secondary">No map location</p>
+                )}
+              </div>
+            )
+          })}
         </div>
       </aside>
     </div>
