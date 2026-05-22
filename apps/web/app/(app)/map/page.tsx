@@ -213,7 +213,7 @@ export default function MapPage() {
                 <div className="p-1 min-w-[160px]">
                   <p className="text-[14px] font-semibold text-text-primary mb-2">{selectedPin.name}</p>
                   <Link
-                    href="/reviews/new"
+                    href={`/reviews/new?restaurantId=${encodeURIComponent(selectedPin.id)}&restaurantName=${encodeURIComponent(selectedPin.name)}`}
                     className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors"
                   >
                     Write a Review
@@ -231,7 +231,7 @@ export default function MapPage() {
                 <div className="p-1 min-w-[160px]">
                   <p className="text-[14px] font-semibold text-text-primary mb-2">{focusPin.name}</p>
                   <Link
-                    href="/reviews/new"
+                    href={`/reviews/new?restaurantId=${encodeURIComponent(focusPin.id)}&restaurantName=${encodeURIComponent(focusPin.name)}`}
                     className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors"
                   >
                     Write a Review
