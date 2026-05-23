@@ -37,9 +37,7 @@ export function ReviewComposer({ mode, initialData, onSuccess }: ReviewComposerP
   const [mealName, setMealName] = useState<string>(initialData?.mealName ?? '')
   const [rating, setRating] = useState<number>(initialData?.rating ?? 0)
   const [note, setNote] = useState<string>(initialData?.note ?? '')
-  // ME-04 / LO-05: photoUrl always starts as null in both create and edit mode.
-  // In edit mode, the existing photo URL is for display only (not sent unless changed).
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [photoUrl, setPhotoUrl] = useState<string | null>(initialData?.photoUrl ?? null)
   // Track whether user has explicitly changed the photo field
   const [photoChanged, setPhotoChanged] = useState(false)
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? [])

@@ -12,6 +12,7 @@ interface Review {
   userId: string
   restaurantId: string | null
   mealType: 'restaurant' | 'homemade'
+  mealName: string | null
   body: string | null
   rating: string | null
   photoUrl: string | null
@@ -76,13 +77,12 @@ export default function EditReviewPage() {
   const initialData = {
     id: review.id,
     mealType: review.mealType,
+    mealName: review.mealName ?? undefined,
     restaurantId: review.restaurantId ?? undefined,
     restaurantName: review.restaurant?.name ?? undefined,
     rating: review.rating ? parseFloat(review.rating) : 0,
     note: review.body ?? '',
-    // ME-04: photoKey must be null in edit mode — reviewer.photoUrl is a URL (not an upload key).
-    // ReviewComposer initializes photoKey as null always; only sends it in PATCH payload if user changes photo.
-    photoKey: null,
+    photoUrl: review.photoUrl ?? undefined,
     tags: review.tags ?? [],
     mealDate: review.mealDate ?? undefined,
   }

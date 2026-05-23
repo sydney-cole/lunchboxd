@@ -11,11 +11,12 @@ interface PhotoPickerProps {
 const MAX_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
 
 export function PhotoPicker({ photoUrl, onPhotoChange }: PhotoPickerProps) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(photoUrl)
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  // ME-05: Use a ref to track the preview URL for cleanup — avoids closure over stale state value
+  // ME-05: Use a ref to track blob object URLs for cleanup — avoids closure over stale state value.
+  // Initialized to null (not photoUrl) because CDN URLs must not be passed to revokeObjectURL.
   const previewUrlRef = useRef<string | null>(null)
   const errorId = 'photo-picker-error'
 
