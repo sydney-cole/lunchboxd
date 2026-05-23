@@ -22,6 +22,7 @@ interface FocusPin {
   name: string
   lat: number
   lng: number
+  reviewCount: number
 }
 
 interface ListRestaurant {
@@ -31,6 +32,7 @@ interface ListRestaurant {
   address: string | null
   lat: string | null
   lng: string | null
+  reviewCount?: number
 }
 
 const NYC_FALLBACK = { lat: 40.7128, lng: -74.006 }
@@ -144,7 +146,7 @@ export default function MapPage() {
       setSelectedPin(pin)
       setFocusPin(null)
     } else {
-      setFocusPin({ id: restaurant.id, name: restaurant.name, lat: loc.lat, lng: loc.lng })
+      setFocusPin({ id: restaurant.id, name: restaurant.name, lat: loc.lat, lng: loc.lng, reviewCount: restaurant.reviewCount ?? 0 })
       setSelectedPin(null)
     }
   }
@@ -210,14 +212,22 @@ export default function MapPage() {
                 onCloseClick={() => { setSelectedPin(null); setActiveRestaurantId(null) }}
                 disableAutoPan
               >
-                <div className="p-1 min-w-[160px]">
+                <div className="p-1 min-w-[180px]">
                   <p className="text-[14px] font-semibold text-text-primary mb-2">{selectedPin.name}</p>
-                  <Link
-                    href={`/reviews/new?restaurantId=${encodeURIComponent(selectedPin.id)}&restaurantName=${encodeURIComponent(selectedPin.name)}`}
-                    className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors"
-                  >
-                    Write a Review
-                  </Link>
+                  <div className="flex flex-col gap-1.5">
+                    <Link
+                      href={`/restaurants/${selectedPin.id}`}
+                      className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors text-center"
+                    >
+                      View Profile
+                    </Link>
+                    <Link
+                      href={`/reviews/new?restaurantId=${encodeURIComponent(selectedPin.id)}&restaurantName=${encodeURIComponent(selectedPin.name)}`}
+                      className="inline-block text-[12px] font-medium text-accent hover:underline px-1 text-center"
+                    >
+                      + Write a Review
+                    </Link>
+                  </div>
                 </div>
               </InfoWindow>
             )}
@@ -228,14 +238,33 @@ export default function MapPage() {
                 onCloseClick={() => { setFocusPin(null); setActiveRestaurantId(null) }}
                 disableAutoPan
               >
-                <div className="p-1 min-w-[160px]">
+                <div className="p-1 min-w-[180px]">
                   <p className="text-[14px] font-semibold text-text-primary mb-2">{focusPin.name}</p>
-                  <Link
-                    href={`/reviews/new?restaurantId=${encodeURIComponent(focusPin.id)}&restaurantName=${encodeURIComponent(focusPin.name)}`}
-                    className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors"
-                  >
-                    Write a Review
-                  </Link>
+                  <div className="flex flex-col gap-1.5">
+                    {focusPin.reviewCount > 0 ? (
+                      <>
+                        <Link
+                          href={`/restaurants/${focusPin.id}`}
+                          className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors text-center"
+                        >
+                          View Profile
+                        </Link>
+                        <Link
+                          href={`/reviews/new?restaurantId=${encodeURIComponent(focusPin.id)}&restaurantName=${encodeURIComponent(focusPin.name)}`}
+                          className="inline-block text-[12px] font-medium text-accent hover:underline px-1 text-center"
+                        >
+                          + Write a Review
+                        </Link>
+                      </>
+                    ) : (
+                      <Link
+                        href={`/reviews/new?restaurantId=${encodeURIComponent(focusPin.id)}&restaurantName=${encodeURIComponent(focusPin.name)}`}
+                        className="inline-block text-[12px] font-semibold text-white bg-accent hover:bg-accent/90 px-3 py-1.5 rounded-[6px] transition-colors text-center"
+                      >
+                        + Write a Review
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </InfoWindow>
             )}
@@ -297,6 +326,7 @@ export default function MapPage() {
           {(listRestaurants ?? []).map(restaurant => {
             const isActive = activeRestaurantId === restaurant.id
             const hasLocation = Boolean(restaurant.lat && restaurant.lng)
+            const isReviewed = (restaurant.reviewCount ?? 0) > 0
             return (
               <div
                 key={restaurant.id}
@@ -309,7 +339,7 @@ export default function MapPage() {
                   isActive
                     ? 'text-accent'
                     : hasLocation
-                      ? 'text-text-primary group-hover:text-accent group-hover:underline'
+                      ? 'text-text-primary group-hover:text-accent'
                       : 'text-text-primary'
                 }`}>
                   {restaurant.name}
@@ -320,8 +350,25 @@ export default function MapPage() {
                   </p>
                 )}
                 {!hasLocation && (
-                  <p className="text-[11px] text-text-secondary">No map location</p>
+                  <p className="text-[11px] text-text-tertiary">No map location</p>
                 )}
+                <div className="mt-1" onClick={(e) => e.stopPropagation()}>
+                  {isReviewed ? (
+                    <a
+                      href={`/restaurants/${restaurant.id}`}
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100 transition-colors"
+                    >
+                      ✓ {restaurant.reviewCount} {restaurant.reviewCount === 1 ? 'review' : 'reviews'}
+                    </a>
+                  ) : (
+                    <a
+                      href={`/reviews/new?restaurantId=${encodeURIComponent(restaurant.id)}&restaurantName=${encodeURIComponent(restaurant.name)}`}
+                      className="text-[11px] font-medium text-accent hover:underline"
+                    >
+                      + Add a review
+                    </a>
+                  )}
+                </div>
               </div>
             )
           })}

@@ -39,6 +39,7 @@ interface RestaurantResult {
   name: string
   address: string | null
   city: string | null
+  reviewCount: number
 }
 
 interface SearchResults {
@@ -416,18 +417,45 @@ function Section({
 }
 
 function RestaurantCard({ restaurant }: { restaurant: RestaurantResult }) {
+  const isReviewed = restaurant.reviewCount > 0
   return (
-    <div className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-surface hover:border-accent transition-colors">
+    <div className="flex items-center gap-3 p-3.5 rounded-xl border border-border bg-surface hover:border-accent/50 transition-colors">
       <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
         <MapPin size={15} className="text-accent" />
       </div>
-      <div className="min-w-0">
-        <p className="text-sm font-medium text-text-primary truncate">{restaurant.name}</p>
+      <div className="min-w-0 flex-1">
+        {isReviewed ? (
+          <a
+            href={`/restaurants/${restaurant.id}`}
+            className="text-sm font-medium text-text-primary hover:text-accent hover:underline transition-colors"
+          >
+            {restaurant.name}
+          </a>
+        ) : (
+          <p className="text-sm font-medium text-text-primary truncate">{restaurant.name}</p>
+        )}
         {(restaurant.address || restaurant.city) && (
           <p className="text-xs text-text-secondary truncate">
             {[restaurant.address, restaurant.city].filter(Boolean).join(', ')}
           </p>
         )}
+        <div className="mt-1">
+          {isReviewed ? (
+            <a
+              href={`/restaurants/${restaurant.id}`}
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100 transition-colors"
+            >
+              ✓ {restaurant.reviewCount} {restaurant.reviewCount === 1 ? 'review' : 'reviews'}
+            </a>
+          ) : (
+            <a
+              href={`/reviews/new?restaurantId=${encodeURIComponent(restaurant.id)}&restaurantName=${encodeURIComponent(restaurant.name)}`}
+              className="text-[11px] font-medium text-accent hover:underline"
+            >
+              + Add a review
+            </a>
+          )}
+        </div>
       </div>
     </div>
   )

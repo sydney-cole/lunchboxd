@@ -5,7 +5,7 @@ import { db } from '@/lib/db'
 import { restaurants, reviews, follows } from '@/lib/schema'
 import { resolveUserId } from '@/lib/queries'
 import { restaurantReviewedQuerySchema } from '@lunchboxd/shared'
-import { eq, and, isNull, ilike, inArray, type SQL } from 'drizzle-orm'
+import { eq, and, isNull, ilike, inArray, type SQL, sql } from 'drizzle-orm'
 
 export async function GET(req: NextRequest) {
   const { userId: clerkId } = await auth()
@@ -84,7 +84,18 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json(Array.from(restaurantMap.values()))
+    const dedupedRestaurants = Array.from(restaurantMap.values())
+    const restaurantIds = dedupedRestaurants.map(r => r.id)
+    const countRows = restaurantIds.length > 0
+      ? await db
+          .select({ restaurantId: reviews.restaurantId, count: sql<number>`count(*)::int` })
+          .from(reviews)
+          .where(and(inArray(reviews.restaurantId, restaurantIds), isNull(reviews.deletedAt)))
+          .groupBy(reviews.restaurantId)
+      : []
+    const countMap = new Map(countRows.map(c => [c.restaurantId, c.count]))
+
+    return NextResponse.json(dedupedRestaurants.map(r => ({ ...r, reviewCount: countMap.get(r.id) ?? 0 })))
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

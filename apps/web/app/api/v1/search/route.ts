@@ -147,6 +147,18 @@ export async function GET(req: Request) {
     }
   }
 
+  // Add review counts to restaurant results so the UI can show reviewed indicators
+  const restaurantIdList = restaurantRows.map(r => r.id)
+  const restaurantCountRows = restaurantIdList.length > 0
+    ? await db
+        .select({ restaurantId: reviews.restaurantId, count: sql<number>`count(*)::int` })
+        .from(reviews)
+        .where(and(inArray(reviews.restaurantId, restaurantIdList), isNull(reviews.deletedAt)))
+        .groupBy(reviews.restaurantId)
+    : []
+  const restaurantCountMap = new Map(restaurantCountRows.map(c => [c.restaurantId, c.count]))
+  const restaurantsWithCounts = restaurantRows.map(r => ({ ...r, reviewCount: restaurantCountMap.get(r.id) ?? 0 }))
+
   // Fetch reviews for matching tags (excluding soft-deleted)
   const tagReviewIds = [...new Set(tagRows.map(t => t.reviewId))]
   const tagReviewRows = tagReviewIds.length > 0
@@ -165,7 +177,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       users: enrichedUsers,
       meals: [],
-      restaurants: restaurantRows,
+      restaurants: restaurantsWithCounts,
       tags: [],
     })
   }
@@ -256,7 +268,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     users: enrichedUsers,
     meals: enrichedMeals,
-    restaurants: restaurantRows,
+    restaurants: restaurantsWithCounts,
     tags: enrichedTags,
   })
 }
