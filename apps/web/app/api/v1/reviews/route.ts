@@ -113,7 +113,7 @@ export async function GET(_req: Request) {
   const restaurantIds = userReviews
     .map(r => r.restaurantId)
     .filter((id): id is string => id !== null)
-  let restaurantMap: Record<string, { name: string; address: string | null }> = {}
+  let restaurantMap: Record<string, { id: string; name: string; address: string | null }> = {}
   if (restaurantIds.length > 0) {
     const restaurantRows = await db.select({
       id: restaurants.id,
@@ -122,7 +122,7 @@ export async function GET(_req: Request) {
     }).from(restaurants)
       .where(inArray(restaurants.id, restaurantIds))
     for (const r of restaurantRows) {
-      restaurantMap[r.id] = { name: r.name, address: r.address ?? null }
+      restaurantMap[r.id] = { id: r.id, name: r.name, address: r.address ?? null }
     }
   }
 

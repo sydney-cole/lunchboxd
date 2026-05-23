@@ -15,7 +15,7 @@ interface ReviewCardProps {
     mealType: string
     mealDate: string | null
     createdAt?: string | Date
-    restaurant?: { name: string; address: string | null } | null
+    restaurant?: { id?: string; name: string; address: string | null } | null
     tags?: string[]
     likeCount: number
     isLikedByMe: boolean
@@ -182,7 +182,17 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
         {locationLabel && (
           <span className="flex items-center gap-1 mb-2">
             <MapPin size={11} className="text-accent flex-shrink-0" />
-            <span className="text-[12px] text-text-secondary truncate">{locationLabel}</span>
+            {review.restaurant?.id ? (
+              <a
+                href={`/restaurants/${review.restaurant.id}`}
+                className="text-[12px] text-text-secondary truncate hover:text-accent transition-colors duration-150"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {locationLabel}
+              </a>
+            ) : (
+              <span className="text-[12px] text-text-secondary truncate">{locationLabel}</span>
+            )}
           </span>
         )}
 
