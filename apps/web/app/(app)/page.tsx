@@ -7,6 +7,7 @@ import { Loader2, UtensilsCrossed } from 'lucide-react'
 import { ReviewCard } from '@/components/review-card'
 import { FloatingActionButton } from '@/components/floating-action-button'
 import { DeleteDialog } from '@/components/delete-dialog'
+import { FeedFilter, type FeedFilterValue } from '@/components/feed-filter'
 
 interface FeedAuthor {
   id: string
@@ -47,6 +48,9 @@ export default function FeedPage() {
   const router = useRouter()
   const sentinelRef = useRef<HTMLDivElement>(null)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+  const [mealType, setMealType] = useState<FeedFilterValue>('all')
+
+  const feedKey = ['feed', mealType] as const
 
   const {
     data,
@@ -56,12 +60,12 @@ export default function FeedPage() {
     isLoading,
     isError,
   } = useInfiniteQuery<FeedResponse>({
-    queryKey: ['feed'],
+    queryKey: feedKey,
     queryFn: async ({ pageParam }) => {
-      const url = pageParam
-        ? `/api/v1/feed?cursor=${encodeURIComponent(pageParam as string)}&limit=20`
-        : '/api/v1/feed'
-      const res = await fetch(url)
+      const params = new URLSearchParams({ limit: '20' })
+      if (pageParam) params.set('cursor', pageParam as string)
+      if (mealType !== 'all') params.set('mealType', mealType)
+      const res = await fetch(`/api/v1/feed?${params.toString()}`)
       if (!res.ok) throw new Error('Failed to load feed')
       return res.json() as Promise<FeedResponse>
     },
@@ -97,9 +101,9 @@ export default function FeedPage() {
       return res.json() as Promise<{ liked: boolean; likeCount: number }>
     },
     onMutate: async ({ reviewId }) => {
-      await queryClient.cancelQueries({ queryKey: ['feed'] })
-      const previousData = queryClient.getQueryData<InfiniteFeedData>(['feed'])
-      queryClient.setQueryData<InfiniteFeedData>(['feed'], (old) => {
+      await queryClient.cancelQueries({ queryKey: feedKey })
+      const previousData = queryClient.getQueryData<InfiniteFeedData>(feedKey)
+      queryClient.setQueryData<InfiniteFeedData>(feedKey, (old) => {
         if (!old) return old
         return {
           ...old,
@@ -121,11 +125,11 @@ export default function FeedPage() {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(['feed'], context.previousData)
+        queryClient.setQueryData(feedKey, context.previousData)
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['feed'] })
+      queryClient.invalidateQueries({ queryKey: feedKey })
     },
   })
 
@@ -136,62 +140,68 @@ export default function FeedPage() {
     },
     onSuccess: () => {
       setDeleteTarget(null)
-      queryClient.invalidateQueries({ queryKey: ['feed'] })
+      queryClient.invalidateQueries({ queryKey: feedKey })
     },
   })
 
   const allItems = data?.pages.flatMap((page) => page.items) ?? []
-
-  if (isLoading) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-bg flex items-center justify-center">
-        <Loader2 size={28} className="animate-spin text-text-tertiary" />
-      </div>
-    )
-  }
-
-  if (isError) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-bg flex items-center justify-center">
-        <div className="text-center px-4">
-          <p className="font-[family-name:--font-fraunces] text-[22px] font-semibold text-text-primary mb-2">
-            Couldn&apos;t load your feed
-          </p>
-          <p className="text-[15px] text-text-secondary">
-            Something went wrong. Refresh the page to try again.
-          </p>
-        </div>
-      </div>
-    )
-  }
+  const filterLabel = mealType === 'restaurant' ? 'restaurant' : 'homemade'
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-bg">
       <div className="w-full max-w-[640px] mx-auto px-4 py-10">
 
+        {/* Meal-type filter */}
+        <div className="flex justify-center mb-6">
+          <FeedFilter value={mealType} onChange={setMealType} />
+        </div>
+
+        {/* Loading state */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-24">
+            <Loader2 size={28} className="animate-spin text-text-tertiary" />
+          </div>
+        )}
+
+        {/* Error state */}
+        {isError && (
+          <div className="text-center px-4 py-24">
+            <p className="font-[family-name:--font-fraunces] text-[22px] font-semibold text-text-primary mb-2">
+              Couldn&apos;t load your feed
+            </p>
+            <p className="text-[15px] text-text-secondary">
+              Something went wrong. Refresh the page to try again.
+            </p>
+          </div>
+        )}
+
         {/* Empty state */}
-        {allItems.length === 0 && (
+        {!isLoading && !isError && allItems.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="w-16 h-16 rounded-2xl bg-surface-subtle border border-border flex items-center justify-center mb-5">
               <UtensilsCrossed size={28} strokeWidth={1.5} className="text-text-tertiary" />
             </div>
             <h2 className="font-[family-name:--font-fraunces] text-[20px] font-semibold text-text-primary mb-2">
-              Nothing here yet
+              {mealType === 'all' ? 'Nothing here yet' : `No ${filterLabel} meals yet`}
             </h2>
-            <p className="text-[14px] text-text-secondary mb-7 max-w-[220px] leading-relaxed">
-              Follow people to see what they&apos;re eating.
+            <p className="text-[14px] text-text-secondary mb-7 max-w-[240px] leading-relaxed">
+              {mealType === 'all'
+                ? "Follow people to see what they're eating."
+                : `No ${filterLabel} meals in your feed. Try a different filter.`}
             </p>
-            <a
-              href="/search"
-              className="inline-flex items-center bg-accent text-white text-[14px] font-semibold px-6 py-2.5 rounded-full hover:bg-accent-hover transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 shadow-[0_1px_3px_rgba(249,115,22,0.20)]"
-            >
-              Find people to follow
-            </a>
+            {mealType === 'all' && (
+              <a
+                href="/search"
+                className="inline-flex items-center bg-accent text-white text-[14px] font-semibold px-6 py-2.5 rounded-full hover:bg-accent-hover transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 shadow-[0_1px_3px_rgba(249,115,22,0.20)]"
+              >
+                Find people to follow
+              </a>
+            )}
           </div>
         )}
 
         {/* Feed list */}
-        {allItems.length > 0 && (
+        {!isLoading && !isError && allItems.length > 0 && (
           <div className="flex flex-col gap-5">
             {allItems.map((item) => (
               <ReviewCard

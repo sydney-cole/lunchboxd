@@ -72,6 +72,7 @@ export type UserSearchInput = z.infer<typeof userSearchSchema>
 export const feedQuerySchema = z.object({
   cursor: z.string().datetime().optional().nullable(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
+  mealType: z.enum(['restaurant', 'homemade']).optional(),
 })
 export type FeedQueryInput = z.infer<typeof feedQuerySchema>
 

@@ -226,12 +226,14 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
         {review.tags && review.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
             {review.tags.slice(0, 3).map((tag) => (
-              <span
+              <a
                 key={tag}
-                className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-accent-subtle text-accent"
+                href={`/tags/${encodeURIComponent(tag)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-accent-subtle text-accent hover:bg-accent hover:text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent"
               >
                 {tag}
-              </span>
+              </a>
             ))}
             {review.tags.length > 3 && (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium text-text-tertiary">

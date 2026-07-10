@@ -1,0 +1,1 @@
+CREATE INDEX "review_tags_label_idx" ON "review_tags" USING btree ("label");

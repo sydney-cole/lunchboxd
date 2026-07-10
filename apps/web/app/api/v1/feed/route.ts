@@ -17,27 +17,34 @@ export async function GET(req: Request) {
   const parsed = feedQuerySchema.safeParse({
     cursor: searchParams.get('cursor') ?? undefined,
     limit: searchParams.get('limit') ?? undefined,
+    mealType: searchParams.get('mealType') ?? undefined,
   })
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid query params', issues: parsed.error.issues }, { status: 400 })
   }
-  const { cursor, limit } = parsed.data
+  const { cursor, limit, mealType } = parsed.data
   const PAGE_SIZE = limit ?? 20
 
   // Build WHERE clause: owner = me AND (if cursor) createdAt < cursor
   // CRITICAL: pass new Date(cursor) to lt() — not raw string — for timestamp comparison
-  const whereClause = cursor
-    ? and(
-        eq(feedItems.ownerUserId, userId),
-        lt(feedItems.createdAt, new Date(cursor))
-      )
-    : eq(feedItems.ownerUserId, userId)
+  const conditions = [
+    eq(feedItems.ownerUserId, userId),
+    ...(cursor ? [lt(feedItems.createdAt, new Date(cursor))] : []),
+    // Meal-type filter joins reviews below; also skip soft-deleted at the DB level
+    ...(mealType ? [eq(reviews.mealType, mealType), isNull(reviews.deletedAt)] : []),
+  ]
 
-  // Fetch PAGE_SIZE + 1 rows to detect hasMore without a COUNT query
-  const rawRows = await db
+  // Fetch PAGE_SIZE + 1 rows to detect hasMore without a COUNT query.
+  // When filtering by meal type, join reviews so the filter applies before pagination.
+  let query = db
     .select({ reviewId: feedItems.reviewId, feedCreatedAt: feedItems.createdAt })
     .from(feedItems)
-    .where(whereClause)
+    .$dynamic()
+  if (mealType) {
+    query = query.innerJoin(reviews, eq(reviews.id, feedItems.reviewId))
+  }
+  const rawRows = await query
+    .where(and(...conditions))
     .orderBy(desc(feedItems.createdAt))
     .limit(PAGE_SIZE + 1)
 

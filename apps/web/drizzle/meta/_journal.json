@@ -29,6 +29,13 @@
       "when": 1778529004902,
       "tag": "0003_striped_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783710866731,
+      "tag": "0004_yellow_leper_queen",
+      "breakpoints": true
     }
   ]
 }

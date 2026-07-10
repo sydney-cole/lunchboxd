@@ -61,7 +61,10 @@ export const reviewTags = pgTable('review_tags', {
   id: uuid('id').primaryKey().defaultRandom(),
   reviewId: uuid('review_id').references(() => reviews.id).notNull(),
   label: text('label').notNull(),
-})
+}, (table) => ({
+  // Supports exact-match tag lookups for the /tags/<label> list page
+  reviewTagsLabelIdx: index('review_tags_label_idx').on(table.label),
+}))
 
 export const follows = pgTable('follows', {
   id: uuid('id').primaryKey().defaultRandom(),
