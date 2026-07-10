@@ -5,6 +5,7 @@ import { users } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 import { NotificationBell } from '@/components/notification-bell'
 import { MobileNav } from '@/components/mobile-nav'
+import { UserMenu } from '@/components/user-menu'
 
 export default async function AppLayout({
   children,
@@ -70,17 +71,7 @@ export default async function AppLayout({
         {/* Right: Actions */}
         <div className="flex items-center gap-2 ml-auto w-auto md:w-44 justify-end">
           <NotificationBell />
-          <a
-            href={`/@${user.username}`}
-            aria-label="Your profile"
-            className="w-9 h-9 rounded-full bg-accent/15 hover:bg-accent/25 transition-all duration-150 flex items-center justify-center overflow-hidden shrink-0 ring-2 ring-transparent hover:ring-accent/40 ring-offset-1"
-          >
-            {user.avatarUrl ? (
-              <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-[13px] font-bold text-accent">{initial}</span>
-            )}
-          </a>
+          <UserMenu username={user.username} avatarUrl={user.avatarUrl} initial={initial} />
         </div>
       </nav>
 
