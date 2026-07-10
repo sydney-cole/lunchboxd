@@ -162,9 +162,9 @@ export default function MapPage() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-64px)]">
+    <div className="flex flex-col md:flex-row h-[calc(100dvh-64px-3.5rem-env(safe-area-inset-bottom))] md:h-[calc(100vh-64px)]">
       {/* Map area */}
-      <div className="flex-1 relative">
+      <div className="h-[48%] shrink-0 md:h-auto md:flex-1 relative">
         {(mapLoading || !mapCenter) && (
           <div className="absolute inset-0 flex items-center justify-center bg-bg">
             <Loader2 size={32} className="animate-spin text-text-secondary" />
@@ -274,7 +274,7 @@ export default function MapPage() {
       </div>
 
       {/* List panel */}
-      <aside className="w-full md:w-[320px] overflow-y-auto border-t md:border-t-0 md:border-l border-border bg-bg flex flex-col">
+      <aside className="w-full flex-1 min-h-0 md:flex-none md:w-[320px] overflow-hidden md:overflow-y-auto border-t md:border-t-0 md:border-l border-border bg-bg flex flex-col">
         <div className="p-4 border-b border-border space-y-3">
           <input
             type="text"

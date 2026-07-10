@@ -180,7 +180,7 @@ export function NotificationBell() {
 
       {isOpen && (
         <div
-          className="absolute right-0 top-full mt-2.5 w-[380px] max-h-[480px] overflow-y-auto bg-surface border border-border rounded-2xl shadow-[0_16px_48px_rgba(28,25,23,0.14),0_4px_16px_rgba(28,25,23,0.08)] z-50"
+          className="fixed left-3 right-3 top-[68px] w-auto max-h-[70vh] md:absolute md:inset-auto md:left-auto md:right-0 md:top-full md:mt-2.5 md:w-[380px] md:max-h-[480px] overflow-y-auto bg-surface border border-border rounded-2xl shadow-[0_16px_48px_rgba(28,25,23,0.14),0_4px_16px_rgba(28,25,23,0.08)] z-50"
           role="dialog"
           aria-label="Notifications"
         >

@@ -84,7 +84,7 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
     <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(28,25,23,0.06),0_1px_2px_rgba(28,25,23,0.04)] hover:shadow-[0_8px_24px_rgba(28,25,23,0.10),0_2px_6px_rgba(28,25,23,0.05)] hover:-translate-y-0.5 transition-all duration-200 group flex">
 
       {/* Left: Square image */}
-      <div className="relative w-[148px] flex-shrink-0 self-stretch bg-surface-subtle">
+      <div className="relative w-[116px] sm:w-[148px] flex-shrink-0 self-stretch bg-surface-subtle">
         {review.photoUrl && !photoError ? (
           <img
             src={review.photoUrl}
