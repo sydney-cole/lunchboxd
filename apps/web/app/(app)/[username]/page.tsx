@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import { Loader2, UtensilsCrossed } from 'lucide-react'
@@ -236,12 +237,12 @@ export default function ProfilePage() {
 
             {/* CTA */}
             {isOwner ? (
-              <a
+              <Link
                 href="/profile/edit"
                 className="px-6 py-2.5 rounded-full border border-border-strong text-text-primary text-[14px] font-semibold hover:border-accent hover:text-accent transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-accent"
               >
                 Edit profile
-              </a>
+              </Link>
             ) : (
               <FollowButton targetUserId={user.id} initialState={followState ?? 'none'} />
             )}

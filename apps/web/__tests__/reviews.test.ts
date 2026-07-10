@@ -22,11 +22,11 @@ describe('REVW-01: Half-star rating (0.5-5 stars)', () => {
 
 describe('REVW-02: Written note', () => {
   it('should accept note up to 2000 characters', () => {
-    const result = reviewSchema.safeParse({ mealType: 'restaurant', note: 'a'.repeat(2000) })
+    const result = reviewSchema.safeParse({ mealType: 'restaurant', rating: 3.5, note: 'a'.repeat(2000) })
     expect(result.success).toBe(true)
   })
   it('should reject note over 2000 characters', () => {
-    const result = reviewSchema.safeParse({ mealType: 'restaurant', note: 'a'.repeat(2001) })
+    const result = reviewSchema.safeParse({ mealType: 'restaurant', rating: 3.5, note: 'a'.repeat(2001) })
     expect(result.success).toBe(false)
   })
 })
@@ -37,22 +37,22 @@ describe('REVW-03: Photo attachment', () => {
 
 describe('REVW-04: Mood tags', () => {
   it('should accept tags as array of strings', () => {
-    const result = reviewSchema.safeParse({ mealType: 'restaurant', tags: ['comfort food', 'date night'] })
+    const result = reviewSchema.safeParse({ mealType: 'restaurant', rating: 3.5, tags: ['comfort food', 'date night'] })
     expect(result.success).toBe(true)
   })
   it('should reject tag longer than 50 characters', () => {
-    const result = reviewSchema.safeParse({ mealType: 'restaurant', tags: ['a'.repeat(51)] })
+    const result = reviewSchema.safeParse({ mealType: 'restaurant', rating: 3.5, tags: ['a'.repeat(51)] })
     expect(result.success).toBe(false)
   })
 })
 
 describe('REVW-05: Meal date', () => {
   it('should accept mealDate in YYYY-MM-DD format', () => {
-    const result = reviewSchema.safeParse({ mealType: 'restaurant', mealDate: '2026-04-29' })
+    const result = reviewSchema.safeParse({ mealType: 'restaurant', rating: 3.5, mealDate: '2026-04-29' })
     expect(result.success).toBe(true)
   })
   it('should reject mealDate in MM/DD/YYYY format', () => {
-    const result = reviewSchema.safeParse({ mealType: 'restaurant', mealDate: '04/29/2026' })
+    const result = reviewSchema.safeParse({ mealType: 'restaurant', rating: 3.5, mealDate: '04/29/2026' })
     expect(result.success).toBe(false)
   })
 })

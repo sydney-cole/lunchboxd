@@ -64,15 +64,16 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
     if (debounceRef.current) clearTimeout(debounceRef.current)
 
     if (!query || query.length < 2) {
-      setResults([])
-      setIsOpen(false)
-      setHasSearched(false)
-      return
+      debounceRef.current = setTimeout(() => {
+        setResults([])
+        setIsOpen(false)
+        setHasSearched(false)
+      }, 0)
+    } else {
+      debounceRef.current = setTimeout(() => {
+        search(query)
+      }, 300)
     }
-
-    debounceRef.current = setTimeout(() => {
-      search(query)
-    }, 300)
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -169,8 +170,10 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
             if (results.length > 0 || showManually) setIsOpen(true)
           }}
           placeholder="Search for a restaurant..."
+          role="combobox"
           aria-haspopup="listbox"
           aria-expanded={showDropdown}
+          aria-controls="restaurant-search-listbox"
           aria-autocomplete="list"
           className="w-full h-[44px] px-3 pr-10 bg-surface border border-border rounded-[8px] text-[16px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
         />
@@ -184,6 +187,7 @@ export function RestaurantSearch({ value, onChange }: RestaurantSearchProps) {
       {/* Dropdown */}
       {showDropdown && (
         <div
+          id="restaurant-search-listbox"
           role="listbox"
           aria-label="Restaurant search results"
           className="absolute top-full left-0 right-0 z-50 mt-1 bg-surface border border-border rounded-[8px] shadow-[0_4px_12px_rgba(28,25,23,0.12)] overflow-hidden"

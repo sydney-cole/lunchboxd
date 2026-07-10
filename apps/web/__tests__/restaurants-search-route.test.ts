@@ -1,12 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest'
 import { NextRequest } from 'next/server'
 
 // vi.hoisted ensures these variables are available when vi.mock factories run
 const {
   mockLimit,
   mockReturning,
-  mockOnConflictDoUpdate,
-  mockValues,
   mockInsert,
   mockSelect,
 } = vi.hoisted(() => {
@@ -15,10 +13,12 @@ const {
   const mockValues = vi.fn(() => ({ onConflictDoUpdate: mockOnConflictDoUpdate }))
   const mockInsert = vi.fn(() => ({ values: mockValues }))
   const mockLimit = vi.fn()
-  const mockWhere = vi.fn(() => ({ limit: mockLimit }))
+  // The cache lookup chains .where().limit(); the review-count query chains .where().groupBy()
+  const mockGroupBy = vi.fn(() => Promise.resolve([]))
+  const mockWhere = vi.fn(() => ({ limit: mockLimit, groupBy: mockGroupBy }))
   const mockFrom = vi.fn(() => ({ where: mockWhere }))
   const mockSelect = vi.fn(() => ({ from: mockFrom }))
-  return { mockLimit, mockReturning, mockOnConflictDoUpdate, mockValues, mockInsert, mockSelect }
+  return { mockLimit, mockReturning, mockInsert, mockSelect }
 })
 
 vi.mock('@clerk/nextjs/server', () => ({
@@ -31,10 +31,15 @@ vi.mock('@/lib/db', () => ({
 
 vi.mock('@/lib/schema', () => ({
   restaurants: {},
+  reviews: { restaurantId: 'reviews.restaurantId', deletedAt: 'reviews.deletedAt' },
 }))
 
 vi.mock('drizzle-orm', () => ({
   ilike: vi.fn().mockReturnValue('mocked-condition'),
+  and: vi.fn().mockReturnValue('mocked-and'),
+  inArray: vi.fn().mockReturnValue('mocked-in-array'),
+  isNull: vi.fn().mockReturnValue('mocked-is-null'),
+  sql: vi.fn().mockReturnValue('mocked-sql'),
 }))
 
 const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText'
@@ -54,7 +59,7 @@ const makeRequest = (q: string) =>
   new NextRequest(`http://localhost/api/v1/restaurants/search?q=${encodeURIComponent(q)}`)
 
 describe('GET /api/v1/restaurants/search — Google Places integration', () => {
-  let fetchSpy: ReturnType<typeof vi.spyOn>
+  let fetchSpy: MockInstance<typeof fetch>
 
   beforeEach(() => {
     fetchSpy = vi.spyOn(global, 'fetch')
@@ -155,7 +160,7 @@ describe('GET /api/v1/restaurants/search — Google Places integration', () => {
 
     const res = await GET(makeRequest('tacos'))
 
-    expect(await res.json()).toEqual(cached)
+    expect(await res.json()).toEqual(cached.map(r => ({ ...r, reviewCount: 0 })))
   })
 
   it('falls back to cached DB results when the Places API call throws', async () => {
@@ -166,12 +171,12 @@ describe('GET /api/v1/restaurants/search — Google Places integration', () => {
 
     const res = await GET(makeRequest('tacos'))
 
-    expect(await res.json()).toEqual(cached)
+    expect(await res.json()).toEqual(cached.map(r => ({ ...r, reviewCount: 0 })))
   })
 
   it('returns 401 and does not call Places API when the user is not authenticated', async () => {
     const { auth } = await import('@clerk/nextjs/server')
-    vi.mocked(auth).mockResolvedValueOnce({ userId: null } as any)
+    vi.mocked(auth).mockResolvedValueOnce({ userId: null } as unknown as Awaited<ReturnType<typeof auth>>)
     const { GET } = await import('../app/api/v1/restaurants/search/route')
 
     const res = await GET(makeRequest('tacos'))
@@ -189,6 +194,6 @@ describe('GET /api/v1/restaurants/search — Google Places integration', () => {
     const res = await GET(makeRequest('tacos'))
 
     expect(fetchSpy).not.toHaveBeenCalled()
-    expect(await res.json()).toEqual(cached)
+    expect(await res.json()).toEqual(cached.map(r => ({ ...r, reviewCount: 0 })))
   })
 })

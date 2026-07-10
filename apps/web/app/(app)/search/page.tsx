@@ -67,11 +67,8 @@ export default function SearchPage() {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    if (query.length < 2) {
-      setDebouncedQuery('')
-      return
-    }
-    const timer = setTimeout(() => setDebouncedQuery(query), 300)
+    const isShort = query.length < 2
+    const timer = setTimeout(() => setDebouncedQuery(isShort ? '' : query), isShort ? 0 : 300)
     return () => clearTimeout(timer)
   }, [query])
 

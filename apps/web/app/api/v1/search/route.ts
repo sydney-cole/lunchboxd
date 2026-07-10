@@ -11,6 +11,13 @@ const searchSchema = z.object({
   q: z.string().min(2).max(100),
 })
 
+interface GooglePlace {
+  id: string
+  displayName?: { text?: string }
+  formattedAddress?: string
+  location?: { latitude?: number; longitude?: number }
+}
+
 type ReviewResult = {
   id: string
   mealName: string | null
@@ -120,7 +127,7 @@ export async function GET(req: Request) {
       if (placesRes.ok) {
         const { places = [] } = await placesRes.json()
         const upserted = await Promise.all(
-          places.slice(0, 5).map(async (p: any) => {
+          (places as GooglePlace[]).slice(0, 5).map(async (p: GooglePlace) => {
             const [row] = await db.insert(restaurants).values({
               placeId: p.id,
               source: 'google_places',

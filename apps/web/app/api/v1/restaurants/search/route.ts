@@ -5,6 +5,13 @@ import { db } from '@/lib/db'
 import { restaurants, reviews } from '@/lib/schema'
 import { ilike, sql, and, inArray, isNull } from 'drizzle-orm'
 
+interface GooglePlace {
+  id: string
+  displayName?: { text?: string }
+  formattedAddress?: string
+  location?: { latitude?: number; longitude?: number }
+}
+
 export async function GET(req: NextRequest) {
   const { userId: clerkId } = await auth()
   if (!clerkId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -57,7 +64,7 @@ export async function GET(req: NextRequest) {
           // two concurrent in-flight results. A distributed lock would be needed to
           // eliminate this; acceptable at MVP scale. (ME-06)
           const results = await Promise.all(
-            places.slice(0, 5).map(async (p: any) => {
+            (places as GooglePlace[]).slice(0, 5).map(async (p: GooglePlace) => {
               const [row] = await db.insert(restaurants).values({
                 placeId: p.id,
                 source: 'google_places',

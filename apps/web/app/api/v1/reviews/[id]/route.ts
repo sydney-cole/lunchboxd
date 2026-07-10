@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
 import { reviews, reviewTags, feedItems, restaurants, userStats } from '@/lib/schema'
-import { reviewSchema, updateReviewSchema, normalizeTagLabel } from '@lunchboxd/shared'
+import { updateReviewSchema, normalizeTagLabel } from '@lunchboxd/shared'
 import { resolveUserId } from '@/lib/queries'
 import { eq, and, isNull, sql } from 'drizzle-orm'
 

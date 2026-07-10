@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, UtensilsCrossed } from 'lucide-react'
@@ -190,12 +191,12 @@ export default function FeedPage() {
                 : `No ${filterLabel} meals in your feed. Try a different filter.`}
             </p>
             {mealType === 'all' && (
-              <a
+              <Link
                 href="/search"
                 className="inline-flex items-center bg-accent text-white text-[14px] font-semibold px-6 py-2.5 rounded-full hover:bg-accent-hover transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 shadow-[0_1px_3px_rgba(249,115,22,0.20)]"
               >
                 Find people to follow
-              </a>
+              </Link>
             )}
           </div>
         )}

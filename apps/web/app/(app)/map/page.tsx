@@ -71,8 +71,8 @@ export default function MapPage() {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setMapCenter(NYC_FALLBACK)
-      return
+      const t = setTimeout(() => setMapCenter(NYC_FALLBACK), 0)
+      return () => clearTimeout(t)
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => setMapCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude }),

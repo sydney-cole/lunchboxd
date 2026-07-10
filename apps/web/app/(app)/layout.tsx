@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { db } from '@/lib/db'
 import { users } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
@@ -33,39 +34,39 @@ export default async function AppLayout({
     <>
       <nav className="h-16 border-b border-border bg-white/90 backdrop-blur-lg flex items-center px-4 md:px-6 sticky top-0 z-40">
         {/* Left: Logo */}
-        <a
+        <Link
           href="/"
           className="font-[family-name:--font-fraunces] text-[22px] font-bold text-text-primary shrink-0 w-auto md:w-44 hover:text-accent transition-colors duration-150"
         >
           lunchboxd
-        </a>
+        </Link>
 
         {/* Center: Nav links — desktop only */}
         <div className="hidden md:flex flex-1 items-center justify-center gap-0.5">
-          <a
+          <Link
             href="/"
             className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
           >
             Feed
-          </a>
-          <a
+          </Link>
+          <Link
             href="/search"
             className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
           >
             Search
-          </a>
-          <a
+          </Link>
+          <Link
             href="/reviews"
             className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
           >
             My Reviews
-          </a>
-          <a
+          </Link>
+          <Link
             href="/map"
             className="text-[14px] font-medium text-text-secondary hover:text-text-primary px-4 py-2 rounded-full hover:bg-accent-subtle transition-all duration-150"
           >
             Map
-          </a>
+          </Link>
         </div>
 
         {/* Right: Actions */}

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { Pencil, Trash2, MoreHorizontal, Heart, MapPin, UtensilsCrossed, X } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
 import { formatRelativeTime } from '@/lib/utils'
@@ -291,31 +292,33 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
         </div>
       </div>
 
-      {/* Full-photo lightbox overlay */}
-      {lightboxOpen && review.photoUrl && !photoError && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 cursor-zoom-out"
-          onClick={() => setLightboxOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Meal photo"
-        >
-          <button
-            type="button"
+      {/* Full-photo lightbox overlay (portaled to body so it escapes the card's transform/overflow) */}
+      {lightboxOpen && review.photoUrl && !photoError && typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 cursor-zoom-out"
             onClick={() => setLightboxOpen(false)}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-white"
-            aria-label="Close"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Meal photo"
           >
-            <X size={20} />
-          </button>
-          <img
-            src={review.photoUrl}
-            alt="Meal photo"
-            className="max-w-full max-h-full object-contain rounded-lg"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
+            <button
+              type="button"
+              onClick={() => setLightboxOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-white"
+              aria-label="Close"
+            >
+              <X size={20} />
+            </button>
+            <img
+              src={review.photoUrl}
+              alt="Meal photo"
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

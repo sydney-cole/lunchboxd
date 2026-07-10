@@ -85,7 +85,7 @@ export async function POST(req: Request) {
   return NextResponse.json(review, { status: 201 })
 }
 
-export async function GET(_req: Request) {
+export async function GET() {
   const { userId: clerkId } = await auth()
   if (!clerkId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -98,7 +98,7 @@ export async function GET(_req: Request) {
 
   // Fetch tags for each review
   const reviewIds = userReviews.map(r => r.id)
-  let tagsMap: Record<string, string[]> = {}
+  const tagsMap: Record<string, string[]> = {}
   if (reviewIds.length > 0) {
     const allTags = await db.select().from(reviewTags)
       .where(inArray(reviewTags.reviewId, reviewIds))
@@ -113,7 +113,7 @@ export async function GET(_req: Request) {
   const restaurantIds = userReviews
     .map(r => r.restaurantId)
     .filter((id): id is string => id !== null)
-  let restaurantMap: Record<string, { id: string; name: string; address: string | null }> = {}
+  const restaurantMap: Record<string, { id: string; name: string; address: string | null }> = {}
   if (restaurantIds.length > 0) {
     const restaurantRows = await db.select({
       id: restaurants.id,
@@ -127,8 +127,8 @@ export async function GET(_req: Request) {
   }
 
   // Fetch like data for all reviews (batch — not N+1)
-  let likeCountMap: Record<string, number> = {}
-  let likedByMeSet = new Set<string>()
+  const likeCountMap: Record<string, number> = {}
+  const likedByMeSet = new Set<string>()
   if (reviewIds.length > 0) {
     const likeRows = await db
       .select({ reviewId: likes.reviewId, likeUserId: likes.userId })

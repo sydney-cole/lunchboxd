@@ -18,7 +18,7 @@ describe('MEAL-02: Manual restaurant entry', () => {
 
 describe('MEAL-03: Homemade meal tag', () => {
   it('should accept mealType homemade with no restaurantId', () => {
-    const result = reviewSchema.safeParse({ mealType: 'homemade', restaurantId: null })
+    const result = reviewSchema.safeParse({ mealType: 'homemade', restaurantId: null, rating: 3.5 })
     expect(result.success).toBe(true)
   })
 })
