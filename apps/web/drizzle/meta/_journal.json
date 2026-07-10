@@ -36,6 +36,13 @@
       "when": 1783710866731,
       "tag": "0004_yellow_leper_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783711947663,
+      "tag": "0005_normalize_existing_tags",
+      "breakpoints": true
     }
   ]
 }

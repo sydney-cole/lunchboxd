@@ -2,16 +2,17 @@ import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
 import { users, reviews, reviewTags, likes, restaurants } from '@/lib/schema'
-import { profileQuerySchema } from '@lunchboxd/shared'
+import { profileQuerySchema, normalizeTagLabel } from '@lunchboxd/shared'
 import { eq, and, isNull, lt, desc, inArray } from 'drizzle-orm'
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ label: string }> }
 ) {
-  // Next.js 16: params is a Promise. Tags are stored lowercased/trimmed.
+  // Next.js 16: params is a Promise. Tags are stored canonicalized (lowercase,
+  // & === and, collapsed whitespace) — normalize the clicked label the same way.
   const { label: rawLabel } = await params
-  const label = decodeURIComponent(rawLabel).trim().toLowerCase()
+  const label = normalizeTagLabel(decodeURIComponent(rawLabel))
 
   // Auth is optional — tag pages are public browse. Viewers just miss isLikedByMe.
   const { userId: clerkId } = await auth()

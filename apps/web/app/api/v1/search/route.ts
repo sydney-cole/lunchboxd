@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { users, follows, friendships, reviews, restaurants, reviewTags, likes } from '@/lib/schema'
 import { resolveUserId } from '@/lib/queries'
+import { normalizeTagLabel } from '@lunchboxd/shared'
 import { eq, and, or, ilike, inArray, isNull, ne, sql } from 'drizzle-orm'
 import { z } from 'zod/v4'
 
@@ -43,6 +44,9 @@ export async function GET(req: Request) {
 
   const q = parsed.data.q
   const term = `%${q}%`
+  // Tag labels are stored canonicalized (lowercase, & === and); match the query the same way
+  const normalizedTag = normalizeTagLabel(q)
+  const tagTerm = normalizedTag ? `%${normalizedTag}%` : null
 
   // Fetch following + friendship sets for priority sorting
   const [followingRows, friendshipRows] = await Promise.all([
@@ -91,11 +95,13 @@ export async function GET(req: Request) {
       .where(ilike(restaurants.name, term))
       .limit(20),
 
-    // Tags: find review IDs with matching tag labels
-    db.select({ reviewId: reviewTags.reviewId, label: reviewTags.label })
-      .from(reviewTags)
-      .where(ilike(reviewTags.label, term))
-      .limit(200),
+    // Tags: find review IDs with matching tag labels (normalized: & === and)
+    tagTerm
+      ? db.select({ reviewId: reviewTags.reviewId, label: reviewTags.label })
+          .from(reviewTags)
+          .where(ilike(reviewTags.label, tagTerm))
+          .limit(200)
+      : Promise.resolve([]),
   ])
 
   // Augment restaurant results with Places API when local cache is thin

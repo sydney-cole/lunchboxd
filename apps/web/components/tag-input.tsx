@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react'
 import { X } from 'lucide-react'
+import { normalizeTagLabel } from '@lunchboxd/shared'
 
 interface TagInputProps {
   tags: string[]
@@ -13,11 +14,11 @@ export function TagInput({ tags, onChange }: TagInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const commitTag = (raw: string) => {
-    // LO-01: Normalize to lowercase before deduplication — matches server-side normalization
-    const trimmed = raw.trim().toLowerCase()
-    if (!trimmed) return
-    if (!tags.includes(trimmed)) {
-      onChange([...tags, trimmed])
+    // Canonicalize (lowercase, & === and, collapse spaces) before dedup — matches server-side normalization
+    const normalized = normalizeTagLabel(raw)
+    if (!normalized) return
+    if (!tags.includes(normalized)) {
+      onChange([...tags, normalized])
     }
     setInputValue('')
   }

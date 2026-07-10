@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { reviews, reviewTags, restaurants, likes, userStats } from '@/lib/schema'
-import { reviewSchema } from '@lunchboxd/shared'
+import { reviewSchema, normalizeTagLabel } from '@lunchboxd/shared'
 import { resolveUserId, fanOutToFollowers } from '@/lib/queries'
 import { eq, isNull, desc, and, inArray, sql } from 'drizzle-orm'
 
@@ -49,14 +49,14 @@ export async function POST(req: Request) {
     mealDate: input.mealDate ?? null,
   }).returning()
 
-  // Insert tags (normalized: lowercase + trim)
+  // Insert tags (canonicalized: lowercase, & === and, collapse spaces; dedup)
   if (input.tags && input.tags.length > 0) {
-    await db.insert(reviewTags).values(
-      input.tags.map((label: string) => ({
-        reviewId: review.id,
-        label: label.toLowerCase().trim(),
-      }))
-    )
+    const labels = [...new Set(input.tags.map(normalizeTagLabel).filter(Boolean))]
+    if (labels.length > 0) {
+      await db.insert(reviewTags).values(
+        labels.map((label) => ({ reviewId: review.id, label }))
+      )
+    }
   }
 
   // Fan-out to followers' feeds (includes author's own feed)

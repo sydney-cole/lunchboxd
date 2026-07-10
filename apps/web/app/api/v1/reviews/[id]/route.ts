@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
 import { reviews, reviewTags, feedItems, restaurants, userStats } from '@/lib/schema'
-import { reviewSchema, updateReviewSchema } from '@lunchboxd/shared'
+import { reviewSchema, updateReviewSchema, normalizeTagLabel } from '@lunchboxd/shared'
 import { resolveUserId } from '@/lib/queries'
 import { eq, and, isNull, sql } from 'drizzle-orm'
 
@@ -103,12 +103,10 @@ export async function PATCH(
 
   if (input.tags !== undefined) {
     await db.delete(reviewTags).where(eq(reviewTags.reviewId, id))
-    if (input.tags.length > 0) {
+    const labels = [...new Set(input.tags.map(normalizeTagLabel).filter(Boolean))]
+    if (labels.length > 0) {
       await db.insert(reviewTags).values(
-        input.tags.map((label: string) => ({
-          reviewId: id,
-          label: label.toLowerCase().trim(),
-        }))
+        labels.map((label) => ({ reviewId: id, label }))
       )
     }
   }
