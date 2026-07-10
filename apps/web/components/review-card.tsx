@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { Pencil, Trash2, MoreHorizontal, Heart, MapPin, UtensilsCrossed } from 'lucide-react'
+import { Pencil, Trash2, MoreHorizontal, Heart, MapPin, UtensilsCrossed, X } from 'lucide-react'
 import { StarRating } from '@/components/star-rating'
 import { formatRelativeTime } from '@/lib/utils'
 
@@ -42,6 +42,7 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
   const [isClamped, setIsClamped] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [photoError, setPhotoError] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const bodyRef = useRef<HTMLParagraphElement>(null)
 
@@ -73,6 +74,20 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
     return () => document.removeEventListener('mousedown', handleOutsideClick)
   }, [menuOpen])
 
+  useEffect(() => {
+    if (!lightboxOpen) return
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setLightboxOpen(false)
+    }
+    document.addEventListener('keydown', handleKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [lightboxOpen])
+
   const locationLabel =
     review.mealType === 'homemade'
       ? 'Homemade'
@@ -86,12 +101,19 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
       {/* Left: Square image */}
       <div className="relative w-[116px] sm:w-[148px] flex-shrink-0 self-stretch bg-surface-subtle">
         {review.photoUrl && !photoError ? (
-          <img
-            src={review.photoUrl}
-            alt="Meal photo"
-            className="absolute inset-0 w-full h-full object-contain"
-            onError={() => setPhotoError(true)}
-          />
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(true)}
+            className="absolute inset-0 w-full h-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent"
+            aria-label="View full photo"
+          >
+            <img
+              src={review.photoUrl}
+              alt="Meal photo"
+              className="absolute inset-0 w-full h-full object-cover"
+              onError={() => setPhotoError(true)}
+            />
+          </button>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <UtensilsCrossed size={28} strokeWidth={1.5} className="text-accent/30" />
@@ -268,6 +290,32 @@ export function ReviewCard({ review, onEdit, onDelete, onLike, showAuthor, isOwn
           </button>
         </div>
       </div>
+
+      {/* Full-photo lightbox overlay */}
+      {lightboxOpen && review.photoUrl && !photoError && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 cursor-zoom-out"
+          onClick={() => setLightboxOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Meal photo"
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Close"
+          >
+            <X size={20} />
+          </button>
+          <img
+            src={review.photoUrl}
+            alt="Meal photo"
+            className="max-w-full max-h-full object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   )
 }
