@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { db } from '@/lib/db'
 import { users, reviews, reviewTags, likes, restaurants } from '@/lib/schema'
-import { profileQuerySchema, normalizeTagLabel } from '@lunchboxd/shared'
+import { feedQuerySchema, normalizeTagLabel } from '@lunchboxd/shared'
 import { eq, and, isNull, lt, desc, inArray } from 'drizzle-orm'
 
 export async function GET(
@@ -18,20 +18,22 @@ export async function GET(
   const { userId: clerkId } = await auth()
 
   const { searchParams } = new URL(req.url)
-  const parsed = profileQuerySchema.safeParse({
+  const parsed = feedQuerySchema.safeParse({
     cursor: searchParams.get('cursor'),
     limit: searchParams.get('limit') ?? 20,
+    mealType: searchParams.get('mealType') ?? undefined,
   })
   if (!parsed.success) {
     return NextResponse.json({ error: 'Invalid query params' }, { status: 400 })
   }
-  const { cursor, limit } = parsed.data
+  const { cursor, limit, mealType } = parsed.data
 
   // Filter on the tag label; order + paginate on reviews.createdAt.
   const conditions = [
     eq(reviewTags.label, label),
     isNull(reviews.deletedAt),
     ...(cursor ? [lt(reviews.createdAt, new Date(cursor))] : []),
+    ...(mealType ? [eq(reviews.mealType, mealType)] : []),
   ]
 
   // limit+1 to detect hasMore without a COUNT query

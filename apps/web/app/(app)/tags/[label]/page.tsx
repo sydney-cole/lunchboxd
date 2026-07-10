@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2, UtensilsCrossed, Tag } from 'lucide-react'
 import { ReviewCard } from '@/components/review-card'
+import { FeedFilter, type FeedFilterValue } from '@/components/feed-filter'
 
 interface TagReview {
   id: string
@@ -40,8 +41,9 @@ export default function TagPage() {
   const label = decodeURIComponent(params.label as string)
   const queryClient = useQueryClient()
   const sentinelRef = useRef<HTMLDivElement>(null)
+  const [mealType, setMealType] = useState<FeedFilterValue>('all')
 
-  const queryKey = ['tag-reviews', label]
+  const queryKey = ['tag-reviews', label, mealType]
 
   const {
     data,
@@ -53,11 +55,10 @@ export default function TagPage() {
   } = useInfiniteQuery<TagReviewsPage>({
     queryKey,
     queryFn: async ({ pageParam }) => {
-      const base = `/api/v1/tags/${encodeURIComponent(label)}/reviews`
-      const url = pageParam
-        ? `${base}?cursor=${encodeURIComponent(pageParam as string)}&limit=20`
-        : base
-      const res = await fetch(url)
+      const params = new URLSearchParams({ limit: '20' })
+      if (pageParam) params.set('cursor', pageParam as string)
+      if (mealType !== 'all') params.set('mealType', mealType)
+      const res = await fetch(`/api/v1/tags/${encodeURIComponent(label)}/reviews?${params.toString()}`)
       if (!res.ok) throw new Error('Failed to load tagged reviews')
       return res.json() as Promise<TagReviewsPage>
     },
@@ -136,6 +137,11 @@ export default function TagPage() {
           </div>
         </div>
 
+        {/* Meal-type filter */}
+        <div className="flex justify-center mb-6">
+          <FeedFilter value={mealType} onChange={setMealType} />
+        </div>
+
         {isLoading && (
           <div className="flex justify-center py-10">
             <Loader2 size={24} className="animate-spin text-text-tertiary" />
@@ -154,10 +160,12 @@ export default function TagPage() {
               <UtensilsCrossed size={24} strokeWidth={1.5} className="text-text-tertiary" />
             </div>
             <p className="font-[family-name:--font-fraunces] text-[18px] font-semibold text-text-primary mb-1.5">
-              No reviews tagged &ldquo;{label}&rdquo;
+              No {mealType === 'all' ? '' : `${mealType} `}reviews tagged &ldquo;{label}&rdquo;
             </p>
             <p className="text-[14px] text-text-secondary leading-relaxed">
-              Be the first to tag a meal with this.
+              {mealType === 'all'
+                ? 'Be the first to tag a meal with this.'
+                : 'Try a different filter.'}
             </p>
           </div>
         )}
